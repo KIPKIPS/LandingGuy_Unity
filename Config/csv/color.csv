@@ -1,0 +1,7 @@
+describe,16进制色码,备注
+id,hexCode,_hexCode
+int,string,string
+,,
+1,#000000,黑色
+2,#ffffff,白色
+3,#ff6d6d,粉色

@@ -1,0 +1,19 @@
+[
+	{
+		"id":1,
+		"hexCode":"#000000"
+	},
+	{
+		"id":2,
+		"hexCode":"#ffffff"
+	},
+	{
+		"id":3,
+		"hexCode":"#ff6d6d"
+	},
+	{
+		"__metatable":"true",
+		"id":"int",
+		"hexCode":"string"
+	}
+]

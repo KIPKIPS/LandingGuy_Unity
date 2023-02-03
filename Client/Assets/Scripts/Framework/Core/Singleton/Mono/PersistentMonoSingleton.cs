@@ -11,14 +11,14 @@ namespace Framework.Core.Singleton {
 
         // Singleton design pattern
         public static T Instance {
-            get => _instance = (_instance = _instance ?? FindObjectOfType<T>()) ?? new GameObject().AddComponent<T>();
+            get => _instance = (_instance ??= FindObjectOfType<T>()) ?? new GameObject().AddComponent<T>();
         }
 
         // On awake, we check if there's already a copy of the object in the scene. If there's one, we destroy it.
         protected virtual void Awake() {
             if (!Application.isPlaying) {
                 return;
-            }
+            } 
             if (_instance == null) {
                 //If I am the first instance, make me the Singleton
                 _instance = this as T;

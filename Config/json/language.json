@@ -1,0 +1,57 @@
+[
+	{
+		"id":1,
+		"textKey":"COMMON_DEV_NAME",
+		"sc":"KIPKIPS",
+		"en":"KIPKIPS"
+	},
+	{
+		"id":2,
+		"textKey":"COMMON_STUDIO",
+		"sc":"STUDIO",
+		"en":"STUDIO"
+	},
+	{
+		"id":3,
+		"textKey":"COMMON_GAME_NAME",
+		"sc":"UNDEFINED",
+		"en":"UNDEFINED"
+	},
+	{
+		"id":4,
+		"textKey":"GAMESTART_PRESS",
+		"sc":"按任意键开始",
+		"en":"PRESS ANY KEY"
+	},
+	{
+		"id":5,
+		"textKey":"GAMESTART_CONTINUE",
+		"sc":"继续游戏",
+		"en":"CONTINUE"
+	},
+	{
+		"id":6,
+		"textKey":"GAMESTART_NEW",
+		"sc":"开始新游戏",
+		"en":"NEW GAME"
+	},
+	{
+		"id":7,
+		"textKey":"GAMESTART_EXIT",
+		"sc":"退出游戏",
+		"en":"EXIT GAME"
+	},
+	{
+		"id":8,
+		"textKey":"GAMESTART_SETTINGS",
+		"sc":"系统设置",
+		"en":"SETTINGS"
+	},
+	{
+		"__metatable":"true",
+		"id":"int",
+		"textKey":"string",
+		"sc":"string",
+		"en":"string"
+	}
+]

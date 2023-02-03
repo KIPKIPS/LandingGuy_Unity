@@ -12,11 +12,7 @@ namespace Framework.Core.Pool {
         protected ObservePool() {
             _factory = new BaseFactory<T>();
         }
-        public static ObservePool<T> Instance {
-            get {
-                return SingletonProperty<ObservePool<T>>.Instance;
-            }
-        }
+        public static ObservePool<T> Instance => SingletonProperty<ObservePool<T>>.Instance;
         public void Dispose() {
             SingletonProperty<ObservePool<T>>.Dispose();
         }

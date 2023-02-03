@@ -1,0 +1,14 @@
+describe,世界名字,世界详情,地形资源名称,地形X尺寸,地形Y尺寸,地形拆分尺寸X,地形拆分尺寸Y,地形切分数量X,地形切分数量Y,地形最大海拔高度
+id,worldName,_worldDetails,terrainName,terrainSizeX,terrainSizeY,chunkSizeX,chunkSizeY,chunkSliceX,chunkSliceY,terrainHeight
+int,string,string,string,int,int,int,int,int,int,int
+,,,,,,,,,,
+1,Main,主世界,terr_main,1024,1024,256,256,4,4,2048
+2,Giant,巨人国,terr_giant,1024,1024,256,256,4,4,2048
+3,Lilliput,小人国家,terr_lilliput,1024,1024,256,256,4,4,2048
+4,Elfenland,精灵岛,terr_elfenland,1024,1024,256,256,4,4,2048
+5,Limbo,世界尽头(荒芜之地),terr_limbo,1024,1024,256,256,4,4,2048
+6,LowerDimension,降维空间,terr_lower_dimension,1024,1024,256,256,4,4,2048
+7,EmptyFloatingIsland,浮空岛,terr_empty_floating_island,1024,1024,256,256,4,4,2048
+8,Underworld,地底世界,terr_underworld,1024,1024,256,256,4,4,2048
+9,Dreamland,梦境,terr_dreamland,1024,1024,256,256,4,4,2048
+10,Hell,地狱,terr_hell,1024,1024,256,256,4,4,2048

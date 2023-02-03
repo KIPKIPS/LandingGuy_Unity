@@ -14,7 +14,7 @@ namespace Framework.Core.Singleton {
         public static T Instance {
             get {
                 lock (_lock) {
-                    _instance = _instance ?? SingletonCreator.CreateSingleton<T>();
+                    _instance ??= SingletonCreator.CreateSingleton<T>();
                 }
                 return _instance;
             }

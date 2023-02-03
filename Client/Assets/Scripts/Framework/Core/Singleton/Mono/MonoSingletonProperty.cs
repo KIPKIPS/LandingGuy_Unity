@@ -8,7 +8,7 @@ namespace Framework.Core.Singleton {
     public static class MonoSingletonProperty<T> where T : MonoBehaviour, ISingleton {
         private static T _instance;
         public static T Instance {
-            get => _instance = _instance ?? SingletonCreator.CreateMonoSingleton<T>();
+            get => _instance ??= SingletonCreator.CreateMonoSingleton<T>();
         }
         public static void Dispose() {
             if (SingletonCreator.IsUnitTestMode) {
