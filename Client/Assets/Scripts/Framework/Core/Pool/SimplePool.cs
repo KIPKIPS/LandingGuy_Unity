@@ -1,4 +1,5 @@
 ﻿// author:KIPKIPS
+// date:2023.02.03 11:39
 // describe:普通对象池
 
 namespace Framework.Core.Pool {

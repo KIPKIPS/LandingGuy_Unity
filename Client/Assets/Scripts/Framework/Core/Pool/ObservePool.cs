@@ -1,23 +1,24 @@
 ﻿// author:KIPKIPS
+// date:2023.02.03 10:05
 // describe:单例对象池
 using System;
 using Framework.Core.Singleton;
 
 namespace Framework.Core.Pool {
     //池对象容器
-    public class FixedQuantityPool<T> : BasePool<T>, ISingleton where T : IPoolAble, new() {
+    public class ObservePool<T> : BasePool<T>, ISingleton where T : IPoolAble, new() {
         public void Initialize() {
         }
-        protected FixedQuantityPool() {
+        protected ObservePool() {
             _factory = new BaseFactory<T>();
         }
-        public static FixedQuantityPool<T> Instance {
+        public static ObservePool<T> Instance {
             get {
-                return SingletonProperty<FixedQuantityPool<T>>.Instance;
+                return SingletonProperty<ObservePool<T>>.Instance;
             }
         }
         public void Dispose() {
-            SingletonProperty<FixedQuantityPool<T>>.Dispose();
+            SingletonProperty<ObservePool<T>>.Dispose();
         }
         public void Init(int maxCount, int initCount) {
             if (maxCount > 0) {
