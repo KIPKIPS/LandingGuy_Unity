@@ -15,7 +15,7 @@ namespace Framework.Core.Container {
         /// </summary>
         public void ForbidWrite() => _writable = false;
         public RestrictedDictionary() => _dictionary = new Dictionary<TKey, TValue>();
-        private IDictionary<TKey, TValue> _dictionary;
+        private readonly IDictionary<TKey, TValue> _dictionary;
         public void Add(TKey key, TValue value) {
             if (_writable) {
                 _dictionary.Add(key, value);
@@ -57,7 +57,7 @@ namespace Framework.Core.Container {
         public int Count => _dictionary.Count;
         public bool IsReadOnly => false;
         public bool Remove(KeyValuePair<TKey, TValue> item) => _writable && _dictionary.Remove(item);
-        public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator() =>_dictionary.GetEnumerator();
+        public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator() => _dictionary.GetEnumerator();
         System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() => _dictionary.GetEnumerator();
     }
 }

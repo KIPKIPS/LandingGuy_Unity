@@ -5,20 +5,35 @@ using System;
 using Framework.Core.Singleton;
 
 namespace Framework.Core.Pool {
-    //池对象容器
+    
+    /// <summary>
+    /// 数量限制池对象容器
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
     public class ObservePool<T> : BasePool<T>, ISingleton where T : IPoolAble, new() {
+        /// <summary>
+        /// 初始化
+        /// </summary>
         public void Initialize() {
         }
+        /// <summary>
+        /// 构造器
+        /// </summary>
         protected ObservePool() {
             _factory = new BaseFactory<T>();
         }
+        /// <summary>
+        /// 单例池容器
+        /// </summary>
         public static ObservePool<T> Instance => SingletonProperty<ObservePool<T>>.Instance;
+        
         /// <summary>
         /// 析构函数
         /// </summary>
         public void Dispose() {
             SingletonProperty<ObservePool<T>>.Dispose();
         }
+        
         /// <summary>
         /// 初始化函数
         /// </summary>
@@ -35,6 +50,7 @@ namespace Framework.Core.Pool {
                 }
             }
         }
+        
         /// <summary>
         /// 最大缓存数量
         /// </summary>
@@ -51,6 +67,7 @@ namespace Framework.Core.Pool {
                 }
             }
         }
+        
         /// <summary>
         /// 分配实例
         /// </summary>

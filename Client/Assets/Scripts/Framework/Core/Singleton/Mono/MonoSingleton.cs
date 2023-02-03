@@ -53,7 +53,7 @@ namespace Framework.Core.Singleton {
         /// <summary>
         /// 当前应用程序是否结束 标签
         /// </summary>
-        protected static bool _onApplicationQuit = false;
+        protected static bool _onApplicationQuit;
 
         /// <summary>
         /// 应用程序退出：释放当前对象并销毁相关GameObject

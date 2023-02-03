@@ -3,10 +3,18 @@
 // describe:普通对象池
 
 namespace Framework.Core.Pool {
+    /// <summary>
+    /// 简易对象池
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
     public class SimplePool<T> : BasePool<T> where T : IPoolAble, new() {
+        /// <summary>
+        /// 构造器
+        /// </summary>
         public SimplePool() {
             _factory = new BaseFactory<T>();
         }
+        
         /// <summary>
         /// 分配函数
         /// </summary>
@@ -16,6 +24,7 @@ namespace Framework.Core.Pool {
             result.IsRecycled = false;
             return result;
         }
+        
         /// <summary>
         /// 回收函数
         /// </summary>

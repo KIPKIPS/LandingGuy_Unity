@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Framework.Core.Singleton {
     /// <summary>
-    /// 如果跳转到新的场景里已经有了实例，则不创建新的单例（或者创建新的单例后会销毁掉新的单例）
+    /// 如果跳转到新的场景里已经有了实例,则不创建新的单例(或者创建新的单例后会销毁掉新的单例)
     /// </summary>
     /// <typeparam name="T"></typeparam>
     public abstract class PersistentMonoSingleton<T> : MonoBehaviour where T : Component {
@@ -27,7 +27,7 @@ namespace Framework.Core.Singleton {
                 //If a Singleton already exists and you find
                 //another reference in scene, destroy it!
                 if (this != _instance) {
-                    Destroy(this.gameObject);
+                    Destroy(gameObject);
                 }
             }
         }

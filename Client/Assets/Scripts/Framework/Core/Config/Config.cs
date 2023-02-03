@@ -12,14 +12,18 @@ namespace Framework.Core.Config {
     public class Config :Singleton<Config> {
         private static readonly string logTag = "Config";
         private static readonly string configPath = "Config/"; //配置表路径
-        //配置总表
+        //配置表
         private static readonly RestrictedDictionary<string, List<dynamic>> _configDict = new ();
         private static readonly RestrictedDictionary<string, RestrictedDictionary<string, string>> _typeDict = new ();
+        
         /// <summary>
         /// 构造器
         /// </summary>
         private Config() => AnalyticsConfig();
-        // 解析配置表
+        
+        /// <summary>
+        /// 解析配置表
+        /// </summary>
         private static void AnalyticsConfig() {
             _configDict.EnableWrite();
             _typeDict.EnableWrite();
@@ -97,9 +101,9 @@ namespace Framework.Core.Config {
         /// <summary>
         /// 处理字典类型的配置表
         /// </summary>
-        /// <param name="jObj"></param>
-        /// <param name="filedName"></param>
-        /// <param name="cfName"></param>
+        /// <param name="jObj">解析的Json对象</param>
+        /// <param name="filedName">文件名称</param>
+        /// <param name="cfName">配置表名称</param>
         /// <returns></returns>
         private static dynamic HandleDict(JObject jObj, string filedName, string cfName) {
             dynamic table = new RestrictedDictionary<dynamic, dynamic>();
@@ -133,10 +137,14 @@ namespace Framework.Core.Config {
                 }
             }
             table.ForbidWrite();
-            // Utils.Log(logTag, table);    
             return table;
         }
-        // 递归处理数组类型
+        
+        /// <summary>
+        /// 递归处理数组类型
+        /// </summary>
+        /// <param name="array">配置数组</param>
+        /// <returns></returns>
         private static dynamic HandleArray(JToken[] array) {
             dynamic table = new RestrictedDictionary<int, dynamic>();
             table.EnableWrite();

@@ -5,6 +5,10 @@ using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Framework.Core.Pool {
+    /// <summary>
+    /// 预制体对象池
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
     public class PrefabPool<T> : GoPool<T> where T : Object,IPoolAble {
         /// <summary>
         /// 构造函数
