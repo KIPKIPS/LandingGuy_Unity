@@ -6,13 +6,13 @@ using System.Collections.Generic;
 namespace Framework.Core.Pool {
     public abstract class BasePool<T> : IPool<T> {
         // Gets the current count.
-        public int CurCount {
+        protected int CurCount {
             get {
                 return _cacheStack.Count;
             }
         }
         protected IFactory<T> _factory; //定义实现接口的类对象
-        protected Stack<T> _cacheStack = new Stack<T>();
+        protected readonly Stack<T> _cacheStack = new Stack<T>();
 
         // default is 5
         protected int MaxCount = 5;

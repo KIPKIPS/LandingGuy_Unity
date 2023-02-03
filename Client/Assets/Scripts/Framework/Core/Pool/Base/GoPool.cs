@@ -6,7 +6,7 @@ using System.Collections.Generic;
 namespace Framework.Core.Pool {
     public abstract class GoPool<T> : IPool<T> {
         protected IFactory<T> _factory; //定义实现接口的类对象
-        protected Stack<T> _cacheStack = new Stack<T>();
+        protected readonly Stack<T> _cacheStack = new Stack<T>();
         
         public virtual T Allocate() {
             return _cacheStack.Count == 0 ? _factory.Create() : _cacheStack.Pop();

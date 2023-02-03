@@ -5,7 +5,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Framework.Core.Pool {
-    public class PrefabPool<T> : GoPool<T> where T : UnityEngine.Object,IPoolAble {
+    public class PrefabPool<T> : GoPool<T> where T : Object,IPoolAble {
         public PrefabPool(T prefab,Transform root) {
             _factory = new GoFactory<T>(prefab,root);
         }
