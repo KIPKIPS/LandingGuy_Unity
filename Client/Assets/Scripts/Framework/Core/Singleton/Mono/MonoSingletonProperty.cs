@@ -4,12 +4,13 @@
 using UnityEngine;
 
 namespace Framework.Core.Singleton {
-    // 继承Mono的属性单例
+    /// <summary>
+    /// 继承Mono的属性单例
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
     public static class MonoSingletonProperty<T> where T : MonoBehaviour, ISingleton {
         private static T _instance;
-        public static T Instance {
-            get => _instance ??= SingletonCreator.CreateMonoSingleton<T>();
-        }
+        public static T Instance => _instance ??= SingletonCreator.CreateMonoSingleton<T>();
         public static void Dispose() {
             if (SingletonCreator.IsUnitTestMode) {
                 Object.DestroyImmediate(_instance.gameObject);

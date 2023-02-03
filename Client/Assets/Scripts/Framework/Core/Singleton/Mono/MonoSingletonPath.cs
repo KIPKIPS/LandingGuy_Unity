@@ -7,11 +7,7 @@ namespace Framework.Core.Singleton {
     [AttributeUsage(AttributeTargets.Class)] //这个特性只能标记在Class上
     public class MonoSingletonPath : Attribute {
         private readonly string _pathInHierarchy;
-        public MonoSingletonPath(string pathInHierarchy) {
-            _pathInHierarchy = pathInHierarchy;
-        }
-        public string PathInHierarchy {
-            get => _pathInHierarchy;
-        }
+        public MonoSingletonPath(string pathInHierarchy) => _pathInHierarchy = pathInHierarchy;
+        public string PathInHierarchy => _pathInHierarchy;
     }
 }

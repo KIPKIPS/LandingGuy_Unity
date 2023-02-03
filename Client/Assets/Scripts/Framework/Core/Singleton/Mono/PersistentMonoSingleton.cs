@@ -4,21 +4,20 @@
 using UnityEngine;
 
 namespace Framework.Core.Singleton {
-    // 如果跳转到新的场景里已经有了实例，则不创建新的单例（或者创建新的单例后会销毁掉新的单例）
+    /// <summary>
+    /// 如果跳转到新的场景里已经有了实例，则不创建新的单例（或者创建新的单例后会销毁掉新的单例）
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
     public abstract class PersistentMonoSingleton<T> : MonoBehaviour where T : Component {
         protected static T _instance;
         protected bool _enabled;
 
         // Singleton design pattern
-        public static T Instance {
-            get => _instance = (_instance ??= FindObjectOfType<T>()) ?? new GameObject().AddComponent<T>();
-        }
+        public static T Instance => _instance = (_instance ??= FindObjectOfType<T>()) ?? new GameObject().AddComponent<T>();
 
         // On awake, we check if there's already a copy of the object in the scene. If there's one, we destroy it.
         protected virtual void Awake() {
-            if (!Application.isPlaying) {
-                return;
-            } 
+            if (!Application.isPlaying) return;
             if (_instance == null) {
                 //If I am the first instance, make me the Singleton
                 _instance = this as T;

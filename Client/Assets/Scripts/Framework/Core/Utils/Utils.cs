@@ -13,6 +13,7 @@ using System.Reflection;
 namespace Framework {
     public static class Utils {
         #region File Load
+        
         /// <summary>
         /// 加载json文件
         /// </summary>
@@ -54,6 +55,7 @@ namespace Framework {
         private static readonly HashSet<string> _logColorHashSet = new ();
         private static readonly SimplePool<LogEntity> _logEntityPool = new ();
         private static readonly Dictionary<int, string> _spaceDict = new ();
+        
         /// <summary>
         /// 输出日志
         /// </summary>
@@ -81,14 +83,14 @@ namespace Framework {
             }
             Debug.Log(GetLogFormatString(tag, msg));
         }
+        
         /// <summary>
         /// 获取日志数据
         /// </summary>
         /// <param name="msgObj">被打印的日志对象</param>
         /// <returns>日志实体</returns>
-        private static LogEntity GetMessageData(object msgObj) {
-            return HandleLogUnit(true, msgObj, -1);
-        }
+        private static LogEntity GetMessageData(object msgObj) => HandleLogUnit(true, msgObj, -1);
+        
         /// <summary>
         /// 递归解析对象
         /// </summary>
@@ -126,6 +128,7 @@ namespace Framework {
             logEntity.Create(msg, innerLine);
             return logEntity;
         }
+        
         /// <summary>
         /// 获取迭代器长度
         /// </summary>
@@ -138,6 +141,7 @@ namespace Framework {
             }
             return cnt;
         }
+        
         /// <summary>
         /// 格式化字符串
         /// </summary>
@@ -154,6 +158,7 @@ namespace Framework {
             _spaceDict.Add(num, space);
             return space;
         }
+        
         /// <summary>
         /// 是否包含属性
         /// </summary>
@@ -167,47 +172,41 @@ namespace Framework {
             }
             return false;
         }
+        
         /// <summary>
         /// 是否继承接口
         /// </summary>
         /// <param name="obj">对象</param>
         /// <typeparam name="T">接口类型</typeparam>
         /// <returns>是否继承该接口</returns>
-        private static bool InheritInterface<T>(object obj) {
-            return typeof(T).IsAssignableFrom(obj.GetType());
-        }
+        private static bool InheritInterface<T>(object obj) => typeof(T).IsAssignableFrom(obj.GetType());
 
         /// <summary>
         /// 警告日志
         /// </summary>
         /// <param name="message">日志对象</param>
-        public static void LogWarning(object message) {
-            LogWarning("WARNING", message);
-        }
+        public static void LogWarning(object message) => LogWarning("WARNING", message);
+        
         /// <summary>
         /// 警告日志
         /// </summary>
         /// <param name="tag">前缀标签</param>
         /// <param name="message">日志对象</param>
-        public static void LogWarning(string tag, object message) {
-            Debug.LogWarning(GetLogFormatString(tag, message));
-        }
+        public static void LogWarning(string tag, object message) => Debug.LogWarning(GetLogFormatString(tag, message));
 
         /// <summary>
         /// 错误日志
         /// </summary>
         /// <param name="message">日志对象</param>
-        public static void LogError(object message) {
-            LogError("ERROR", message);
-        }
+        public static void LogError(object message) => LogError("ERROR", message);
+        
         /// <summary>
         /// 错误日志
         /// </summary>
         /// <param name="tag">前缀标签</param>
         /// <param name="message">日志对象</param>
-        public static void LogError(string tag, object message) {
-            Debug.LogError(GetLogFormatString(tag, message));
-        }
+        public static void LogError(string tag, object message) => Debug.LogError(GetLogFormatString(tag, message));
+        
         /// <summary>
         /// 获取格式化的日志信息
         /// </summary>
@@ -259,11 +258,14 @@ namespace Framework {
             }
             return default;
         }
-        public static T Find<T>(string name) {
-            Transform target = GameObject.Find(name).transform;
-            T res = target.GetComponent<T>();
-            return res;
-        }
+
+        /// <summary>
+        /// 查找对象
+        /// </summary>
+        /// <param name="name">查找的对象命名</param>
+        /// <typeparam name="T"></typeparam>
+        /// <returns>查找的结果对象</returns>
+        public static T Find<T>(string name) => GameObject.Find(name).transform.GetComponent<T>();
 
         /// <summary>
         /// 递归查找父节点下的对象
@@ -288,16 +290,12 @@ namespace Framework {
             return null;
         }
         /// <summary>
-        /// 文本着色
+        /// 文本着色 其中ColorHelper.GetColor(color) 返回十六进制格式的颜色对象,color参数传入色码号即可,色码号在配置表可以看到
         /// </summary>
         /// <param name="str">着色字符串</param>
         /// <param name="hexColor">十六进制颜色</param>
-        /// <returns></returns>
-        public static string AddColor(string str, string hexColor) {
-            //其中ColorHelper.GetColor(color) 返回十六进制格式的颜色对象,color参数传入色码号即可,色码号在配置表可以看到
-            //返回一个类似html标签语言包装好颜色信息的字符串,Unity的Text组件可以解析此串中的颜色信息
-            return string.Format("<color=#{0}>{1}</color>", hexColor, str);
-        }
+        /// <returns>返回html标签语言包装好颜色信息的字符串,Unity的Text组件可以解析此串中的颜色信息</returns>
+        public static string AddColor(string str, string hexColor) => string.Format("<color=#{0}>{1}</color>", hexColor, str);
 
         //color下划线颜色 line 线厚度
         // public static string AddUnderLine(string msg, int colorIndex, int line) {
@@ -314,18 +312,14 @@ namespace Framework {
             return new Color(tempColorVec.x, tempColorVec.y, tempColorVec.z, isAlphaRandom ? new System.Random().Next() / 255 : 1);
         }
 
-        private static System.Random m_Random = new System.Random();
+        private static System.Random m_Random = new ();
+        
         /// <summary>
         /// 获取随机颜色RGB A 例如：#ff00ff
         /// </summary>
         /// <returns>十六进制颜色字符串</returns>
-        private static string GetRandomColorCode() {
-            int r = m_Random.Next(255);
-            int g = m_Random.Next(255);
-            int b = m_Random.Next(255);
-            return string.Format("#{0}{1}{2}", r.ToString("X"), g.ToString("X"), b.ToString("X"));
-        }
-
+        private static string GetRandomColorCode() => string.Format("#{0}{1}{2}", m_Random.Next(255).ToString("X"), m_Random.Next(255).ToString("X"), m_Random.Next(255).ToString("X"));
+        
         // 单次定时器
         // public static int SetTimeout(int ms, Action<TimerSlice> callback) {
         //     return Timer.Instance.SetTimeout(ms, callback);

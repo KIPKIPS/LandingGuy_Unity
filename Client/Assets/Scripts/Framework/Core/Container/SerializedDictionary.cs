@@ -11,7 +11,9 @@ namespace Framework.Core.Container {
         [SerializeField] List<TKey> keys = new List<TKey>();
         [SerializeField] List<TValue> values = new List<TValue>();
 
-        // OnBeforeSerialize implementation.
+        /// <summary>
+        /// OnBeforeSerialize implementation.
+        /// </summary>
         public void OnBeforeSerialize() {
             keys.Clear();
             values.Clear();
@@ -21,7 +23,9 @@ namespace Framework.Core.Container {
             }
         }
 
-        // OnAfterDeserialize implementation
+        /// <summary>
+        /// OnAfterDeserialize implementation
+        /// </summary>
         public void OnAfterDeserialize() {
             for (int i = 0; i < keys.Count; i++) {
                 Add(keys[i], values[i]);

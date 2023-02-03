@@ -8,11 +8,16 @@ using System;
 namespace Framework.Core.Singleton {
     // 普通单例创建类
     internal static class SingletonCreator {
+        /// <summary>
+        /// 构造函数
+        /// </summary>
+        /// <typeparam name="T">泛型类型</typeparam>
+        /// <returns>创建的实例对象</returns>
+        /// <exception cref="Exception"></exception>
         static T CreateNonPublicConstructorObject<T>() where T : class {
             var type = typeof(T);
-            // 获取私有构造函数
+            //获取私有构造函数
             var constructorInfos = type.GetConstructors(BindingFlags.Instance | BindingFlags.NonPublic);
-
             // 获取无参构造函数
             var ctor = Array.Find(constructorInfos, c => c.GetParameters().Length == 0);
             if (ctor == null) {
@@ -20,6 +25,11 @@ namespace Framework.Core.Singleton {
             }
             return ctor.Invoke(null) as T;
         }
+        /// <summary>
+        /// 创建单例对象
+        /// </summary>
+        /// <typeparam name="T">泛型类型</typeparam>
+        /// <returns>创建的实例对象</returns>
         public static T CreateSingleton<T>() where T : class, ISingleton {
             var type = typeof(T);
             var monoBehaviourType = typeof(MonoBehaviour);
@@ -32,10 +42,20 @@ namespace Framework.Core.Singleton {
             }
         }
 
-        // 单元测试模式 标签
+        /// <summary>
+        /// 单元测试模式 标签
+        /// </summary>
         public static bool IsUnitTestMode { get; set; }
 
-        // 查找Obj（一个嵌套查找Obj的过程）
+        /// <summary>
+        /// 查找Obj（一个嵌套查找Obj的过程）
+        /// </summary>
+        /// <param name="root"></param>
+        /// <param name="subPath"></param>
+        /// <param name="index"></param>
+        /// <param name="build"></param>
+        /// <param name="dontDestroy"></param>
+        /// <returns></returns>
         private static GameObject FindGameObject(GameObject root, string[] subPath, int index, bool build, bool dontDestroy) {
             GameObject client = null;
             if (root == null) {
@@ -63,7 +83,11 @@ namespace Framework.Core.Singleton {
             return ++index == subPath.Length ? client : FindGameObject(client, subPath, index, build, dontDestroy);
         }
 
-        // 泛型方法：创建MonoBehaviour单例
+        /// <summary>
+        /// 泛型方法：创建MonoBehaviour单例
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
         public static T CreateMonoSingleton<T>() where T : class, ISingleton {
             T instance = null;
             var type = typeof(T);
@@ -103,7 +127,13 @@ namespace Framework.Core.Singleton {
             return instance;
         }
 
-        // 在GameObject上创建T组件（脚本）
+        /// <summary>
+        /// 在GameObject上创建T组件（脚本）
+        /// </summary>
+        /// <param name="path"></param>
+        /// <param name="dontDestroy"></param>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
         private static T CreateComponentOnGameObject<T>(string path, bool dontDestroy) where T : class {
             var obj = FindGameObject(path, true, dontDestroy);
             if (obj == null) {
@@ -115,7 +145,13 @@ namespace Framework.Core.Singleton {
             return obj.AddComponent(typeof(T)) as T;
         }
 
-        // 查找Obj（对于路径 进行拆分）
+        /// <summary>
+        /// 查找Obj（对于路径 进行拆分）
+        /// </summary>
+        /// <param name="path"></param>
+        /// <param name="build"></param>
+        /// <param name="dontDestroy"></param>
+        /// <returns></returns>
         private static GameObject FindGameObject(string path, bool build, bool dontDestroy) {
             if (string.IsNullOrEmpty(path)) {
                 return null;

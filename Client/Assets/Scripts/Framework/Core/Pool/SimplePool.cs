@@ -7,11 +7,20 @@ namespace Framework.Core.Pool {
         public SimplePool() {
             _factory = new BaseFactory<T>();
         }
+        /// <summary>
+        /// 分配函数
+        /// </summary>
+        /// <returns>分配的对象</returns>
         public override T Allocate() {
             T result = base.Allocate();
             result.IsRecycled = false;
             return result;
         }
+        /// <summary>
+        /// 回收函数
+        /// </summary>
+        /// <param name="obj">回收的对象</param>
+        /// <returns>是否回收成功</returns>
         public override bool Recycle(T obj) {
             if (obj == null || obj.IsRecycled) {
                 return false;

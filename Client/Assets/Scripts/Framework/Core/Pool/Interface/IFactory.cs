@@ -4,6 +4,10 @@
 
 namespace Framework.Core.Pool {
     public interface IFactory<out T> {
+        /// <summary>
+        /// 创建实例方法
+        /// </summary>
+        /// <returns></returns>
         T Create();
     }
 }

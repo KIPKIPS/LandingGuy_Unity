@@ -15,9 +15,10 @@ namespace Framework.Core.Config {
         //配置总表
         private static readonly RestrictedDictionary<string, List<dynamic>> _configDict = new ();
         private static readonly RestrictedDictionary<string, RestrictedDictionary<string, string>> _typeDict = new ();
-        private Config() {
-            AnalyticsConfig();
-        }
+        /// <summary>
+        /// 构造器
+        /// </summary>
+        private Config() => AnalyticsConfig();
         // 解析配置表
         private static void AnalyticsConfig() {
             _configDict.EnableWrite();
@@ -162,7 +163,11 @@ namespace Framework.Core.Config {
             return table;
         }
 
-        // 获取配置表
+        /// <summary>
+        /// 获取配置表
+        /// </summary>
+        /// <param name="configName">配置表名称</param>
+        /// <returns>配置表对象</returns>
         public static List<dynamic> GetConfig(string configName) {
             try {
                 if (_configDict.ContainsKey(configName)) {
@@ -174,7 +179,12 @@ namespace Framework.Core.Config {
             return null;
         }
 
-        // 获取配置表的指定id的Hashtable
+        /// <summary>
+        /// 获取配置表的指定id的Hashtable
+        /// </summary>
+        /// <param name="configName">配置表名称</param>
+        /// <param name="id">索引</param>
+        /// <returns>配置表索引数据对象</returns>
         public static dynamic GetConfig(string configName, int id) {
             try {
                 if (_configDict.ContainsKey(configName)) {

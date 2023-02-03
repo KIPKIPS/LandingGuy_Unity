@@ -4,7 +4,10 @@
 using UnityEngine;
 
 namespace Framework.Core.Singleton {
-    // 如果跳转到新的场景里已经有了实例，则删除已有示例，再创建新的实例
+    /// <summary>
+    /// 如果跳转到新的场景里已经有了实例，则删除已有示例，再创建新的实例
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
     public class ReplaceableMonoSingleton<T> : MonoBehaviour where T : Component {
         protected static T _instance;
         public float InitializationTime;
@@ -26,11 +29,9 @@ namespace Framework.Core.Singleton {
 
         // On awake, we check if there's already a copy of the object in the scene. If there's one, we destroy it.
         protected virtual void Awake() {
-            if (!Application.isPlaying) {
-                return;
-            }
+            if (!Application.isPlaying) return;
             InitializationTime = Time.time;
-            DontDestroyOnLoad(this.gameObject);
+            DontDestroyOnLoad(gameObject);
             // we check for existing objects of the same type
             T[] check = FindObjectsOfType<T>();
             foreach (T searched in check) {
