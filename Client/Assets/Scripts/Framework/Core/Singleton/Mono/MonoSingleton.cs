@@ -3,7 +3,7 @@
 // describe:mono单例类
 using UnityEngine;
 
-namespace Framework.Core.Singleton {
+namespace Framework.Core {
     /// <summary>
     /// 静态类：MonoBehaviour类的单例
     /// 泛型类：Where约束表示T类型必须继承MonoSingleton<T>

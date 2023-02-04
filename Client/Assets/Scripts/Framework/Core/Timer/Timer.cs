@@ -4,11 +4,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Framework.Core.Singleton;
-using Framework.Core.Pool;
 using UnityEngine;
 
-namespace Framework.Core.Timer {
+namespace Framework.Core {
     public class Timer : MonoSingleton<Timer> {
         private static readonly string logTag = "Timer";
         private static readonly Dictionary<int, Entity> _timerEntityDict = new();

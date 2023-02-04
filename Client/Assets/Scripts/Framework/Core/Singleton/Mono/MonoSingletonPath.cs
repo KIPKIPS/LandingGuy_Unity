@@ -2,7 +2,7 @@
 // date:2023.02.02 22:20
 // describe:mono单例路径
 using System;
-namespace Framework.Core.Singleton {
+namespace Framework.Core {
     /// <summary>
     /// MonoSingleton路径
     /// </summary>

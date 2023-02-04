@@ -1,14 +1,12 @@
 ﻿// author:KIPKIPS
 // date:2023.02.03 21:59
 // describe:配置表数据
-using Framework.Core.Singleton;
 using System;
 using System.IO;
 using System.Linq;
 using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
-using Framework.Core.Container;
-namespace Framework.Core.Config {
+namespace Framework.Core {
     public class Config :Singleton<Config> {
         private static readonly string logTag = "Config";
         private static readonly string configPath = "Config/"; //配置表路径

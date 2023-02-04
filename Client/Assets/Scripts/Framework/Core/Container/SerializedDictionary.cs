@@ -5,7 +5,7 @@ using UnityEngine;
 using System;
 using System.Collections.Generic;
 
-namespace Framework.Core.Container {
+namespace Framework.Core {
     [Serializable]
     public class SerializedDictionary<TKey, TValue> : Dictionary<TKey, TValue>, ISerializationCallbackReceiver {
         [SerializeField] List<TKey> keys = new List<TKey>();

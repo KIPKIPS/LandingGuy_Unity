@@ -1,7 +1,7 @@
 ﻿// author:KIPKIPS
 // date:2023.02.03 10:52
 // describe:对象池接口
-namespace Framework.Core.Pool {
+namespace Framework.Core {
     public interface IPool<T> {
         /// <summary>
         /// 分配方法

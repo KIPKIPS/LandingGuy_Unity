@@ -5,7 +5,7 @@ using UnityEngine;
 using System.Reflection;
 using System;
 
-namespace Framework.Core.Singleton {
+namespace Framework.Core {
     // 普通单例创建类
     internal static class SingletonCreator {
         /// <summary>

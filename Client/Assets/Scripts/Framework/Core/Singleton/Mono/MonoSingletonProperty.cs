@@ -3,7 +3,7 @@
 // describe:mono单例属性
 using UnityEngine;
 
-namespace Framework.Core.Singleton {
+namespace Framework.Core {
     /// <summary>
     /// 继承Mono的属性单例
     /// </summary>

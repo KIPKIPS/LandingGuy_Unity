@@ -3,7 +3,7 @@
 // describe:只读字典,开启读权限
 using System.Collections.Generic;
 
-namespace Framework.Core.Container {
+namespace Framework.Core {
     public class RestrictedDictionary<TKey, TValue> : IDictionary<TKey, TValue> {
         private bool _writable;
         /// <summary>

@@ -3,7 +3,7 @@
 // describe:可替换单例类,可被新创建单例替换
 using UnityEngine;
 
-namespace Framework.Core.Singleton {
+namespace Framework.Core {
     /// <summary>
     /// 如果跳转到新的场景里已经有了实例,则删除已有示例,再创建新的实例
     /// </summary>
