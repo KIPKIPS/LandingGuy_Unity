@@ -290,11 +290,11 @@ namespace Framework {
             return null;
         }
         /// <summary>
-        /// 文本着色 其中ColorHelper.GetColor(color) 返回十六进制格式的颜色对象,color参数传入色码号即可,色码号在配置表可以看到
+        /// 文本着色
         /// </summary>
         /// <param name="str">着色字符串</param>
         /// <param name="hexColor">十六进制颜色</param>
-        /// <returns>返回html标签语言包装好颜色信息的字符串,Unity的Text组件可以解析此串中的颜色信息</returns>
+        /// <returns>返回着色字符串</returns>
         public static string AddColor(string str, string hexColor) => string.Format("<color=#{0}>{1}</color>", hexColor, str);
 
         //color下划线颜色 line 线厚度
@@ -312,13 +312,14 @@ namespace Framework {
             return new Color(tempColorVec.x, tempColorVec.y, tempColorVec.z, isAlphaRandom ? new System.Random().Next() / 255 : 1);
         }
 
-        private static System.Random m_Random = new ();
-        
         /// <summary>
         /// 获取随机颜色RGB A 例如：#ff00ff
         /// </summary>
         /// <returns>十六进制颜色字符串</returns>
-        private static string GetRandomColorCode() => string.Format("#{0}{1}{2}", m_Random.Next(255).ToString("X"), m_Random.Next(255).ToString("X"), m_Random.Next(255).ToString("X"));
+        private static string GetRandomColorCode() {
+            System.Random r = new ();
+            return string.Format("#{0}{1}{2}", r.Next(255).ToString("X"), r.Next(255).ToString("X"), r.Next(255).ToString("X"));
+        }
         
         // 单次定时器
         // public static int SetTimeout(int ms, Action<TimerSlice> callback) {
