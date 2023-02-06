@@ -11,7 +11,7 @@ using System.Reflection;
 
 namespace Framework {
     public static class Utils {
-        #region File Load
+        #region File Load 文件加载
         
         /// <summary>
         /// 加载json文件
@@ -20,19 +20,15 @@ namespace Framework {
         /// <typeparam name="T">类型</typeparam>
         /// <returns>结果对象</returns>
         public static T LoadJsonByPath<T>(string path) {
-            string filePath = Environment.CurrentDirectory + "/" + path;
-            //print(filePath);
-            //读取文件
-            StreamReader reader = new StreamReader(filePath);
-            string jsonStr = @reader.ReadToEnd();
+            StreamReader reader = new StreamReader(Environment.CurrentDirectory + "/" + path);
+            string jsonStr = reader.ReadToEnd();
             reader.Close();
             //字符串转换为对象
-            T data = JsonConvert.DeserializeObject<T>(@jsonStr);
-            return data;
+            return JsonConvert.DeserializeObject<T>(jsonStr);
         }
         #endregion
 
-        #region Log
+        #region Log 日志输出
         
         /// <summary>
         /// 日志实体
@@ -65,7 +61,6 @@ namespace Framework {
                 Debug.Log(GetLogFormatString(tag, "The expected value is null"));
                 return;
             }
-            ;
             int startIdx = 0;
             if (messages.Length == 1) {
                 startIdx = 0;
@@ -103,18 +98,18 @@ namespace Framework {
             if (InheritInterface<IEnumerable>(msgObj) && !(msgObj is string)) {
                 msg += firstLine ? "" : "\n";
                 IEnumerator ie = ((IEnumerable)msgObj).GetEnumerator();
-                string tempStr = "";
+                string tempStr;
                 int length = GetEnumeratorCount(ie);
                 ie = ((IEnumerable)msgObj).GetEnumerator();
                 int count = 0;
-                bool last, iskvp;
+                bool last, isKvp;
                 while (ie.MoveNext()) {
                     if (ie.Current != null) {
                         dynamic data = ie.Current;
-                        iskvp = ContainProperty(data, "Key");
-                        LogEntity le = HandleLogUnit(false, (iskvp ? data.Value : data), layer + 1);
+                        isKvp = ContainProperty(data, "Key");
+                        LogEntity le = HandleLogUnit(false, (isKvp ? data.Value : data), layer + 1);
                         last = count == length - 1;
-                        tempStr = (GetTable(layer + 1) + (iskvp ? data.Key : count) + " : " + le.content) + (le.innerLine && !last ? "\n" : "");
+                        tempStr = GetTable(layer + 1) + (isKvp ? data.Key : count) + " : " + le.content + (le.innerLine && !last ? "\n" : "");
                         innerLine = last | !innerLine;
                         msg += tempStr;
                     }
@@ -164,14 +159,8 @@ namespace Framework {
         /// <param name="obj">对象</param>
         /// <param name="propertyName">属性名称</param>
         /// <returns>是否包含该属性</returns>
-        private static bool ContainProperty(object obj, string propertyName) {
-            if (obj != null && !string.IsNullOrEmpty(propertyName)) {
-                PropertyInfo propertyInfo = obj.GetType().GetProperty(propertyName);
-                return (propertyInfo != null);
-            }
-            return false;
-        }
-        
+        private static bool ContainProperty(object obj, string propertyName) => obj != null && !string.IsNullOrEmpty(propertyName) && obj.GetType().GetProperty(propertyName) != null;
+
         /// <summary>
         /// 是否继承接口
         /// </summary>
@@ -213,30 +202,30 @@ namespace Framework {
         /// <param name="message">日志对象</param>
         /// <returns>格式化后的字符串</returns>
         private static string GetLogFormatString(string tag, object message) {
-            string tempColorCode;
+            string c;
             if (_logColorDict.ContainsKey(tag)) {
-                tempColorCode = _logColorDict[tag];
+                c = _logColorDict[tag];
             } else {
                 int count = 0; // 颜色循环次数上限
                 do {
-                    tempColorCode = GetRandomColorCode();
+                    c = GetRandomColorCode();
                     count++;
                     if (count > 1000) {
                         // 获取颜色次数超过1000次 默认返回白色
                         Debug.LogWarning("Color Get Duplicated");
-                        return String.Format("<color=#000000>[{0}]</color>: {1}", tag, message);
+                        return $"<color=#000000>[{tag}]</color>: {message}";
                     }
-                } while (_logColorHashSet.Contains(tempColorCode));
+                } while (_logColorHashSet.Contains(c));
                 // 找到对应颜色
-                _logColorDict[tag] = tempColorCode;
-                _logColorHashSet.Add(tempColorCode);
+                _logColorDict[tag] = c;
+                _logColorHashSet.Add(c);
             }
-            return String.Format("<color={0}>[{1}]</color>: {2}", tempColorCode, tag, message);
+            return $"<color={c}>[{tag}]</color>: {message}";
         }
 
         #endregion
 
-        #region Find
+        #region Find 节点查找
 
         /// <summary>
         /// 查找对象
@@ -247,15 +236,10 @@ namespace Framework {
         /// <returns>查找结果</returns>
         public static T Find<T>(Transform root, string name) {
             if (name == null) {
-                T res = root.GetComponent<T>();
-                return res;
+                return root.GetComponent<T>();
             }
             Transform target = GetChild(root, name);
-            if (target != null) {
-                T res = target.GetComponent<T>();
-                return res;
-            }
-            return default;
+            return target != null ? target.GetComponent<T>() : default;
         }
 
         /// <summary>
@@ -288,13 +272,17 @@ namespace Framework {
             }
             return null;
         }
+        #endregion
+
+        #region Color 颜色相关工具
+        private static readonly System.Random random = new ();
         /// <summary>
         /// 文本着色
         /// </summary>
         /// <param name="str">着色字符串</param>
         /// <param name="hexColor">十六进制颜色</param>
         /// <returns>返回着色字符串</returns>
-        public static string AddColor(string str, string hexColor) => string.Format("<color=#{0}>{1}</color>", hexColor, str);
+        public static string AddColor(string str, string hexColor) => $"<color=#{hexColor}>{str}</color>";
 
         //color下划线颜色 line 线厚度
         // public static string AddUnderLine(string msg, int colorIndex, int line) {
@@ -307,31 +295,15 @@ namespace Framework {
         /// <param name="isAlphaRandom">是否随机透明度</param>
         /// <returns>随机的颜色对象</returns>
         public static Color GetRandomColor(bool isAlphaRandom = false) {
-            Vector3 tempColorVec = new Vector3(new System.Random().Next(255), new System.Random().Next(255), new System.Random().Next(255)) / 255;
-            return new Color(tempColorVec.x, tempColorVec.y, tempColorVec.z, isAlphaRandom ? new System.Random().Next() / 255 : 1);
+            Vector3 v = new Vector3(random.Next(255), random.Next(255), random.Next(255)) / 255;
+            return new Color(v.x, v.y, v.z, isAlphaRandom ? random.Next() / 255 : 1);
         }
 
         /// <summary>
         /// 获取随机颜色RGB A 例如：#ff00ff
         /// </summary>
         /// <returns>十六进制颜色字符串</returns>
-        private static string GetRandomColorCode() {
-            System.Random r = new ();
-            return string.Format("#{0}{1}{2}", r.Next(255).ToString("X"), r.Next(255).ToString("X"), r.Next(255).ToString("X"));
-        }
-        
-        // 单次定时器
-        // public static int SetTimeout(int ms, Action<TimerSlice> callback) {
-        //     return Timer.Instance.SetTimeout(ms, callback);
-        // }
-        //
-        // // 循环定时器
-        // public static int SetInterval(int ms, Action<TimerSlice> callback) {
-        //     return Timer.Instance.SetInterval(ms, callback);
-        // }
-        // public static void ClearTimer(int id) {
-        //     Timer.Instance.ClearTimer(id);
-        // }
+        private static string GetRandomColorCode() => $"#{random.Next(255) : x}{random.Next(255) : x}{random.Next(255) : x}";
 
         #endregion
     }
