@@ -2,7 +2,7 @@
 //     author:{wkp}
 //     time:16:53
 // ]]
-namespace Framework.UI.Binding.Runtime {
+namespace Framework {
     public class UIBinding {
         
     }
