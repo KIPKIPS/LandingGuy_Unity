@@ -13,7 +13,7 @@ namespace Framework {
         /// <summary>
         /// 静态实例
         /// </summary>
-        protected static T _instance;
+        private static T _instance;
 
         /// <summary>
         /// 静态属性：封装相关实例对象

@@ -8,12 +8,33 @@ namespace Framework {
     /// 如果跳转到新的场景里已经有了实例,则不创建新的单例(或者创建新的单例后会销毁掉新的单例)
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public abstract class PersistentMonoSingleton<T> : MonoBehaviour where T : Component {
-        protected static T _instance;
-        protected bool _enabled;
-
+    public abstract class PersistentMonoSingleton<T> : MonoBehaviour,ISingleton where T : PersistentMonoSingleton<T> {
+        private static T _instance;
+        private bool _enabled;
+        private static bool _onApplicationQuit;
         // Singleton design pattern
-        public static T Instance => _instance = (_instance ??= FindObjectOfType<T>()) ?? new GameObject().AddComponent<T>();
+        public static T Instance {
+            get {
+                if (_instance == null && !_onApplicationQuit) {
+                    _instance = SingletonCreator.CreateMonoSingleton<T>();
+                }
+                return _instance;
+            }
+        }
+
+        /// <summary>
+        /// 应用程序退出：释放当前对象并销毁相关GameObject
+        /// </summary>
+        protected virtual void OnApplicationQuit() {
+            _onApplicationQuit = true;
+        }
+        /// <summary>
+        /// 实现接口的单例初始化
+        /// </summary>
+        public virtual void Initialize() {
+        }
+        
+        public static bool IsApplicationQuit => _onApplicationQuit;
 
         // On awake, we check if there's already a copy of the object in the scene. If there's one, we destroy it.
         protected virtual void Awake() {

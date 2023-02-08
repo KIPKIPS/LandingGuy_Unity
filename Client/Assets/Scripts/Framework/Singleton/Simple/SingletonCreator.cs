@@ -107,12 +107,12 @@ namespace Framework {
             MemberInfo info = typeof(T);
             //获取T类型 自定义属性，并找到相关路径属性，利用该属性创建T实例
             var attributes = info.GetCustomAttributes(true);
-            foreach (var atribute in attributes) {
-                var defineAttri = atribute as MonoSingletonPath;
-                if (defineAttri == null) {
+            foreach (var attribute in attributes) {
+                var defineAttr = attribute as MonoSingletonPath;
+                if (defineAttr == null) {
                     continue;
                 }
-                instance = CreateComponentOnGameObject<T>(defineAttri.PathInHierarchy, true);
+                instance = CreateComponentOnGameObject<T>(defineAttr.PathInHierarchy, true);
                 break;
             }
 

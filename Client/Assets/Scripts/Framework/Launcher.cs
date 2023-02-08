@@ -6,6 +6,7 @@ namespace Framework {
     public class Launcher : MonoSingleton<Launcher> {
         
         void Awake() {
+            AudioManager.Instance.BgmVolume = 0.5f;
         }
     }
 }
