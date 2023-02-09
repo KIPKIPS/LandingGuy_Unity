@@ -5,7 +5,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Framework {
-    public class GoFactory<T> : IFactory<T> where T : Object {
+    public class GoFactory<T> : IFactory<T> where T : Component,new() {
         private readonly T _prefab;
         private readonly Transform _root;
         /// <summary>
@@ -13,7 +13,7 @@ namespace Framework {
         /// </summary>
         /// <returns></returns>
         public T Create() {
-            var g = GameObject.Instantiate(_prefab, _root);
+            T g = _prefab is null ? new GameObject().AddComponent<T>() : GameObject.Instantiate(_prefab, _root);
             Transform t = g.GameObject().transform;
             t.localScale = Vector3.one;
             t.localPosition = Vector3.zero;
@@ -27,6 +27,10 @@ namespace Framework {
         /// <param name="root">实例的根节点</param>
         public GoFactory(T prefab,Transform root) {
             _prefab = prefab;
+            _root = root;
+        }
+        
+        public GoFactory(Transform root) {
             _root = root;
         }
     }

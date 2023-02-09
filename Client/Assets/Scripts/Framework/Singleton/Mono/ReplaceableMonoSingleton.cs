@@ -9,7 +9,7 @@ namespace Framework {
     /// </summary>
     /// <typeparam name="T"></typeparam>
     public class ReplaceableMonoSingleton<T> : MonoBehaviour where T : Component {
-        protected static T _instance;
+        private static T _instance;
         public float initializationTime;
 
         /// <summary>
@@ -28,17 +28,14 @@ namespace Framework {
                 return _instance;
             }
         }
-
-        // On awake, we check if there's already a copy of the object in the scene. If there's one, we destroy it.
+        
         protected virtual void Awake() {
             if (!Application.isPlaying) return;
             initializationTime = Time.time;
             DontDestroyOnLoad(gameObject);
-            // we check for existing objects of the same type
             T[] check = FindObjectsOfType<T>();
             foreach (T searched in check) {
                 if (searched != this) {
-                    // if we find another object of the same type (not this), and if it's older than our current object, we destroy it.
                     if (searched.GetComponent<ReplaceableMonoSingleton<T>>().initializationTime < initializationTime) {
                         Destroy(searched.gameObject);
                     }

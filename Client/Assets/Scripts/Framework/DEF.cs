@@ -8,6 +8,7 @@ namespace Framework {
         //音频类型
         public enum AudioType {
             BGM = 0,
+            EFFECT = 1,
         }
     }
 }

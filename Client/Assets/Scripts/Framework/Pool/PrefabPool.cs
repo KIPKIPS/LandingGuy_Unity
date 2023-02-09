@@ -9,7 +9,7 @@ namespace Framework {
     /// 预制体对象池
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public class PrefabPool<T> : GoPool<T> where T : Object,IPoolAble {
+    public class PrefabPool<T> : GoPool<T> where T : Component,new() {
         /// <summary>
         /// 构造函数
         /// </summary>
@@ -18,6 +18,10 @@ namespace Framework {
         public PrefabPool(T prefab,Transform root) {
             _factory = new GoFactory<T>(prefab,root);
         }
+        
+        public PrefabPool(Transform root) {
+            _factory = new GoFactory<T>(root);
+        }
         /// <summary>
         /// 分配函数
         /// </summary>
@@ -25,7 +29,6 @@ namespace Framework {
         public override T Allocate() {
             T result = base.Allocate();
             result.GameObject().SetActive(true);
-            result.IsRecycled = false;
             return result;
         }
         /// <summary>
@@ -34,12 +37,10 @@ namespace Framework {
         /// <param name="obj">回收的对象</param>
         /// <returns>是否回收成功</returns>
         public override bool Recycle(T obj) {
-            if (obj == null || obj.IsRecycled) {
+            if (obj == null) {
                 return false;
             }
             obj.GameObject().SetActive(false);
-            obj.IsRecycled = true;
-            obj.OnRecycled();
             _cacheStack.Push(obj);
             return true;
         }

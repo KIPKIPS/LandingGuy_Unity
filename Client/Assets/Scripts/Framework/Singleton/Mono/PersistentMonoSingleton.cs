@@ -12,7 +12,6 @@ namespace Framework {
         private static T _instance;
         private bool _enabled;
         private static bool _onApplicationQuit;
-        // Singleton design pattern
         public static T Instance {
             get {
                 if (_instance == null && !_onApplicationQuit) {
@@ -36,7 +35,6 @@ namespace Framework {
         
         public static bool IsApplicationQuit => _onApplicationQuit;
 
-        // On awake, we check if there's already a copy of the object in the scene. If there's one, we destroy it.
         protected virtual void Awake() {
             if (!Application.isPlaying) return;
             if (_instance == null) {
@@ -45,8 +43,6 @@ namespace Framework {
                 DontDestroyOnLoad(transform.gameObject);
                 _enabled = true;
             } else {
-                //If a Singleton already exists and you find
-                //another reference in scene, destroy it!
                 if (this != _instance) {
                     Destroy(gameObject);
                 }
