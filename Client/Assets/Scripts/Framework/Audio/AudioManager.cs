@@ -87,22 +87,6 @@ namespace Framework {
         [SerializeField] //bgm是否循环
         private bool _loopBgm;
         public bool LoopBgm => _loopBgm;
-
-        /// <summary>
-        /// 更新全局音量
-        /// </summary>
-        void UpdateGlobalVolume() {
-            UpdateBgmVolume();
-            UpdateEffectVolume();
-            Utils.Log(_logTag,GlobalVolume);
-        }
-        /// <summary>
-        /// 更新背景音乐音量
-        /// </summary>
-        void UpdateBgmVolume() {
-            BgmAudioSource.volume = BgmVolume * GlobalVolume;
-            Utils.Log(_logTag,BgmAudioSource.volume);
-        }
         private Transform _effectAudioTrs;
         public Transform EffectAudioTrs {
             get {
@@ -119,6 +103,25 @@ namespace Framework {
             }
         }
         public List<AudioSource> effectAudioList = new();
+        private PrefabPool<AudioSource> _audioSourcePool;
+
+        private PrefabPool<AudioSource> AudioSourcePool => _audioSourcePool ??= new PrefabPool<AudioSource>(EffectAudioTrs);
+
+        /// <summary>
+        /// 更新全局音量
+        /// </summary>
+        void UpdateGlobalVolume() {
+            UpdateBgmVolume();
+            UpdateEffectVolume();
+            Utils.Log(_logTag,GlobalVolume);
+        }
+        /// <summary>
+        /// 更新背景音乐音量
+        /// </summary>
+        void UpdateBgmVolume() {
+            BgmAudioSource.volume = BgmVolume * GlobalVolume;
+            Utils.Log(_logTag,BgmAudioSource.volume);
+        }
         /// <summary>
         /// 更新特效音乐音量
         /// </summary>
@@ -146,9 +149,7 @@ namespace Framework {
             effectAudioList.Remove(audioSource);
             audioSource.transform.SetParent(EffectAudioTrs);
         }
-        private PrefabPool<AudioSource> _audioSourcePool;
-
-        private PrefabPool<AudioSource> AudioSourcePool => _audioSourcePool ??= new PrefabPool<AudioSource>(EffectAudioTrs);
+        
         private AudioSource GetAudioPlay(bool is3d,Transform trs) {
             AudioSource audioSource = AudioSourcePool.Allocate();
             var t = audioSource.transform;
@@ -156,7 +157,9 @@ namespace Framework {
             t.localPosition = Vector3.zero;
             t.localRotation = quaternion.identity;
             t.localScale = Vector3.zero;
-            t.name = EffectAudioTrs.name +(EffectAudioTrs.childCount - 1);
+            if (!t.name.StartsWith(EffectAudioTrs.name)) {
+                t.name = $"{EffectAudioTrs.name}_{effectAudioList.Count}";
+            }
             audioSource.spatialBlend = is3d ? 1 : 0;
             effectAudioList.Add(audioSource);
             return audioSource;
@@ -186,7 +189,7 @@ namespace Framework {
         /// <summary>
         /// 设置静音
         /// </summary>
-        void SetMute() {
+        public void SetMute() {
             BgmAudioSource.mute = Mute;
         }
         #endregion
