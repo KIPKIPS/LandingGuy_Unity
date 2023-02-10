@@ -15,11 +15,11 @@ namespace Framework {
         /// </summary>
         /// <param name="prefab">实例化的预制体</param>
         /// <param name="root">创建实例的根节点</param>
-        public PrefabPool(T prefab,Transform root) {
+        public PrefabPool(T prefab,Transform root = null) {
             _factory = new GoFactory<T>(prefab,root);
         }
         
-        public PrefabPool(Transform root) {
+        public PrefabPool(Transform root = null) {
             _factory = new GoFactory<T>(root);
         }
         /// <summary>

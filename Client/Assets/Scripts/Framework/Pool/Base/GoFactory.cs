@@ -30,7 +30,7 @@ namespace Framework {
             _root = root;
         }
         
-        public GoFactory(Transform root) {
+        public GoFactory(Transform root = null) {
             _root = root;
         }
     }
