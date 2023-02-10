@@ -17,6 +17,7 @@ namespace Framework {
         /// <param name="type">事件类型</param>
         /// <param name="callback">有参事件触发回调</param>
         public static void Register(EventType type, Action<dynamic> callback) {
+            Utils.Log(_logTag,$"register => EventType.{type.ToString()}");
             if (!_eventDict.ContainsKey(type)) {
                 Entity e = _eventEntityPool.Allocate();
                 _eventDict[type] = e;
@@ -31,6 +32,7 @@ namespace Framework {
         /// <param name="type">事件类型</param>
         /// <param name="callback">无参事件触发回调</param>
         public static void Register(EventType type, Action callback) {
+            Utils.Log(_logTag,$"register => EventType.{type.ToString()}");
             if (!_eventDict.ContainsKey(type)) {
                 Entity e = _eventEntityPool.Allocate();
                 _eventDict[type] = e;
@@ -46,6 +48,7 @@ namespace Framework {
         /// <param name="type">事件类型</param>
         /// <param name="callback">有参事件触发回调</param>
         public static void Remove(EventType type, Action<dynamic> callback) {
+            Utils.Log(_logTag,$"remove => EventType.{type.ToString()}");
             if (_eventDict.ContainsKey(type)) {
                 _eventDict[type].RemoveCallback(callback);
                 if (_eventDict[type].CanRemove) {
@@ -61,6 +64,7 @@ namespace Framework {
         /// <param name="type">事件类型</param>
         /// <param name="callback">无参事件触发回调</param>
         public static void Remove(EventType type, Action callback) {
+            Utils.Log(_logTag,$"remove => EventType.{type.ToString()}");
             if (_eventDict.ContainsKey(type)) {
                 _eventDict[type].RemoveCallback(callback);
                 if (_eventDict[type].CanRemove) {
@@ -76,6 +80,7 @@ namespace Framework {
         /// <param name="type">事件类型</param>
         /// <param name="data">事件传递数据</param>
         public static void Dispatch(EventType type, dynamic data = null) {
+            Utils.Log(_logTag,$"dispatch => EventType.{type.ToString()}");
             if (_eventDict != null && _eventDict.ContainsKey(type)) {
                 _eventDict[type].Execute(data);
             }

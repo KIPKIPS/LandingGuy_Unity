@@ -7,19 +7,13 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace Framework {
-    public class Timer : Singleton<Timer> {
+    public class Timer {
         private static readonly string logTag = "Timer";
         private static readonly Dictionary<int, Entity> _timerEntityDict = new();
         private static readonly Stack<int> _removeStack = new();
         private static readonly SimplePool<Entity> _timerEntityPool = new();
         private static int _allocateTimerId;
-        private static bool _isStart;
-        /// <summary>
-        /// 构造器
-        /// </summary>
-        private Timer() {
-            
-        }
+
         /// <summary>
         /// 创建计时器
         /// </summary>
@@ -28,10 +22,6 @@ namespace Framework {
         /// <param name="times">循环执行次数 默认1次</param>
         /// <returns>计时器对象</returns>
         public static Entity New(Action<Entity> callback, int millisecond, int times = 1) {
-            if (!_isStart) {
-                Launcher.Instance.StartCoroutine(TriggerTimer());
-                _isStart = true;
-            }
             _allocateTimerId++;
             Entity e = _timerEntityPool.Allocate();
             e.SetEntity(millisecond, callback, _allocateTimerId, times);
@@ -47,7 +37,7 @@ namespace Framework {
             if (_timerEntityDict.ContainsKey(timerId)) {
                 _timerEntityPool.Recycle(_timerEntityDict[timerId]);
             } else {
-                Utils.Log(logTag, "Timer " + timerId + " is not exist !");
+                Utils.LogError(logTag, "Timer " + timerId + " is not exist !");
             }
         }
         
@@ -55,7 +45,7 @@ namespace Framework {
         /// 循环触发器
         /// </summary>
         /// <returns></returns>
-        static IEnumerator TriggerTimer() {
+        public static IEnumerator TriggerTimer() {
             int i, count;
             while (true) {
                 foreach (KeyValuePair<int, Entity> e in _timerEntityDict) {
@@ -68,8 +58,6 @@ namespace Framework {
                     for (i = 0; i < count; i++) {
                         int id = _removeStack.Pop();
                         if (_timerEntityDict.ContainsKey(id)) {
-                            // timerEventDict[id].OnRecycled();
-                            // timerEventDict.Remove(id);
                             _timerEntityPool.Recycle(_timerEntityDict[id]);
                         }
                     }

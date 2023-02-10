@@ -275,7 +275,7 @@ namespace Framework {
         #endregion
 
         #region Color 颜色相关工具
-        private static readonly System.Random random = new ();
+
         /// <summary>
         /// 文本着色
         /// </summary>
@@ -283,7 +283,7 @@ namespace Framework {
         /// <param name="hexColor">十六进制颜色</param>
         /// <returns>返回着色字符串</returns>
         public static string AddColor(string str, string hexColor) => $"<color=#{hexColor}>{str}</color>";
-
+        static readonly System.Random random = new ();
         //color下划线颜色 line 线厚度
         // public static string AddUnderLine(string msg, int colorIndex, int line) {
         //     return string.Format("<UnderWave/color={0},thickness=${1}>{2}</UnderWave>", GetColor(colorIndex), line, msg);
@@ -294,16 +294,13 @@ namespace Framework {
         /// </summary>
         /// <param name="isAlphaRandom">是否随机透明度</param>
         /// <returns>随机的颜色对象</returns>
-        public static Color GetRandomColor(bool isAlphaRandom = false) {
-            Vector3 v = new Vector3(random.Next(255), random.Next(255), random.Next(255)) / 255;
-            return new Color(v.x, v.y, v.z, isAlphaRandom ? random.Next() / 255 : 1);
-        }
+        public static Color GetRandomColor(bool isAlphaRandom = false) => new (random.Next(255), random.Next(255), random.Next(255), isAlphaRandom ? random.Next() / 255 : 1);
 
         /// <summary>
         /// 获取随机颜色RGB A 例如：#ff00ff
         /// </summary>
         /// <returns>十六进制颜色字符串</returns>
-        private static string GetRandomColorCode() => $"#{random.Next(255) : x}{random.Next(255) : x}{random.Next(255) : x}";
+        private static string GetRandomColorCode() => $"#{random.Next(255):X}{random.Next(255):X}{random.Next(255):X}";
 
         #endregion
     }

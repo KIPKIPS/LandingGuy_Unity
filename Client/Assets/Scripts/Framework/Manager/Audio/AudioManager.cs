@@ -1,18 +1,26 @@
 ﻿// author:KIPKIPS
 // date:2023.02.08 21:47
 // describe:音效系统
-using System;
+
 using System.Collections.Generic;
 using Unity.Mathematics;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace Framework {
+namespace Framework.Manager {
     [MonoSingletonPath("AudioManager")]
     public class AudioManager : PersistentMonoSingleton<AudioManager> {
         [SerializeField]private AudioSource _bgmAudioSource;
         private readonly string _logTag = "AudioManager";
+        public new void Initialize() {
+            //TODO:读取用户配置文件
+            Mute = false;
+            GlobalVolume = 1;
+            EffectVolume = 1;
+            BgmVolume = 1;
+            Utils.Log(_logTag,"the audio initialization settings are complete");
+        }
         public AudioSource BgmAudioSource {
             get {
                 if (_bgmAudioSource is null) {

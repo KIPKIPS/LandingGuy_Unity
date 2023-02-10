@@ -13,18 +13,17 @@ namespace Framework {
         //配置表
         private static readonly RestrictedDictionary<string, List<dynamic>> _configDict = new ();
         private static readonly RestrictedDictionary<string, RestrictedDictionary<string, string>> _typeDict = new ();
-        private static bool _loadConfig;
         /// <summary>
         /// 构造器
         /// </summary>
         private Config() {
-            
+            AnalyticsConfig();
         }
         
         /// <summary>
         /// 解析配置表
         /// </summary>
-        private static void AnalyticsConfig(Action callback) {
+        private static void AnalyticsConfig() {
             _configDict.EnableWrite();
             _typeDict.EnableWrite();
             // _configDict = new Dictionary<string, List<dynamic>>();
@@ -95,8 +94,7 @@ namespace Framework {
             }
             _configDict.ForbidWrite();
             _typeDict.ForbidWrite();
-            Utils.Log(logTag, "Config table data is parsed");
-            callback?.Invoke();
+            Utils.Log(logTag, "config data load finished");
         }
         
         /// <summary>
@@ -179,15 +177,13 @@ namespace Framework {
         /// <returns>配置表对象</returns>
         public static List<dynamic> GetConfig(string configName) {
             dynamic result = null;
-            CheckConfig(() => {
-                try {
-                    if (_configDict.ContainsKey(configName)) {
-                        result = _configDict[configName];
-                    }
-                } catch (Exception e) {
-                    result = null;
+            try {
+                if (_configDict.ContainsKey(configName)) {
+                    result = _configDict[configName];
                 }
-            });
+            } catch (Exception e) {
+                result = null;
+            }
             return result;
         }
 
@@ -199,26 +195,16 @@ namespace Framework {
         /// <returns>配置表索引数据对象</returns>
         public static dynamic GetConfig(string configName, int id) {
             dynamic result = null;
-            CheckConfig(() => {
-                try {
-                    if (_configDict.ContainsKey(configName)) {
-                        if (_configDict[configName] != null && _configDict[configName][id] != null) {
-                            result= _configDict[configName][id];
-                        }
+            try {
+                if (_configDict.ContainsKey(configName)) {
+                    if (_configDict[configName] != null && _configDict[configName][id] != null) {
+                        result= _configDict[configName][id];
                     }
-                } catch (Exception e) {
-                    result = null;
                 }
-            });
-            return result;
-        }
-        private static void CheckConfig(Action callback) {
-            if (!_loadConfig) {
-                AnalyticsConfig(callback);
-                _loadConfig = true;
-            } else {
-                callback?.Invoke();
+            } catch (Exception e) {
+                result = null;
             }
+            return result;
         }
     }
 }
