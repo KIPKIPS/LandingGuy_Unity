@@ -5,19 +5,28 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using Framework.Pool;
+// using Unity.VisualScripting;
+using Framework.Singleton;
 namespace Framework.Manager {
-    public class TimerManager:PersistentMonoSingleton<TimerManager> {
+    public class TimerManager: Singleton<TimerManager> {
         private readonly string _logTag = "TimerManager";
         private readonly Dictionary<int, TimerEntity> _timerEntityDict = new();
         private readonly Stack<int> _removeStack = new();
         
         private readonly SimplePool<TimerEntity> _timerEntityPool = new();
         private int _allocateTimerId;
-
+        private Coroutine triggerTimer;
         public void Launch() {
-            StartCoroutine(TriggerTimer());
+            triggerTimer = this.StartCoroutine(TriggerTimer());
             Utils.Log(_logTag,"timer manager is start");
+        }
+        public override void Dispose() {
+            this.StopCoroutine(triggerTimer);
+            _timerEntityDict.Clear();
+            _removeStack.Clear();
+            _timerEntityPool.Clear();
+            _allocateTimerId = 0;
         }
         /// <summary>
         /// 创建计时器

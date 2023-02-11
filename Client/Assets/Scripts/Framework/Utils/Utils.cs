@@ -7,8 +7,9 @@ using Newtonsoft.Json;
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-using System.Reflection;
-
+using Framework.Manager;
+// using System.Reflection;
+using Framework.Pool;
 namespace Framework {
     public static class Utils {
         #region File Load 文件加载
@@ -302,6 +303,35 @@ namespace Framework {
         /// <returns>十六进制颜色字符串</returns>
         private static string GetRandomColorCode() => $"#{random.Next(255):X}{random.Next(255):X}{random.Next(255):X}";
 
+        #endregion
+
+
+        #region Mono函数
+        
+        public static Coroutine StartCoroutine(this object obj, IEnumerator routine) {
+            return MonoManager.Instance.StartCoroutine(routine);
+        }
+
+        public static void StopCoroutine(this object obj, Coroutine routine) {
+            MonoManager.Instance.StopCoroutine(routine);
+        }
+
+        public static void StopAllCoroutines(this object obj) {
+            MonoManager.Instance.StopAllCoroutines();
+        }
+        
+        public static void AddUpdate(this object obj, Action callback) {
+            MonoManager.Instance.UPDATE += callback;
+        }
+        public static void RemoveUpdate(this object obj, Action callback) {
+            MonoManager.Instance.UPDATE -= callback;
+        }
+        public static void DontDestroy(this UnityEngine.Object uo) {
+            MonoManager.Instance.DontDestroy(uo);
+        }
+        public static Component AddUnityComponent<T>(this Transform trs) where T:Component{
+            return MonoManager.Instance.AddUnityComponent<T>(trs);
+        }
         #endregion
     }
 }

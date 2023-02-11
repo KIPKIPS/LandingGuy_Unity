@@ -1,10 +1,10 @@
 ﻿// author:KIPKIPS
 // date:2023.02.11 00:30
 // describe:本地化存储器
-using System;
+
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
-using UnityEngine;
+using Framework.Singleton;
 
 namespace Framework.Manager {
     public class StorageManager : Singleton<StorageManager> {

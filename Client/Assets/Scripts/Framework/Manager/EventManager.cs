@@ -3,6 +3,8 @@
 // describe:事件机制
 using System.Collections.Generic;
 using System;
+using Framework.Pool;
+using Framework.Singleton;
 namespace Framework.Manager {
     public class EventManager : Singleton<EventManager> {
         private static readonly string _logTag = "EventManager";

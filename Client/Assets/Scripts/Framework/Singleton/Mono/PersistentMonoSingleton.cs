@@ -3,7 +3,7 @@
 // describe:唯一单例,一经创建不再销毁
 using UnityEngine;
 
-namespace Framework {
+namespace Framework.Singleton {
     /// <summary>
     /// 如果跳转到新的场景里已经有了实例,则不创建新的单例(或者创建新的单例后会销毁掉新的单例)
     /// </summary>

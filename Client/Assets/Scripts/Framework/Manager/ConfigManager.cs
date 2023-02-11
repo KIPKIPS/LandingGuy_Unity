@@ -6,6 +6,8 @@ using System.IO;
 using System.Linq;
 using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
+using Framework.Container;
+using Framework.Singleton;
 namespace Framework.Manager {
     public class ConfigManager :Singleton<ConfigManager> {
         private readonly string logTag = "ConfigManager";

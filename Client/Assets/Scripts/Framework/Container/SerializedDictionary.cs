@@ -5,11 +5,11 @@ using UnityEngine;
 using System;
 using System.Collections.Generic;
 
-namespace Framework {
+namespace Framework.Container {
     [Serializable]
     public class SerializedDictionary<TKey, TValue> : Dictionary<TKey, TValue>, ISerializationCallbackReceiver {
-        [SerializeField] List<TKey> keys = new List<TKey>();
-        [SerializeField] List<TValue> values = new List<TValue>();
+        [SerializeField] List<TKey> keys = new ();
+        [SerializeField] List<TValue> values = new ();
 
         /// <summary>
         /// OnBeforeSerialize implementation.

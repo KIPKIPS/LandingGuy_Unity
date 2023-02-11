@@ -4,13 +4,13 @@
 
 using System.Collections.Generic;
 using Unity.Mathematics;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Events;
+using Framework.Pool;
+using Framework.Singleton;
 
 namespace Framework.Manager {
-    [MonoSingletonPath("AudioManager")]
-    public class AudioManager : PersistentMonoSingleton<AudioManager> {
+    public class AudioManager : Singleton<AudioManager> {
         [SerializeField]private AudioSource _bgmAudioSource;
         private readonly string _logTag = "AudioManager";
         public void Launch() {
@@ -21,16 +21,32 @@ namespace Framework.Manager {
             BgmVolume = 1;
             Utils.Log(_logTag,"the audio initialization settings are complete");
         }
+        private Transform _audioRoot;
+        private Transform AudioRoot {
+            get {
+                if (_audioRoot == null) {
+                    _audioRoot= new GameObject().transform;
+                    var trs = _audioRoot;
+                    trs.DontDestroy();
+                    trs.position = Vector3.zero;
+                    trs.localPosition = Vector3.zero;
+                    trs.localRotation = Quaternion.identity;
+                    trs.localScale = Vector3.one;
+                    trs.name = "AudioRoot";
+                }
+                return _audioRoot;
+            }
+        }
         public AudioSource BgmAudioSource {
             get {
                 if (_bgmAudioSource is null) {
                     var trs = new GameObject().transform;
-                    trs.SetParent(transform);
+                    trs.SetParent(AudioRoot);
                     trs.localPosition = Vector3.zero;
-                    trs.localRotation = quaternion.identity;
-                    trs.localScale = Vector3.zero;
+                    trs.localRotation = Quaternion.identity;
+                    trs.localScale = Vector3.one;
                     trs.name = DEF.AudioType.BGM.ToString();
-                    _bgmAudioSource = trs.AddComponent<AudioSource>();
+                    _bgmAudioSource = trs.AddUnityComponent<AudioSource>() as AudioSource;
                     _bgmAudioSource.loop = true;
                     _bgmAudioSource.playOnAwake = false;
                 }
@@ -144,7 +160,7 @@ namespace Framework.Manager {
         private AudioSource GetAudioPlay(bool is3d,Vector3 position) {
             AudioSource audioSource = AudioSourcePool.Allocate();
             var t = audioSource.transform;
-            t.SetParent(transform);
+            t.SetParent(AudioRoot);
             t.position = position;
             t.localRotation = quaternion.identity;
             t.localScale = Vector3.zero;

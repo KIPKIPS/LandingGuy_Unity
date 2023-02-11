@@ -8,6 +8,8 @@ namespace Framework {
     public class Launcher : MonoBehaviour {
         
         void Awake() {
+            DontDestroyOnLoad(this);
+            MonoManager.Instance.Launch();
             TimerManager.Instance.Launch();
             EventManager.Instance.Launch();
             ConfigManager.Instance.Launch();
@@ -17,7 +19,7 @@ namespace Framework {
         void Update() {
             if (Input.GetMouseButtonDown(0)) {
                 System.Random r = new System.Random();
-                AudioManager.Instance.PlayAudio(Resources.Load<AudioClip>("aud_button"),new Vector3(r.Next(2),r.Next(2),r.Next(2)));
+                AudioManager.Instance.PlayAudio(Resources.Load<AudioClip>("aud_button"),new Vector3(r.Next(3),r.Next(3),r.Next(3)));
             }
             if (Input.GetKeyDown(KeyCode.M)) {
                 AudioManager.Instance.Mute = !AudioManager.Instance.Mute;
@@ -27,6 +29,9 @@ namespace Framework {
             }
             if (Input.GetKeyDown(KeyCode.Minus)) {
                 AudioManager.Instance.GlobalVolume -= 0.1f;
+            }
+            if (Input.GetKeyDown(KeyCode.S)) {
+                TimerManager.Instance.Dispose();
             }
         }
     }

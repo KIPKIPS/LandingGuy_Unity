@@ -4,7 +4,7 @@
 using Unity.VisualScripting;
 using UnityEngine;
 
-namespace Framework {
+namespace Framework.Pool {
     public class GoFactory<T> : IFactory<T> where T : Component,new() {
         private readonly T _prefab;
         private readonly Transform _root;

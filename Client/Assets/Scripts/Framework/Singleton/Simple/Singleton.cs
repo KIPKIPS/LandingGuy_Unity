@@ -1,7 +1,7 @@
 ﻿// author:KIPKIPS
 // date:2023.02.02 22:22
 // describe:普通单例类
-namespace Framework {
+namespace Framework.Singleton {
     public abstract class Singleton<T> : ISingleton where T : Singleton<T> {
         /// <summary>
         /// 静态实例

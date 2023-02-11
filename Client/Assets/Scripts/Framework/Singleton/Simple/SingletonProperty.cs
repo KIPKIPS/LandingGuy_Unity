@@ -1,7 +1,7 @@
 ﻿// author:KIPKIPS
 // date:2023.02.02 22:23
 // describe:普通单例属性
-namespace Framework {
+namespace Framework.Singleton {
     /// <summary>
     /// 属性单例类
     /// </summary>

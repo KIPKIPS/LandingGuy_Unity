@@ -2,7 +2,8 @@
 // date:2023.02.03 10:05
 // describe:单例对象池
 using System;
-namespace Framework {
+using Framework.Singleton;
+namespace Framework.Pool {
     
     /// <summary>
     /// 数量限制池对象容器

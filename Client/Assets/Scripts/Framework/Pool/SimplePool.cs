@@ -2,7 +2,7 @@
 // date:2023.02.03 11:39
 // describe:普通对象池
 
-namespace Framework {
+namespace Framework.Pool {
     /// <summary>
     /// 简易对象池
     /// </summary>
@@ -38,6 +38,10 @@ namespace Framework {
             obj.OnRecycled();
             _cacheStack.Push(obj);
             return true;
+        }
+
+        public void Clear() {
+            _cacheStack.Clear();
         }
     }
 }

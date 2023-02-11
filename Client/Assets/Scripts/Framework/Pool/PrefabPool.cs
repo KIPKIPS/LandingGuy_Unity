@@ -4,7 +4,7 @@
 using Unity.VisualScripting;
 using UnityEngine;
 
-namespace Framework {
+namespace Framework.Pool {
     /// <summary>
     /// 预制体对象池
     /// </summary>

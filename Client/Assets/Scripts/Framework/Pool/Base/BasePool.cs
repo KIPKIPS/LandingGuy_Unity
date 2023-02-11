@@ -3,7 +3,7 @@
 // describe:对象池类
 using System.Collections.Generic;
 
-namespace Framework {
+namespace Framework.Pool {
     public abstract class BasePool<T> : IPool<T> {
         // Gets the current count.
         protected int CurCount =>_cacheStack.Count;
