@@ -17,7 +17,7 @@ namespace Framework {
         static T CreateNonPublicConstructorObject<T>() where T : class {
             var type = typeof(T);
             //获取私有构造函数
-            var constructorInfos = type.GetConstructors(BindingFlags.Instance | BindingFlags.NonPublic);
+            var constructorInfos = type.GetConstructors();//BindingFlags.Instance | BindingFlags.NonPublic
             // 获取无参构造函数
             var ctor = Array.Find(constructorInfos, c => c.GetParameters().Length == 0);
             if (ctor == null) {
@@ -35,11 +35,10 @@ namespace Framework {
             var monoBehaviourType = typeof(MonoBehaviour);
             if (monoBehaviourType.IsAssignableFrom(type)) {
                 return CreateMonoSingleton<T>();
-            } else {
-                var instance = CreateNonPublicConstructorObject<T>();
-                instance.Initialize();
-                return instance;
             }
+            var instance = CreateNonPublicConstructorObject<T>();
+            instance.Initialize();
+            return instance;
         }
 
         /// <summary>

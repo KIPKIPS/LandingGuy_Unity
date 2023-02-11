@@ -6,24 +6,24 @@ using System.IO;
 using System.Linq;
 using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
-namespace Framework {
-    public class Config :Singleton<Config> {
-        private static readonly string logTag = "Config";
-        private static readonly string configPath = "Config/"; //配置表路径
+namespace Framework.Manager {
+    public class ConfigManager :Singleton<ConfigManager> {
+        private readonly string logTag = "ConfigManager";
+        private readonly string configPath = "Config/"; //配置表路径
         //配置表
-        private static readonly RestrictedDictionary<string, List<dynamic>> _configDict = new ();
-        private static readonly RestrictedDictionary<string, RestrictedDictionary<string, string>> _typeDict = new ();
-        /// <summary>
-        /// 构造器
-        /// </summary>
-        private Config() {
+        private readonly RestrictedDictionary<string, List<dynamic>> _configDict = new ();
+        private readonly RestrictedDictionary<string, RestrictedDictionary<string, string>> _typeDict = new ();
+        public void Launch() {
             AnalyticsConfig();
+            Utils.Log(logTag, "config data load finished");
         }
-        
+        // private ConfigManager() {
+        //     
+        // }
         /// <summary>
         /// 解析配置表
         /// </summary>
-        private static void AnalyticsConfig() {
+        private void AnalyticsConfig() {
             _configDict.EnableWrite();
             _typeDict.EnableWrite();
             // _configDict = new Dictionary<string, List<dynamic>>();
@@ -94,7 +94,6 @@ namespace Framework {
             }
             _configDict.ForbidWrite();
             _typeDict.ForbidWrite();
-            Utils.Log(logTag, "config data load finished");
         }
         
         /// <summary>
@@ -104,7 +103,7 @@ namespace Framework {
         /// <param name="filedName">文件名称</param>
         /// <param name="cfName">配置表名称</param>
         /// <returns></returns>
-        private static dynamic HandleDict(JObject jObj, string filedName, string cfName) {
+        private dynamic HandleDict(JObject jObj, string filedName, string cfName) {
             dynamic table = new RestrictedDictionary<dynamic, dynamic>();
             table.EnableWrite();
             RestrictedDictionary<string, string> valueTypeDict = _typeDict[cfName];
@@ -144,7 +143,7 @@ namespace Framework {
         /// </summary>
         /// <param name="array">配置数组</param>
         /// <returns></returns>
-        private static dynamic HandleArray(JToken[] array) {
+        private dynamic HandleArray(JToken[] array) {
             dynamic table = new RestrictedDictionary<int, dynamic>();
             table.EnableWrite();
             for (int i = 1; i <= array.Length; i++) {
@@ -175,7 +174,7 @@ namespace Framework {
         /// </summary>
         /// <param name="configName">配置表名称</param>
         /// <returns>配置表对象</returns>
-        public static List<dynamic> GetConfig(string configName) {
+        public List<dynamic> GetConfig(string configName) {
             dynamic result = null;
             try {
                 if (_configDict.ContainsKey(configName)) {
@@ -193,7 +192,7 @@ namespace Framework {
         /// <param name="configName">配置表名称</param>
         /// <param name="id">索引</param>
         /// <returns>配置表索引数据对象</returns>
-        public static dynamic GetConfig(string configName, int id) {
+        public dynamic GetConfig(string configName, int id) {
             dynamic result = null;
             try {
                 if (_configDict.ContainsKey(configName)) {

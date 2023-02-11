@@ -8,10 +8,11 @@ namespace Framework {
     public class Launcher : MonoBehaviour {
         
         void Awake() {
-            StartCoroutine(Timer.TriggerTimer());
-            Config.Instance.Initialize();
-            StorageManager.Instance.Initialize();
-            AudioManager.Instance.Initialize();
+            TimerManager.Instance.Launch();
+            EventManager.Instance.Launch();
+            ConfigManager.Instance.Launch();
+            StorageManager.Instance.Launch();
+            AudioManager.Instance.Launch();
         }
         void Update() {
             if (Input.GetMouseButtonDown(0)) {
@@ -21,7 +22,7 @@ namespace Framework {
             if (Input.GetKeyDown(KeyCode.M)) {
                 AudioManager.Instance.Mute = !AudioManager.Instance.Mute;
             }
-            if (Input.GetKeyDown(KeyCode.KeypadPlus)) {
+            if (Input.GetKeyDown(KeyCode.Equals)) {
                 AudioManager.Instance.GlobalVolume += 0.1f;
             }
             if (Input.GetKeyDown(KeyCode.Minus)) {

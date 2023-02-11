@@ -13,7 +13,7 @@ namespace Framework.Manager {
     public class AudioManager : PersistentMonoSingleton<AudioManager> {
         [SerializeField]private AudioSource _bgmAudioSource;
         private readonly string _logTag = "AudioManager";
-        public new void Initialize() {
+        public void Launch() {
             //TODO:读取用户配置文件
             Mute = false;
             GlobalVolume = 1;
@@ -148,8 +148,8 @@ namespace Framework.Manager {
             t.position = position;
             t.localRotation = quaternion.identity;
             t.localScale = Vector3.zero;
-            if (!t.name.StartsWith("audio_effect_")) {
-                t.name = $"audio_effect_{effectAudioList.Count}";
+            if (!t.name.StartsWith($"{DEF.AudioType.EFFECT}")) {
+                t.name = $"{DEF.AudioType.EFFECT}_{effectAudioList.Count}";
             }
             audioSource.spatialBlend = is3d ? 1 : 0;
             effectAudioList.Add(audioSource);
