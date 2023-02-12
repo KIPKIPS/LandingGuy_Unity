@@ -4,6 +4,8 @@
 using System;
 using UnityEngine;
 using Framework.Manager;
+using SceneManager = Framework.Manager.SceneManager;
+
 namespace Framework {
     public class Launcher : MonoBehaviour {
         
@@ -15,8 +17,17 @@ namespace Framework {
             ConfigManager.Instance.Launch();
             StorageManager.Instance.Launch();
             AudioManager.Instance.Launch();
+            LocalizationManager.Instance.Launch();
+            SceneManager.Instance.Launch();
+            #region Test
+            Event.Register(EventType.SCENE_LOAD_FINISHED,d => {
+                Utils.Log(d);
+            });
+            #endregion
         }
         void Update() {
+            #region Test
+
             if (Input.GetMouseButtonDown(0)) {
                 System.Random r = new System.Random();
                 AudioManager.Instance.PlayAudio(Resources.Load<AudioClip>("aud_button"),new Vector3(r.Next(3),r.Next(3),r.Next(3)));
@@ -33,6 +44,14 @@ namespace Framework {
             if (Input.GetKeyDown(KeyCode.S)) {
                 TimerManager.Instance.Dispose();
             }
+            if (Input.GetKeyDown(KeyCode.L)) {
+                SceneManager.Instance.LoadSceneAsync("TestScene", () => {
+                    Utils.Log("TestScene scene load finished");
+                });
+            }
+            
+
+            #endregion
         }
     }
 }

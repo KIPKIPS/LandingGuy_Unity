@@ -15,6 +15,9 @@ namespace Framework {
     #region 事件类型枚举
     public enum EventType {
         GAME_LAUNCH,
+        SCENE_LOAD_FINISHED,//场景加载完成
+        SCENE_LOADING,//场景加载中
+        SCENE_FAILURE,//场景加载失败
     }
 
     #endregion

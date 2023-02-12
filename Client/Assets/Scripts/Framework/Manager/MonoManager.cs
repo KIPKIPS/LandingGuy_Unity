@@ -35,11 +35,20 @@ namespace Framework.Manager {
         #endregion
 
         #region Mono函数
-        public void DontDestroy(UnityEngine.Object obj) {
+        /// <summary>
+        /// 切换场景时不销毁
+        /// </summary>
+        /// <param name="obj">不销毁的对象</param>
+        public void UDontDestroyOnLoad(UnityEngine.Object obj) {
             DontDestroyOnLoad(obj);
         }
-        
-        public Component AddUnityComponent<T>(Transform trs) where T:Component{
+        /// <summary>
+        /// 添加组件
+        /// </summary>
+        /// <param name="trs">挂载的Transform组件</param>
+        /// <typeparam name="T">组件类型</typeparam>
+        /// <returns>添加的组件</returns>
+        public Component UAddComponent<T>(Transform trs) where T:Component{
             return trs.AddComponent<T>();
         }
             

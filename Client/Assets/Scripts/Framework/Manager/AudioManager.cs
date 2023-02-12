@@ -11,8 +11,6 @@ using Framework.Singleton;
 
 namespace Framework.Manager {
     public class AudioManager : Singleton<AudioManager> {
-        [SerializeField]private AudioSource _bgmAudioSource;
-        private readonly string _logTag = "AudioManager";
         public void Launch() {
             //TODO:读取用户配置文件
             Mute = false;
@@ -21,13 +19,21 @@ namespace Framework.Manager {
             BgmVolume = 1;
             Utils.Log(_logTag,"the audio initialization settings are complete");
         }
+        private AudioSource _bgmAudioSource;
+        private readonly string _logTag = "AudioManager";
+        //特效音乐列表
+        private readonly List<AudioSource> effectAudioList = new();
+        //特效音乐对象池
+        private PrefabPool<AudioSource> _audioSourcePool;
+        private PrefabPool<AudioSource> AudioSourcePool => _audioSourcePool ??= new PrefabPool<AudioSource>();
+        
         private Transform _audioRoot;
         private Transform AudioRoot {
             get {
                 if (_audioRoot == null) {
                     _audioRoot= new GameObject().transform;
                     var trs = _audioRoot;
-                    trs.DontDestroy();
+                    trs.UDontDestroyOnLoad();
                     trs.position = Vector3.zero;
                     trs.localPosition = Vector3.zero;
                     trs.localRotation = Quaternion.identity;
@@ -46,7 +52,7 @@ namespace Framework.Manager {
                     trs.localRotation = Quaternion.identity;
                     trs.localScale = Vector3.one;
                     trs.name = DEF.AudioType.BGM.ToString();
-                    _bgmAudioSource = trs.AddUnityComponent<AudioSource>() as AudioSource;
+                    _bgmAudioSource = trs.UAddComponent<AudioSource>() as AudioSource;
                     _bgmAudioSource.loop = true;
                     _bgmAudioSource.playOnAwake = false;
                 }
@@ -55,7 +61,7 @@ namespace Framework.Manager {
         }
 
         #region 音量,播放控制
-        [SerializeField][Range(0,1)] //全局音量
+        //全局音量
         private float _globalVolume = 1f;
         public float GlobalVolume {
             get => _globalVolume;
@@ -65,7 +71,7 @@ namespace Framework.Manager {
             }
         }
         
-        [SerializeField][Range(0,1)] //bgm音量
+        //bgm音量
         private float _bgmVolume;
         public float BgmVolume {
             get => _bgmVolume;
@@ -75,7 +81,7 @@ namespace Framework.Manager {
             }
         }
         
-        [SerializeField][Range(0,1)] //特效音量
+        //特效音量
         private float _effectVolume = 1;
         public float EffectVolume {
             get => _effectVolume;
@@ -85,7 +91,7 @@ namespace Framework.Manager {
             }
         }
         
-        [SerializeField] //是否静音
+        //是否静音
         private bool _mute;
         public bool Mute {
             get => _mute;
@@ -107,15 +113,6 @@ namespace Framework.Manager {
         public void SetPause() {
             
         }
-        
-        [SerializeField] //bgm是否循环
-        private bool _loopBgm;
-        public bool LoopBgm => _loopBgm;
-        
-        public List<AudioSource> effectAudioList = new();
-        private PrefabPool<AudioSource> _audioSourcePool;
-
-        private PrefabPool<AudioSource> AudioSourcePool => _audioSourcePool ??= new PrefabPool<AudioSource>();
 
         /// <summary>
         /// 更新全局音量
@@ -162,8 +159,8 @@ namespace Framework.Manager {
             var t = audioSource.transform;
             t.SetParent(AudioRoot);
             t.position = position;
-            t.localRotation = quaternion.identity;
-            t.localScale = Vector3.zero;
+            t.localRotation = Quaternion.identity;
+            t.localScale = Vector3.one;
             if (!t.name.StartsWith($"{DEF.AudioType.EFFECT}")) {
                 t.name = $"{DEF.AudioType.EFFECT}_{effectAudioList.Count}";
             }

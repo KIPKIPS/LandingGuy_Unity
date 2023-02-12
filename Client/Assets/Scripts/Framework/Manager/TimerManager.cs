@@ -21,6 +21,9 @@ namespace Framework.Manager {
             triggerTimer = this.StartCoroutine(TriggerTimer());
             Utils.Log(_logTag,"timer manager is start");
         }
+        /// <summary>
+        /// 释放定时器的相关数据
+        /// </summary>
         public override void Dispose() {
             this.StopCoroutine(triggerTimer);
             _timerEntityDict.Clear();

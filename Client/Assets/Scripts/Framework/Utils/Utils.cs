@@ -326,11 +326,11 @@ namespace Framework {
         public static void RemoveUpdate(this object obj, Action callback) {
             MonoManager.Instance.UPDATE -= callback;
         }
-        public static void DontDestroy(this UnityEngine.Object uo) {
-            MonoManager.Instance.DontDestroy(uo);
+        public static void UDontDestroyOnLoad(this UnityEngine.Object uo) {
+            MonoManager.Instance.UDontDestroyOnLoad(uo);
         }
-        public static Component AddUnityComponent<T>(this Transform trs) where T:Component{
-            return MonoManager.Instance.AddUnityComponent<T>(trs);
+        public static Component UAddComponent<T>(this Transform trs) where T:Component{
+            return MonoManager.Instance.UAddComponent<T>(trs);
         }
         #endregion
     }
