@@ -304,31 +304,67 @@ namespace Framework {
         private static string GetRandomColorCode() => $"#{random.Next(255):X}{random.Next(255):X}{random.Next(255):X}";
 
         #endregion
-
-
+        
         #region Mono函数
         
+        /// <summary>
+        /// 提供给普通类的开启协程方法
+        /// </summary>
+        /// <param name="obj">对象</param>
+        /// <param name="routine">协程迭代器</param>
+        /// <returns>协程对象</returns>
         public static Coroutine StartCoroutine(this object obj, IEnumerator routine) {
             return MonoManager.Instance.StartCoroutine(routine);
         }
 
+        /// <summary>
+        /// 提供给普通类的停止协程方法
+        /// </summary>
+        /// <param name="obj">对象</param>
+        /// <param name="routine">协程迭代器</param>
         public static void StopCoroutine(this object obj, Coroutine routine) {
             MonoManager.Instance.StopCoroutine(routine);
         }
 
+        /// <summary>
+        /// 提供给普通类的停止所有协程的方法
+        /// </summary>
+        /// <param name="obj"></param>
         public static void StopAllCoroutines(this object obj) {
             MonoManager.Instance.StopAllCoroutines();
         }
         
+        /// <summary>
+        /// 提供给普通类的添加Update方法的函数
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="callback">update执行的tick</param>
         public static void AddUpdate(this object obj, Action callback) {
             MonoManager.Instance.UPDATE += callback;
         }
+        
+        /// <summary>
+        /// 提供给普通类的移除Update方法的函数
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="callback">update执行的tick</param>
         public static void RemoveUpdate(this object obj, Action callback) {
             MonoManager.Instance.UPDATE -= callback;
         }
+        
+        /// <summary>
+        /// 提供给普通类的不销毁对象的函数
+        /// </summary>
+        /// <param name="uo">不销毁的对象</param>
         public static void UDontDestroyOnLoad(this UnityEngine.Object uo) {
             MonoManager.Instance.UDontDestroyOnLoad(uo);
         }
+        /// <summary>
+        /// 提供给普通类的添加组件的函数
+        /// </summary>
+        /// <param name="trs">添加节点</param>
+        /// <typeparam name="T">添加的组件</typeparam>
+        /// <returns>组件实例</returns>
         public static Component UAddComponent<T>(this Transform trs) where T:Component{
             return MonoManager.Instance.UAddComponent<T>(trs);
         }

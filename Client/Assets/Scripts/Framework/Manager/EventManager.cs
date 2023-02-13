@@ -9,13 +9,13 @@ namespace Framework.Manager {
     public class EventManager : Singleton<EventManager> {
         private static readonly string _logTag = "EventManager";
         private static readonly SimplePool<EventEntity> _eventEntityPool = new ();
-        private static readonly Dictionary<EventType, EventEntity> _eventDict = new ();
+        //Dictionary<EventType, EventEntity>
+        //这里不使用EventType作为键值的原因是枚举没有时限IEquatable接口,字典使用Enum为键时会触发装箱
+        private static readonly Dictionary<int, EventEntity> _eventDict = new ();
         public void Launch() {
             Utils.Log(_logTag,"event manager is start");
         }
-        // private EventManager() {
-        //     
-        // }
+        
         /// <summary>
         /// 事件注册器
         /// </summary>
@@ -23,12 +23,13 @@ namespace Framework.Manager {
         /// <param name="callback">有参事件触发回调</param>
         public void Register(EventType type, Action<dynamic> callback) {
             Utils.Log(_logTag,$"register => EventType.{type.ToString()}");
-            if (!_eventDict.ContainsKey(type)) {
+            int type2Int = (int) type;
+            if (!_eventDict.ContainsKey(type2Int)) {
                 EventEntity e = _eventEntityPool.Allocate();
-                _eventDict[type] = e;
+                _eventDict[type2Int] = e;
                 e.AddCallback(callback);
             } else {
-                _eventDict[type].AddCallback(callback);
+                _eventDict[type2Int].AddCallback(callback);
             }
         }
         /// <summary>
@@ -38,12 +39,13 @@ namespace Framework.Manager {
         /// <param name="callback">无参事件触发回调</param>
         public void Register(EventType type, Action callback) {
             Utils.Log(_logTag,$"register => EventType.{type.ToString()}");
-            if (!_eventDict.ContainsKey(type)) {
+            int type2Int = (int) type;
+            if (!_eventDict.ContainsKey(type2Int)) {
                 EventEntity e = _eventEntityPool.Allocate();
-                _eventDict[type] = e;
+                _eventDict[type2Int] = e;
                 e.AddCallback(callback);
             } else {
-                _eventDict[type].AddCallback(callback);
+                _eventDict[type2Int].AddCallback(callback);
             }
         }
         
@@ -54,10 +56,11 @@ namespace Framework.Manager {
         /// <param name="callback">有参事件触发回调</param>
         public void Remove(EventType type, Action<dynamic> callback) {
             Utils.Log(_logTag,$"remove => EventType.{type.ToString()}");
-            if (_eventDict.ContainsKey(type)) {
-                _eventDict[type].RemoveCallback(callback);
-                if (_eventDict[type].CanRemove) {
-                    _eventEntityPool.Recycle(_eventDict[type]);
+            int type2Int = (int) type;
+            if (_eventDict.ContainsKey(type2Int)) {
+                _eventDict[type2Int].RemoveCallback(callback);
+                if (_eventDict[type2Int].CanRemove) {
+                    _eventEntityPool.Recycle(_eventDict[type2Int]);
                     // EventQueue.Remove(type);
                 }
             }
@@ -70,11 +73,12 @@ namespace Framework.Manager {
         /// <param name="callback">无参事件触发回调</param>
         public void Remove(EventType type, Action callback) {
             Utils.Log(_logTag,$"remove => EventType.{type.ToString()}");
-            if (_eventDict.ContainsKey(type)) {
-                _eventDict[type].RemoveCallback(callback);
-                if (_eventDict[type].CanRemove) {
+            int type2Int = (int) type;
+            if (_eventDict.ContainsKey(type2Int)) {
+                _eventDict[type2Int].RemoveCallback(callback);
+                if (_eventDict[type2Int].CanRemove) {
                     // EventQueue.Remove(type);
-                    _eventEntityPool.Recycle(_eventDict[type]);
+                    _eventEntityPool.Recycle(_eventDict[type2Int]);
                 }
             }
         }
@@ -86,8 +90,9 @@ namespace Framework.Manager {
         /// <param name="data">事件传递数据</param>
         public void Dispatch(EventType type, dynamic data = null) {
             Utils.Log(_logTag,$"dispatch => EventType.{type.ToString()}");
-            if (_eventDict != null && _eventDict.ContainsKey(type)) {
-                _eventDict[type].Execute(data);
+            int type2Int = (int) type;
+            if (_eventDict != null && _eventDict.ContainsKey(type2Int)) {
+                _eventDict[type2Int].Execute(data);
             }
         }
         
