@@ -12,11 +12,7 @@ namespace Framework.Singleton {
         private static T _instance;
         public static T Instance => _instance ??= SingletonCreator.CreateMonoSingleton<T>();
         public static void Dispose() {
-            if (SingletonCreator.IsUnitTestMode) {
-                Object.DestroyImmediate(_instance.gameObject);
-            } else {
-                Object.Destroy(_instance.gameObject);
-            }
+            Object.Destroy(_instance.gameObject);
             _instance = null;
         }
     }

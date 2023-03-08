@@ -1,16 +1,17 @@
+// author:KIPKIPS
+// date:2023.02.08 08:46
+// describe:树视图
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using AI;
 using UnityEditor;
 using UnityEngine.UIElements;
 using UnityEditor.Experimental.GraphView;
-using Node = AI.Node;
-
+using Framework.AI.BehaviorTree;
+using Node = Framework.AI.BehaviorTree.Node;
 public class BehaviorTreeView : GraphView {
     public Action<NodeView> OnNodeSelected;
-    public new class UxmlFactory : UxmlFactory<BehaviorTreeView, GraphView.UxmlTraits> {
+    public new class UxmlFactory : UxmlFactory<BehaviorTreeView, UxmlTraits> {
     }
 
     private BehaviorTree tree;
@@ -23,23 +24,23 @@ public class BehaviorTreeView : GraphView {
         var styleSheet = AssetDatabase.LoadAssetAtPath<StyleSheet>("Assets/Scripts/Framework/BehaviorTree/Editor/BehaviorTreeEditor.uss");
         styleSheets.Add(styleSheet);
     }
-    public void PopulateView(BehaviorTree tree) {
-        this.tree = tree;
+    public void PopulateView(BehaviorTree bt) {
+        this.tree = bt;
         graphViewChanged -= OnGraphViewChanged;
         DeleteElements(graphElements);
         graphViewChanged += OnGraphViewChanged;
 
-        if (tree.rootNode == null) {
-            tree.rootNode = tree.CreateNode(typeof(RootNode)) as RootNode;
-            EditorUtility.SetDirty(tree);
+        if (bt.rootNode == null) {
+            bt.rootNode = tree.CreateNode(typeof(RootNode)) as RootNode;
+            EditorUtility.SetDirty(bt);
             AssetDatabase.SaveAssets();
         }
         //create node view
-        tree.nodes.ForEach(n => CreateNodeView(n));
+        bt.nodes.ForEach(CreateNodeView);
         
         //create edge
-        tree.nodes.ForEach(n => {
-            var children = tree.GetChildren(n);
+        bt.nodes.ForEach(n => {
+            var children = bt.GetChildren(n);
             children.ForEach(c => {
                 NodeView parentView = FindNodeView(n);
                 NodeView childView = FindNodeView(c);
@@ -48,23 +49,19 @@ public class BehaviorTreeView : GraphView {
             });
         });
     }
-    NodeView FindNodeView(Node node) {
+    private NodeView FindNodeView(Node node) {
         return GetNodeByGuid(node.guid) as NodeView;
     }
     public override List<Port> GetCompatiblePorts(Port startPort, NodeAdapter nodeAdapter) {
         return ports.ToList().Where(endPort => endPort.direction != startPort.direction && endPort.node != startPort.node).ToList();
     }
-
-    public GraphViewChange OnGraphViewChanged(GraphViewChange graphViewChange) {
+    private GraphViewChange OnGraphViewChanged(GraphViewChange graphViewChange) {
         if (graphViewChange.elementsToRemove != null) {
             graphViewChange.elementsToRemove.ForEach(elem => {
-                NodeView nodeView = elem as NodeView;
-                if (nodeView != null) {
+                if (elem is NodeView nodeView) {
                     tree.DeleteNode(nodeView.node);
                 }
-                
-                Edge edge = elem as Edge;
-                if (edge != null) {
+                if (elem is Edge edge) {
                     NodeView parentView = edge.output.node as NodeView;
                     NodeView childView = edge.input.node as NodeView;
                     tree.RemoveChild(parentView.node,childView.node);
@@ -83,22 +80,20 @@ public class BehaviorTreeView : GraphView {
 
     public override void BuildContextualMenu(ContextualMenuPopulateEvent evt) {
         foreach (var type in TypeCache.GetTypesDerivedFrom<ActionNode>()) {
-            evt.menu.AppendAction($"{type.BaseType.Name}/{type.Name}", a => CreateNode(type));
+            evt.menu.AppendAction($"{type.BaseType.Name}/{type.Name}", _ => CreateNode(type));
         }
         foreach (var type in TypeCache.GetTypesDerivedFrom<CompositeNode>()) {
-            evt.menu.AppendAction($"{type.BaseType.Name}/{type.Name}", a => CreateNode(type));
+            evt.menu.AppendAction($"{type.BaseType.Name}/{type.Name}", _ => CreateNode(type));
         }
         foreach (var type in TypeCache.GetTypesDerivedFrom<DecoratorNode>()) {
-            evt.menu.AppendAction($"{type.BaseType.Name}/{type.Name}", a => CreateNode(type));
+            evt.menu.AppendAction($"{type.BaseType.Name}/{type.Name}", _ => CreateNode(type));
         }
     }
-
-    void CreateNode(Type type) {
+    private void CreateNode(Type type) {
         Node node = tree.CreateNode(type);
         CreateNodeView(node);
     }
-    
-    void CreateNodeView(Node node) {
+    private void CreateNodeView(Node node) {
         NodeView nodeView = new NodeView(node);
         nodeView.OnNodeSelected += OnNodeSelected; 
         AddElement(nodeView);

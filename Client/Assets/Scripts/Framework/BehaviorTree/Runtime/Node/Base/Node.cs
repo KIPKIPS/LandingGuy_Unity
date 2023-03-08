@@ -1,15 +1,16 @@
-using System.Collections;
-using System.Collections.Generic;
+// author:KIPKIPS
+// date:2023.02.08 08:46
+// describe:节点基类
 using UnityEngine;
 
-namespace AI {
+namespace Framework.AI.BehaviorTree {
     public abstract class Node : ScriptableObject {
         public enum State {
             Running,Failure,Success,
         }
 
         [HideInInspector]public State state;
-        [HideInInspector]public bool started = false;
+        [HideInInspector]public bool started;
         [HideInInspector]public string guid;
         [HideInInspector]public Vector2 position;
         /// <summary>

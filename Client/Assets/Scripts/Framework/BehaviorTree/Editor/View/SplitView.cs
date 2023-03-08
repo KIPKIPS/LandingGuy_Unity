@@ -1,9 +1,9 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+// author:KIPKIPS
+// date:2023.02.08 11:21
+// describe:分割视图
 using UnityEngine.UIElements;
-using UnityEditor.Experimental.GraphView;
+
 public class SplitView : TwoPaneSplitView {
-    public new class UxmlFactory : UxmlFactory<SplitView, TwoPaneSplitView.UxmlTraits> {
+    public new class UxmlFactory : UxmlFactory<SplitView, UxmlTraits> {
     }
 }

@@ -1,7 +1,6 @@
 ﻿// author:KIPKIPS
 // date:2023.02.03 14:19
 // describe:针对GameObject的对象池
-using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Framework.Pool {
@@ -28,7 +27,7 @@ namespace Framework.Pool {
         /// <returns>分配的对象</returns>
         public override T Allocate() {
             T result = base.Allocate();
-            result.GameObject().SetActive(true);
+            result.gameObject.SetActive(true);
             return result;
         }
         /// <summary>
@@ -40,7 +39,7 @@ namespace Framework.Pool {
             if (obj == null) {
                 return false;
             }
-            obj.GameObject().SetActive(false);
+            obj.gameObject.SetActive(false);
             _cacheStack.Push(obj);
             return true;
         }

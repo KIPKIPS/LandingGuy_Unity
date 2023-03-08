@@ -4,6 +4,7 @@
 using UnityEngine;
 using System.Reflection;
 using System;
+using Object = UnityEngine.Object;
 
 namespace Framework.Singleton {
     // 普通单例创建类
@@ -40,11 +41,7 @@ namespace Framework.Singleton {
             instance.Initialize();
             return instance;
         }
-
-        /// <summary>
-        /// 单元测试模式 标签
-        /// </summary>
-        public static bool IsUnitTestMode { get; set; }
+        
 
         /// <summary>
         /// 查找Obj（一个嵌套查找Obj的过程）
@@ -71,8 +68,8 @@ namespace Framework.Singleton {
                     if (root != null) {
                         client.transform.SetParent(root.transform);
                     }
-                    if (dontDestroy && index == 0 && !IsUnitTestMode) {
-                        GameObject.DontDestroyOnLoad(client);
+                    if (dontDestroy && index == 0) {
+                        Object.DontDestroyOnLoad(client);
                     }
                 }
             }
@@ -88,15 +85,15 @@ namespace Framework.Singleton {
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
         public static T CreateMonoSingleton<T>() where T : class, ISingleton {
-            T instance = null;
+            T instance;
             var type = typeof(T);
 
             //判断T实例存在的条件是否满足
-            if (!IsUnitTestMode && !Application.isPlaying)
-                return instance;
+            if (!Application.isPlaying)
+                return null;
 
             //判断当前场景中是否存在T实例
-            instance = UnityEngine.Object.FindObjectOfType(type) as T;
+            instance = Object.FindObjectOfType(type) as T;
             if (instance != null) {
                 instance.Initialize();
                 return instance;
@@ -118,8 +115,7 @@ namespace Framework.Singleton {
             //如果还是无法找到instance  则主动去创建同名Obj 并挂载相关脚本 组件
             if (instance == null) {
                 var obj = new GameObject(typeof(T).Name);
-                if (!IsUnitTestMode)
-                    UnityEngine.Object.DontDestroyOnLoad(obj);
+                Object.DontDestroyOnLoad(obj);
                 instance = obj.AddComponent(typeof(T)) as T;
             }
             instance.Initialize();
@@ -137,8 +133,8 @@ namespace Framework.Singleton {
             var obj = FindGameObject(path, true, dontDestroy);
             if (obj == null) {
                 obj = new GameObject("Singleton of " + typeof(T).Name);
-                if (dontDestroy && !IsUnitTestMode) {
-                    UnityEngine.Object.DontDestroyOnLoad(obj);
+                if (dontDestroy) {
+                    Object.DontDestroyOnLoad(obj);
                 }
             }
             return obj.AddComponent(typeof(T)) as T;

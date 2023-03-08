@@ -9,7 +9,7 @@ using Framework.Singleton;
 namespace Framework.Manager {
     public class StorageManager : Singleton<StorageManager> {
         private readonly string _logTag = "StorageManager";
-        private BinaryFormatter _binaryFormatter = new ();
+        private readonly BinaryFormatter _binaryFormatter = new ();
         public void Launch() {
             Utils.Log(_logTag, "the local data is loaded");
             var path = DEF.DataStoragePath;

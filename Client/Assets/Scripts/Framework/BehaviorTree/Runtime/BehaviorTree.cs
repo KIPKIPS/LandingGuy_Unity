@@ -1,10 +1,13 @@
-﻿using System;
+﻿// author:KIPKIPS
+// date:2023.02.08 08:46
+// describe:行为树
+using System;
 using System.Collections.Generic;
 using UnityEngine;
-using State = AI.Node.State;
+using State = Framework.AI.BehaviorTree.Node.State;
 using UnityEditor;
 
-namespace AI {
+namespace Framework.AI.BehaviorTree {
     [CreateAssetMenu()]
     public class BehaviorTree : ScriptableObject {
         public Node rootNode;

@@ -1,8 +1,7 @@
-﻿// --[[
-//     author:{wkp}
-//     time:19:59
-// ]]
-namespace AI {
+﻿// author:KIPKIPS
+// date:2023.02.08 19:59
+// describe:重复节点
+namespace Framework.AI.BehaviorTree {
     public class RepeatNode :DecoratorNode {
         protected override void OnStart() {
             

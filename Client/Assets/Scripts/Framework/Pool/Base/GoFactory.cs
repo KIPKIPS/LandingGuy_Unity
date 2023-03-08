@@ -1,7 +1,6 @@
 ﻿// author:KIPKIPS
 // date:2023.02.03 15:48
 // describe:GameObject工厂
-using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Framework.Pool {
@@ -13,8 +12,8 @@ namespace Framework.Pool {
         /// </summary>
         /// <returns></returns>
         public T Create() {
-            T g = _prefab is null ? new GameObject().AddComponent<T>() : GameObject.Instantiate(_prefab, _root);
-            Transform t = g.GameObject().transform;
+            T g = _prefab is null ? new GameObject().AddComponent<T>() : Object.Instantiate(_prefab, _root);
+            Transform t = g.gameObject.transform;
             t.localScale = Vector3.one;
             t.localPosition = Vector3.zero;
             t.localRotation = Quaternion.identity;

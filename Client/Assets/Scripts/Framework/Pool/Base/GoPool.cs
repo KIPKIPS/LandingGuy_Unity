@@ -6,7 +6,7 @@ using System.Collections.Generic;
 namespace Framework.Pool {
     public abstract class GoPool<T> : IPool<T> {
         protected IFactory<T> _factory; //定义实现接口的类对象
-        protected readonly Stack<T> _cacheStack = new Stack<T>();
+        protected readonly Stack<T> _cacheStack = new ();
         /// <summary>
         /// 请求分配对象
         /// </summary>

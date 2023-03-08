@@ -1,11 +1,9 @@
-﻿// --[[
-//     author:{wkp}
-//     time:19:50
-// ]]
-using System;
+﻿// author:KIPKIPS
+// date:2023.02.08 19:50
+// describe:行为树执行器
 using UnityEngine;
 
-namespace AI {
+namespace Framework.AI.BehaviorTree {
     public class BehaviorTreeRunner : MonoBehaviour {
         public BehaviorTree behaviorTree;
         void Start() {

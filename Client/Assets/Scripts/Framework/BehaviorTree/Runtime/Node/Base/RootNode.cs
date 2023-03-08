@@ -1,8 +1,7 @@
-﻿// --[[
-//     author:{wkp}
-//     time:17:45
-// ]]
-namespace AI {
+﻿// author:KIPKIPS
+// date:2023.02.08 14:45
+// describe:根节点
+namespace Framework.AI.BehaviorTree {
     public class RootNode:Node {
         public Node child;
         protected override void OnStart() {

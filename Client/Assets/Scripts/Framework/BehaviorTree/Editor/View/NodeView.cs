@@ -1,34 +1,33 @@
-﻿// --[[
-//     author:{wkp}
-//     time:16:57
-// ]]
+﻿// author:KIPKIPS
+// date:2023.02.08 16:57
+// describe:节点视图
 using System;
-using AI;
 using UnityEngine;
-using UnityEditor;
-using Node = AI.Node;
 using UnityEditor.Experimental.GraphView;
-using UnityEngine.Tilemaps;
-using UnityEngine.UIElements;
-
+using Framework.AI.BehaviorTree;
+using Node = Framework.AI.BehaviorTree.Node;
 public class NodeView : UnityEditor.Experimental.GraphView.Node {
 
     public Action<NodeView> OnNodeSelected;
-    public Node node;
+    public readonly Node node;
     public Port input;
     public Port output;
     
     public NodeView(Node node) {
         this.node = node;
-        this.title = node.name;
-        this.viewDataKey = node.guid;
+        title = node.name;
+        viewDataKey = node.guid;
         style.left = node.position.x;
         style.top = node.position.y;
 
         CreateInputPorts();
         CreateOutputPorts();
     }
-    public void CreateInputPorts() {
+    public sealed override string title {
+        get => base.title;
+        set => base.title = value;
+    }
+    private void CreateInputPorts() {
         switch (node) {
             case ActionNode:
                 input = InstantiatePort(Orientation.Horizontal, Direction.Input, Port.Capacity.Single, typeof(bool));
@@ -47,8 +46,7 @@ public class NodeView : UnityEditor.Experimental.GraphView.Node {
             inputContainer.Add(input);
         }
     }
-
-    public void CreateOutputPorts() {
+    private void CreateOutputPorts() {
         switch (node) {
             case ActionNode:
                 break;

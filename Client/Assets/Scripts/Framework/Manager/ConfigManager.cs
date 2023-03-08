@@ -33,8 +33,8 @@ namespace Framework.Manager {
             // UIUtils.LoadJsonByPath<List<JObject>>("Data/" + tabName + ".json");
             DirectoryInfo dir = new DirectoryInfo(configPath);
             FileSystemInfo[] files = dir.GetFileSystemInfos();
-            string configName = "";
-            string fullName = "";
+            string configName;
+            // string fullName = "";
             for (int i = 0; i < files.Length; i++) {
                 configName = files[i].Name.Replace(".json", "");
                 // fullName = configPath + files[i].Name;

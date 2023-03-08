@@ -6,7 +6,7 @@ using UnityEngine;
 namespace Framework.Singleton {
     /// <summary>
     /// 静态类：MonoBehaviour类的单例
-    /// 泛型类：Where约束表示T类型必须继承MonoSingleton<T>
+    /// 泛型类：Where约束表示T类型必须继承MonoSingleton
     /// </summary>
     /// <typeparam name="T"></typeparam>
     public abstract class MonoSingleton<T> : MonoBehaviour, ISingleton where T : MonoSingleton<T> {
@@ -37,23 +37,13 @@ namespace Framework.Singleton {
         /// 资源释放
         /// </summary>
         public virtual void Dispose() {
-            if (SingletonCreator.IsUnitTestMode) {
-                var curTrans = transform;
-                do {
-                    var parent = curTrans.parent;
-                    DestroyImmediate(curTrans.gameObject);
-                    curTrans = parent;
-                } while (curTrans != null);
-                _instance = null;
-            } else {
-                Destroy(gameObject);
-            }
+            Destroy(gameObject);
         }
 
         /// <summary>
         /// 当前应用程序是否结束 标签
         /// </summary>
-        protected static bool _onApplicationQuit;
+        private static bool _onApplicationQuit;
 
         /// <summary>
         /// 应用程序退出：释放当前对象并销毁相关GameObject

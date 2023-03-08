@@ -3,7 +3,6 @@
 // describe:Mono事件管理类
 using System;
 using Framework.Singleton;
-using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Framework.Manager {
@@ -48,8 +47,8 @@ namespace Framework.Manager {
         /// <param name="trs">挂载的Transform组件</param>
         /// <typeparam name="T">组件类型</typeparam>
         /// <returns>添加的组件</returns>
-        public Component UAddComponent<T>(Transform trs) where T:Component{
-            return trs.AddComponent<T>();
+        public Component UAddComponent<T>(Transform trs) where T:Component {
+            return trs.gameObject.AddComponent<T>();
         }
             
         #endregion

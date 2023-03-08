@@ -1,10 +1,9 @@
-﻿// --[[
-//     author:{wkp}
-//     time:20:05
-// ]]
-namespace AI {
+﻿// author:KIPKIPS
+// date:2023.02.08 20:05
+// describe:顺序节点
+namespace Framework.AI.BehaviorTree {
     public class SequencerNode:CompositeNode {
-        private int current = 0;
+        private int current;
         protected override void OnStart() {
             current = 0;
         }
