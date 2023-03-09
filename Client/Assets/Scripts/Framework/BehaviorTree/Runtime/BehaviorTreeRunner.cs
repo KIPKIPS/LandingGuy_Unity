@@ -6,7 +6,7 @@ using UnityEngine;
 namespace Framework.AI.BehaviorTree {
     public class BehaviorTreeRunner : MonoBehaviour {
         public BehaviorTree behaviorTree;
-        void Start() {
+        private void Start() {
             behaviorTree = behaviorTree.Clone();
         }
         private void Update() {
