@@ -14,7 +14,7 @@ public class BehaviorTreeView : GraphView {
     public new class UxmlFactory : UxmlFactory<BehaviorTreeView, UxmlTraits> {
     }
 
-    private BehaviorTree tree;
+    private BehaviorTree _tree;
     public BehaviorTreeView() {
         Insert(0, new GridBackground());
         this.AddManipulator(new ContentZoomer());
@@ -25,13 +25,13 @@ public class BehaviorTreeView : GraphView {
         styleSheets.Add(styleSheet);
     }
     public void PopulateView(BehaviorTree bt) {
-        this.tree = bt;
+        this._tree = bt;
         graphViewChanged -= OnGraphViewChanged;
         DeleteElements(graphElements);
         graphViewChanged += OnGraphViewChanged;
 
         if (bt.rootNode == null) {
-            bt.rootNode = tree.CreateNode(typeof(RootNode)) as RootNode;
+            bt.rootNode = _tree.CreateNode(typeof(RootNode)) as RootNode;
             EditorUtility.SetDirty(bt);
             AssetDatabase.SaveAssets();
         }
@@ -42,9 +42,9 @@ public class BehaviorTreeView : GraphView {
         bt.nodes.ForEach(n => {
             var children = bt.GetChildren(n);
             children.ForEach(c => {
-                NodeView parentView = FindNodeView(n);
-                NodeView childView = FindNodeView(c);
-                Edge edge = parentView.output.ConnectTo(childView.input);
+                var parentView = FindNodeView(n);
+                var childView = FindNodeView(c);
+                var edge = parentView.Output.ConnectTo(childView.Input);
                 AddElement(edge);
             });
         });
@@ -56,25 +56,24 @@ public class BehaviorTreeView : GraphView {
         return ports.ToList().Where(endPort => endPort.direction != startPort.direction && endPort.node != startPort.node).ToList();
     }
     private GraphViewChange OnGraphViewChanged(GraphViewChange graphViewChange) {
-        if (graphViewChange.elementsToRemove != null) {
-            graphViewChange.elementsToRemove.ForEach(elem => {
-                if (elem is NodeView nodeView) {
-                    tree.DeleteNode(nodeView.node);
+        graphViewChange.elementsToRemove?.ForEach(elem => {
+            switch (elem) {
+                case NodeView nodeView:
+                    _tree.DeleteNode(nodeView.Node);
+                    break;
+                case Edge edge: {
+                    var parentView = edge.output.node as NodeView;
+                    var childView = edge.input.node as NodeView;
+                    _tree.RemoveChild(parentView.Node,childView.Node);
+                    break;
                 }
-                if (elem is Edge edge) {
-                    NodeView parentView = edge.output.node as NodeView;
-                    NodeView childView = edge.input.node as NodeView;
-                    tree.RemoveChild(parentView.node,childView.node);
-                }
-            });
-        }
-        if (graphViewChange.edgesToCreate != null) {
-            graphViewChange.edgesToCreate.ForEach(edge => {
-                NodeView parentView = edge.output.node as NodeView;
-                NodeView childView = edge.input.node as NodeView;
-                tree.AddChild(parentView.node,childView.node);
-            });
-        }
+            }
+        });
+        graphViewChange.edgesToCreate?.ForEach(edge => {
+            var parentView = edge.output.node as NodeView;
+            var childView = edge.input.node as NodeView;
+            _tree.AddChild(parentView.Node,childView.Node);
+        });
         return graphViewChange;
     }
 
@@ -90,11 +89,11 @@ public class BehaviorTreeView : GraphView {
         }
     }
     private void CreateNode(Type type) {
-        Node node = tree.CreateNode(type);
+        var node = _tree.CreateNode(type);
         CreateNodeView(node);
     }
     private void CreateNodeView(Node node) {
-        NodeView nodeView = new NodeView(node);
+        var nodeView = new NodeView(node);
         nodeView.OnNodeSelected += OnNodeSelected; 
         AddElement(nodeView);
     }
