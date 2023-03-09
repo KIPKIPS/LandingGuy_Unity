@@ -8,14 +8,14 @@ using UnityEditor;
 public class InspectorView : VisualElement {
     public new class UxmlFactory : UxmlFactory<InspectorView, UxmlTraits> {
     }
-    private Editor editor;
+    private Editor _editor;
     public InspectorView() {
     }
     public void UpdateSelection(NodeView nodeView) {
         Clear();
-        Object.DestroyImmediate(editor);
-        editor = Editor.CreateEditor(nodeView.node);
-        IMGUIContainer container = new IMGUIContainer(() => { editor.OnInspectorGUI(); });
+        Object.DestroyImmediate(_editor);
+        _editor = Editor.CreateEditor(nodeView.Node);
+        var container = new IMGUIContainer(() => { _editor.OnInspectorGUI(); });
         Add(container);
     }
 }
