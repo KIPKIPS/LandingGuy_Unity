@@ -10,6 +10,7 @@ using UnityEditor;
 namespace Framework.AI.BehaviorTree {
     [CreateAssetMenu()]
     public class BehaviorTree : ScriptableObject {
+        internal static string LOGTag = "BehaviorTree";
         public Node rootNode;
         public State treeState = State.Running;
         public List<Node> nodes = new List<Node>();

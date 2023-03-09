@@ -7,43 +7,46 @@ using UnityEngine.UIElements;
 
 namespace Framework.AI.BehaviorTree {
     public class BehaviorTreeEditor : EditorWindow {
-        private BehaviorTreeView treeView;
-        private InspectorView inspectorView;
+        private BehaviorTreeView _treeView;
+        private InspectorView _inspectorView;
+        private static readonly string AssetPath = "Assets/Scripts/Framework/BehaviorTree/Editor/BehaviorTreeEditor";
         [MenuItem("Tools/AI/BehaviorTreeEditor")]
         public static void OpenWindow() {
-            BehaviorTreeEditor wnd = GetWindow<BehaviorTreeEditor>();
+            var wnd = GetWindow<BehaviorTreeEditor>();
             wnd.titleContent = new GUIContent("BehaviorTreeEditor");
         }
 
+        public static string GetAssetPath(string suffix) => AssetPath + suffix;
+
         public void CreateGUI() {
             // Each editor window contains a root VisualElement object
-            VisualElement root = rootVisualElement;
+            var root = rootVisualElement;
 
             // Import UXML
-            var visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>("Assets/Scripts/Framework/BehaviorTree/Editor/BehaviorTreeEditor.uxml");
+            var visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(GetAssetPath(".uxml"));
             visualTree.CloneTree(root);
 
             // A stylesheet can be added to a VisualElement.
             // The style will be applied to the VisualElement and all of its children.
-            var styleSheet = AssetDatabase.LoadAssetAtPath<StyleSheet>("Assets/Scripts/Framework/BehaviorTree/Editor/BehaviorTreeEditor.uss");
+            var styleSheet = AssetDatabase.LoadAssetAtPath<StyleSheet>(GetAssetPath(".uss"));
             root.styleSheets.Add(styleSheet);
 
-            treeView = root.Q<BehaviorTreeView>();
-            inspectorView = root.Q<InspectorView>();
-            treeView.OnNodeSelected = OnNodeSelectionChanged;
+            _treeView = root.Q<BehaviorTreeView>();
+            _inspectorView = root.Q<InspectorView>();
+            _treeView.OnNodeSelected = OnNodeSelectionChanged;
             OnSelectionChange();
         }
 
         private void OnSelectionChange() {
-            BehaviorTree tree = Selection.activeObject as BehaviorTree;
+            var tree = Selection.activeObject as BehaviorTree;
             if (tree && AssetDatabase.CanOpenAssetInEditor(tree.GetInstanceID())) {
-                treeView.PopulateView(tree);
+                _treeView.PopulateView(tree);
                 
             }
         }
 
-        void OnNodeSelectionChanged(NodeView nodeView) {
-            inspectorView.UpdateSelection(nodeView);
+        private void OnNodeSelectionChanged(NodeView nodeView) {
+            _inspectorView.UpdateSelection(nodeView);
         }
     }
 }
