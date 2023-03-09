@@ -6,15 +6,12 @@ using UnityEngine;
 namespace Framework.AI.BehaviorTree {
     public class WaitNode:ActionNode {
         public float duration = 1;
-        private float startTime;
+        private float _startTime;
         protected override void OnStart() {
-            startTime = Time.time;
+            _startTime = Time.time;
         }
         protected override State OnUpdate() {
-            if (Time.time - startTime >= duration) {
-                return State.Success;
-            }
-            return State.Running;
+            return Time.time - _startTime >= duration ? State.Success : State.Running;
         }
         protected override void OnStop() {
             
