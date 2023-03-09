@@ -19,7 +19,7 @@ namespace Framework.Pool {
         /// 构造器
         /// </summary>
         protected ObservePool() {
-            _factory = new BaseFactory<T>();
+            Factory = new BaseFactory<T>();
         }
         /// <summary>
         /// 单例池容器
@@ -43,10 +43,9 @@ namespace Framework.Pool {
                 initCount = Math.Min(maxCount, initCount);
                 MaxCount = maxCount;
             }
-            if (CurCount < initCount) {
-                for (int i = CurCount; i < initCount; ++i) {
-                    Recycle(_factory.Create());
-                }
+            if (CurCount >= initCount) return;
+            for (var i = CurCount; i < initCount; ++i) {
+                Recycle(Factory.Create());
             }
         }
         
@@ -57,12 +56,11 @@ namespace Framework.Pool {
             get => MaxCount;
             set {
                 MaxCount = value;
-                if (_cacheStack != null && MaxCount > 0 && MaxCount < _cacheStack.Count) {
-                    int removeCount = MaxCount - _cacheStack.Count;
-                    while (removeCount > 0) {
-                        _cacheStack.Pop();
-                        --removeCount;
-                    }
+                if (CacheStack == null || MaxCount <= 0 || MaxCount >= CacheStack.Count) return;
+                var removeCount = MaxCount - CacheStack.Count;
+                while (removeCount > 0) {
+                    CacheStack.Pop();
+                    --removeCount;
                 }
             }
         }
@@ -72,7 +70,7 @@ namespace Framework.Pool {
         /// </summary>
         /// <returns>实例对象</returns>
         public override T Allocate() {
-            T result = base.Allocate();
+            var result = base.Allocate();
             result.IsRecycled = false;
             return result;
         }
@@ -86,13 +84,13 @@ namespace Framework.Pool {
             if (obj == null || obj.IsRecycled) {
                 return false;
             }
-            if (MaxCount > 0 && _cacheStack.Count >= MaxCount) {
+            if (MaxCount > 0 && CacheStack.Count >= MaxCount) {
                 obj.OnRecycled();
                 return false;
             }
             obj.IsRecycled = true;
             obj.OnRecycled();
-            _cacheStack.Push(obj);
+            CacheStack.Push(obj);
             return true;
         }
     }

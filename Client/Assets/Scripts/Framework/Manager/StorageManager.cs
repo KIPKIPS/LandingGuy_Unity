@@ -7,11 +7,13 @@ using System.Runtime.Serialization.Formatters.Binary;
 using Framework.Singleton;
 
 namespace Framework.Manager {
+    // ReSharper disable ClassNeverInstantiated.Global
     public class StorageManager : Singleton<StorageManager> {
-        private readonly string _logTag = "StorageManager";
+        private const string LOGTag = "StorageManager";
         private readonly BinaryFormatter _binaryFormatter = new ();
+        // ReSharper disable once MemberCanBeMadeStatic.Global
         public void Launch() {
-            Utils.Log(_logTag, "the local data is loaded");
+            Utils.Log(LOGTag, "the local data is loaded");
             var path = DEF.DataStoragePath;
                 //不存在目录则创建
             if (!Directory.Exists(path)) {
@@ -27,7 +29,7 @@ namespace Framework.Manager {
         /// <param name="obj">保存对象</param>
         /// <param name="path">保存路径</param>
         private void SaveFile(object obj,string path) {
-            FileStream f = new FileStream(path,FileMode.OpenOrCreate);
+            var f = new FileStream(path,FileMode.OpenOrCreate);
             _binaryFormatter.Serialize(f,obj);//二进制的方式把对象保存进文件
             f.Dispose();//释放文件流
             
@@ -42,7 +44,7 @@ namespace Framework.Manager {
             if (!File.Exists(path)) {
                 return null;
             }
-            FileStream f = new FileStream(path,FileMode.Open);
+            var f = new FileStream(path,FileMode.Open);
             var obj = _binaryFormatter.Deserialize(f) as T;//二进制的方式把对象保存进文件
             f.Dispose();
             return obj;

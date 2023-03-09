@@ -43,6 +43,7 @@ namespace Framework.Singleton {
         /// <summary>
         /// 当前应用程序是否结束 标签
         /// </summary>
+        // ReSharper disable once StaticMemberInGenericType
         private static bool _onApplicationQuit;
 
         /// <summary>
@@ -59,10 +60,5 @@ namespace Framework.Singleton {
         /// 释放当前对象
         /// </summary>
         protected virtual void OnDestroy() => _instance = null;
-
-        /// <summary>
-        /// 判断当前应用程序是否退出
-        /// </summary>
-        public static bool IsApplicationQuit => _onApplicationQuit;
     }
 }

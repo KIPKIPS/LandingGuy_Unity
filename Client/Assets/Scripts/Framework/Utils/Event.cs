@@ -4,6 +4,7 @@
 using System;
 using Framework.Manager;
 namespace Framework {
+    // ReSharper disable ClassNeverInstantiated.Global
     public class Event {
         public static void Register(EventType type, Action<dynamic> callback) {
             EventManager.Instance.Register(type,callback);

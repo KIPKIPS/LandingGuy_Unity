@@ -12,7 +12,7 @@ namespace Framework.Pool {
         /// 构造器
         /// </summary>
         public SimplePool() {
-            _factory = new BaseFactory<T>();
+            Factory = new BaseFactory<T>();
         }
         
         /// <summary>
@@ -20,7 +20,7 @@ namespace Framework.Pool {
         /// </summary>
         /// <returns>分配的对象</returns>
         public override T Allocate() {
-            T result = base.Allocate();
+            var result = base.Allocate();
             result.IsRecycled = false;
             return result;
         }
@@ -36,12 +36,12 @@ namespace Framework.Pool {
             }
             obj.IsRecycled = true;
             obj.OnRecycled();
-            _cacheStack.Push(obj);
+            CacheStack.Push(obj);
             return true;
         }
 
         public void Clear() {
-            _cacheStack.Clear();
+            CacheStack.Clear();
         }
     }
 }

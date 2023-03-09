@@ -2,6 +2,7 @@
 // date:2023.02.02 22:21
 // describe:唯一单例,一经创建不再销毁
 using UnityEngine;
+#pragma warning disable 414
 
 namespace Framework.Singleton {
     /// <summary>
@@ -11,10 +12,13 @@ namespace Framework.Singleton {
     public abstract class PersistentMonoSingleton<T> : MonoBehaviour,ISingleton where T : PersistentMonoSingleton<T> {
         private static T _instance;
         private bool _enabled;
+        // ReSharper disable once StaticMemberInGenericType
         private static bool _onApplicationQuit;
         public static T Instance {
             get {
+                // ReSharper disable once Unity.PerformanceCriticalCodeNullComparison
                 if (_instance == null && !_onApplicationQuit) {
+                    // ReSharper disable once Unity.PerformanceCriticalCodeInvocation
                     _instance = SingletonCreator.CreateMonoSingleton<T>();
                 }
                 return _instance;
@@ -32,8 +36,6 @@ namespace Framework.Singleton {
         /// </summary>
         public virtual void Initialize() {
         }
-        
-        public static bool IsApplicationQuit => _onApplicationQuit;
 
         protected virtual void Awake() {
             if (!Application.isPlaying) return;

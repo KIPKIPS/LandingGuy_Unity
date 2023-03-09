@@ -11,6 +11,8 @@ using Framework.Manager;
 // using System.Reflection;
 using Framework.Pool;
 namespace Framework {
+    // ReSharper disable UnusedMember.Global
+    // ReSharper disable MemberCanBePrivate.Global
     public static class Utils {
         #region File Load 文件加载
         
@@ -21,8 +23,8 @@ namespace Framework {
         /// <typeparam name="T">类型</typeparam>
         /// <returns>结果对象</returns>
         public static T LoadJsonByPath<T>(string path) {
-            StreamReader reader = new StreamReader(Environment.CurrentDirectory + "/" + path);
-            string jsonStr = reader.ReadToEnd();
+            var reader = new StreamReader(Environment.CurrentDirectory + "/" + path);
+            var jsonStr = reader.ReadToEnd();
             reader.Close();
             //字符串转换为对象
             return JsonConvert.DeserializeObject<T>(jsonStr);
@@ -38,43 +40,43 @@ namespace Framework {
             public void OnRecycled() {
             }
             public bool IsRecycled { get; set; }
-            public string content;
-            public bool innerLine;
-            public void Create(string _content, bool _innerLine) {
-                content = _content;
-                innerLine = _innerLine;
+            public string Content;
+            public bool InnerLine;
+            public void Create(string content, bool innerLine) {
+                Content = content;
+                InnerLine = innerLine;
             }
         }
 
         // Log Color HashSet防止重复颜色   例如：<"log","#ff00ff">
-        private static readonly Dictionary<string, string> _logColorDict = new ();
-        private static readonly HashSet<string> _logColorHashSet = new ();
-        private static readonly SimplePool<LogEntity> _logEntityPool = new ();
-        private static readonly Dictionary<int, string> _spaceDict = new ();
+        private static readonly Dictionary<string, string> LOGColorDict = new ();
+        private static readonly HashSet<string> LOGColorHashSet = new ();
+        private static readonly SimplePool<LogEntity> LOGEntityPool = new ();
+        private static readonly Dictionary<int, string> SpaceDict = new ();
         
+        // ReSharper disable Unity.PerformanceAnalysis
         /// <summary>
         /// 输出日志
         /// </summary>
         /// <param name="messages">日志内容</param>
         public static void Log(params object[] messages) {
-            string tag = "Log";
+            var tag = "Log";
             if (messages == null || messages.Length == 0) {
                 Debug.Log(GetLogFormatString(tag, "The expected value is null"));
                 return;
             }
-            int startIdx = 0;
+            var startIdx = 0;
             if (messages.Length == 1) {
                 startIdx = 0;
             } else if (messages[0] is string) {
                 tag = (string)messages[0];
                 startIdx = 1;
             }
-            string msg = "";
-            LogEntity logEntity;
-            for (int i = startIdx; i < messages.Length; i++) {
-                logEntity = GetMessageData(messages[i]);
-                msg += (logEntity.content + "\n");
-                _logEntityPool.Recycle(logEntity);
+            var msg = "";
+            for (var i = startIdx; i < messages.Length; i++) {
+                var logEntity = GetMessageData(messages[i]);
+                msg += $"{logEntity.Content}\n\n";
+                LOGEntityPool.Recycle(logEntity);
             }
             Debug.Log(GetLogFormatString(tag, msg));
         }
@@ -94,23 +96,21 @@ namespace Framework {
         /// <param name="layer">输出层级</param>
         /// <returns>日志实体</returns>
         private static LogEntity HandleLogUnit(bool firstLine, object msgObj, int layer) {
-            string msg = "";
-            bool innerLine = true;
-            if (InheritInterface<IEnumerable>(msgObj) && !(msgObj is string)) {
+            var msg = "";
+            var innerLine = true;
+            if (InheritInterface<IEnumerable>(msgObj) && msgObj is not string) {
                 msg += firstLine ? "" : "\n";
-                IEnumerator ie = ((IEnumerable)msgObj).GetEnumerator();
-                string tempStr;
-                int length = GetEnumeratorCount(ie);
+                var ie = ((IEnumerable)msgObj).GetEnumerator();
+                var length = GetEnumeratorCount(ie);
                 ie = ((IEnumerable)msgObj).GetEnumerator();
-                int count = 0;
-                bool last, isKvp;
+                var count = 0;
                 while (ie.MoveNext()) {
                     if (ie.Current != null) {
                         dynamic data = ie.Current;
-                        isKvp = ContainProperty(data, "Key");
-                        LogEntity le = HandleLogUnit(false, (isKvp ? data.Value : data), layer + 1);
-                        last = count == length - 1;
-                        tempStr = GetTable(layer + 1) + (isKvp ? data.Key : count) + " : " + le.content + (le.innerLine && !last ? "\n" : "");
+                        bool isKvp = ContainProperty(data, "Key");
+                        LogEntity le = HandleLogUnit(false, isKvp ? data.Value : data, layer + 1);
+                        var last = count == length - 1;
+                        var tempStr = $"{GetTable(layer + 1)}{(isKvp ? data.Key : count)} : {le.Content}{(le.InnerLine && !last ? "\n" : "")}";
                         innerLine = last | !innerLine;
                         msg += tempStr;
                     }
@@ -119,7 +119,7 @@ namespace Framework {
             } else {
                 msg = msgObj.ToString();
             }
-            LogEntity logEntity = _logEntityPool.Allocate();
+            var logEntity = LOGEntityPool.Allocate();
             logEntity.Create(msg, innerLine);
             return logEntity;
         }
@@ -130,7 +130,7 @@ namespace Framework {
         /// <param name="ie">迭代器</param>
         /// <returns>迭代器长度</returns>
         private static int GetEnumeratorCount(IEnumerator ie) {
-            int cnt = 0;
+            var cnt = 0;
             while (ie.MoveNext()) {
                 cnt++;
             }
@@ -143,14 +143,14 @@ namespace Framework {
         /// <param name="num">层级</param>
         /// <returns>格式化后的字符串</returns>
         private static string GetTable(int num) {
-            if (_spaceDict.ContainsKey(num)) {
-                return _spaceDict[num];
+            if (SpaceDict.ContainsKey(num)) {
+                return SpaceDict[num];
             }
-            string space = "";
-            for (int i = 0; i < num; i++) {
+            var space = "";
+            for (var i = 0; i < num; i++) {
                 space += "    ";
             }
-            _spaceDict.Add(num, space);
+            SpaceDict.Add(num, space);
             return space;
         }
         
@@ -168,8 +168,8 @@ namespace Framework {
         /// <param name="obj">对象</param>
         /// <typeparam name="T">接口类型</typeparam>
         /// <returns>是否继承该接口</returns>
-        private static bool InheritInterface<T>(object obj) => typeof(T).IsAssignableFrom(obj.GetType());
-
+        // private static bool InheritInterface<T>(object obj) => typeof(T).IsAssignableFrom(obj.GetType());
+        private static bool InheritInterface<T>(object obj) => obj is T;
         /// <summary>
         /// 警告日志
         /// </summary>
@@ -204,22 +204,21 @@ namespace Framework {
         /// <returns>格式化后的字符串</returns>
         private static string GetLogFormatString(string tag, object message) {
             string c;
-            if (_logColorDict.ContainsKey(tag)) {
-                c = _logColorDict[tag];
+            if (LOGColorDict.ContainsKey(tag)) {
+                c = LOGColorDict[tag];
             } else {
-                int count = 0; // 颜色循环次数上限
+                var count = 0; // 颜色循环次数上限
                 do {
                     c = GetRandomColorCode();
                     count++;
-                    if (count > 1000) {
-                        // 获取颜色次数超过1000次 默认返回白色
-                        Debug.LogWarning("Color Get Duplicated");
-                        return $"<color=#000000>[{tag}]</color>: {message}";
-                    }
-                } while (_logColorHashSet.Contains(c));
+                    if (count <= 1000) continue;
+                    // 获取颜色次数超过1000次 默认返回白色
+                    Debug.LogWarning("Color Get Duplicated");
+                    return $"<color=#000000>[{tag}]</color>: {message}";
+                } while (LOGColorHashSet.Contains(c));
                 // 找到对应颜色
-                _logColorDict[tag] = c;
-                _logColorHashSet.Add(c);
+                LOGColorDict[tag] = c;
+                LOGColorHashSet.Add(c);
             }
             return $"<color={c}>[{tag}]</color>: {message}";
         }
@@ -239,7 +238,7 @@ namespace Framework {
             if (name == null) {
                 return root.GetComponent<T>();
             }
-            Transform target = GetChild(root, name);
+            var target = GetChild(root, name);
             return target != null ? target.GetComponent<T>() : default;
         }
 
@@ -259,13 +258,13 @@ namespace Framework {
         /// <returns>查找到的子节点</returns>
         private static Transform GetChild(Transform root, string childName) {
             //根节点查找
-            Transform childTrs = root.Find(childName);
+            var childTrs = root.Find(childName);
             if (childTrs != null) {
                 return childTrs;
             }
             //遍历子物体查找
-            int count = root.childCount;
-            for (int i = 0; i < count; i++) {
+            var count = root.childCount;
+            for (var i = 0; i < count; i++) {
                 childTrs = GetChild(root.GetChild(i), childName);
                 if (childTrs != null) {
                     return childTrs;
@@ -284,7 +283,7 @@ namespace Framework {
         /// <param name="hexColor">十六进制颜色</param>
         /// <returns>返回着色字符串</returns>
         public static string AddColor(string str, string hexColor) => $"<color=#{hexColor}>{str}</color>";
-        static readonly System.Random random = new ();
+        private static readonly System.Random Random = new ();
         //color下划线颜色 line 线厚度
         // public static string AddUnderLine(string msg, int colorIndex, int line) {
         //     return string.Format("<UnderWave/color={0},thickness=${1}>{2}</UnderWave>", GetColor(colorIndex), line, msg);
@@ -295,60 +294,54 @@ namespace Framework {
         /// </summary>
         /// <param name="isAlphaRandom">是否随机透明度</param>
         /// <returns>随机的颜色对象</returns>
-        public static Color GetRandomColor(bool isAlphaRandom = false) => new (random.Next(255), random.Next(255), random.Next(255), isAlphaRandom ? random.Next() / 255 : 1);
+        public static Color GetRandomColor(bool isAlphaRandom = false) => new (Random.Next(255), Random.Next(255), Random.Next(255), isAlphaRandom ? Random.Next() / 255 : 1);
 
         /// <summary>
         /// 获取随机颜色RGB A 例如：#ff00ff
         /// </summary>
         /// <returns>十六进制颜色字符串</returns>
-        private static string GetRandomColorCode() => $"#{random.Next(255):X}{random.Next(255):X}{random.Next(255):X}";
+        private static string GetRandomColorCode() => $"#{Random.Next(255):X}{Random.Next(255):X}{Random.Next(255):X}";
 
         #endregion
         
         #region Mono函数
-        
         /// <summary>
         /// 提供给普通类的开启协程方法
         /// </summary>
-        /// <param name="obj">对象</param>
         /// <param name="routine">协程迭代器</param>
         /// <returns>协程对象</returns>
-        public static Coroutine StartCoroutine(this object obj, IEnumerator routine) {
+        public static Coroutine StartCoroutine(IEnumerator routine) {
             return MonoManager.Instance.StartCoroutine(routine);
         }
 
         /// <summary>
         /// 提供给普通类的停止协程方法
         /// </summary>
-        /// <param name="obj">对象</param>
         /// <param name="routine">协程迭代器</param>
-        public static void StopCoroutine(this object obj, Coroutine routine) {
+        public static void StopCoroutine(Coroutine routine) {
             MonoManager.Instance.StopCoroutine(routine);
         }
 
         /// <summary>
         /// 提供给普通类的停止所有协程的方法
         /// </summary>
-        /// <param name="obj"></param>
-        public static void StopAllCoroutines(this object obj) {
+        public static void StopAllCoroutines() {
             MonoManager.Instance.StopAllCoroutines();
         }
-        
+
         /// <summary>
         /// 提供给普通类的添加Update方法的函数
         /// </summary>
-        /// <param name="obj"></param>
         /// <param name="callback">update执行的tick</param>
-        public static void AddUpdate(this object obj, Action callback) {
+        public static void AddUpdate(Action callback) {
             MonoManager.Instance.UPDATE += callback;
         }
-        
+
         /// <summary>
         /// 提供给普通类的移除Update方法的函数
         /// </summary>
-        /// <param name="obj"></param>
         /// <param name="callback">update执行的tick</param>
-        public static void RemoveUpdate(this object obj, Action callback) {
+        public static void RemoveUpdate(Action callback) {
             MonoManager.Instance.UPDATE -= callback;
         }
         

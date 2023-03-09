@@ -23,10 +23,9 @@ namespace Framework.AI.BehaviorTree {
                 started = true;
             }
             state = OnUpdate();
-            if (state == State.Failure || state == State.Success) {
-                OnStop();
-                started = false;
-            }
+            if (state is not (State.Failure or State.Success)) return state;
+            OnStop();
+            started = false;
             return state;
         }
 

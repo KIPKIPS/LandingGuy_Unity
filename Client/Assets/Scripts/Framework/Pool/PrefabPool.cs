@@ -15,18 +15,19 @@ namespace Framework.Pool {
         /// <param name="prefab">实例化的预制体</param>
         /// <param name="root">创建实例的根节点</param>
         public PrefabPool(T prefab,Transform root = null) {
-            _factory = new GoFactory<T>(prefab,root);
+            Factory = new GoFactory<T>(prefab,root);
         }
         
         public PrefabPool(Transform root = null) {
-            _factory = new GoFactory<T>(root);
+            Factory = new GoFactory<T>(root);
         }
+        // ReSharper disable Unity.PerformanceAnalysis
         /// <summary>
         /// 分配函数
         /// </summary>
         /// <returns>分配的对象</returns>
         public override T Allocate() {
-            T result = base.Allocate();
+            var result = base.Allocate();
             result.gameObject.SetActive(true);
             return result;
         }
@@ -40,7 +41,7 @@ namespace Framework.Pool {
                 return false;
             }
             obj.gameObject.SetActive(false);
-            _cacheStack.Push(obj);
+            CacheStack.Push(obj);
             return true;
         }
     }

@@ -9,15 +9,17 @@ using Newtonsoft.Json.Linq;
 using Framework.Container;
 using Framework.Singleton;
 namespace Framework.Manager {
+    // ReSharper disable ClassNeverInstantiated.Global
+    // ReSharper disable UnusedMember.Global
     public class ConfigManager :Singleton<ConfigManager> {
-        private readonly string logTag = "ConfigManager";
-        private readonly string configPath = "Config/"; //配置表路径
+        private const string LOGTag = "ConfigManager";
+        private const string ConfigPath = "Config/"; //配置表路径
         //配置表
         private readonly RestrictedDictionary<string, List<dynamic>> _configDict = new ();
         private readonly RestrictedDictionary<string, RestrictedDictionary<string, string>> _typeDict = new ();
         public void Launch() {
             AnalyticsConfig();
-            Utils.Log(logTag, "config data load finished");
+            Utils.Log(LOGTag, "config data load finished");
         }
         // private ConfigManager() {
         //     
@@ -31,67 +33,53 @@ namespace Framework.Manager {
             // _configDict = new Dictionary<string, List<dynamic>>();
             //获取所有配置表
             // UIUtils.LoadJsonByPath<List<JObject>>("Data/" + tabName + ".json");
-            DirectoryInfo dir = new DirectoryInfo(configPath);
-            FileSystemInfo[] files = dir.GetFileSystemInfos();
-            string configName;
+            var dir = new DirectoryInfo(ConfigPath);
+            var files = dir.GetFileSystemInfos();
             // string fullName = "";
-            for (int i = 0; i < files.Length; i++) {
-                configName = files[i].Name.Replace(".json", "");
+            foreach (var t in files) {
+                var configName = t.Name.Replace(".json", "");
                 // fullName = configPath + files[i].Name;
-                if (!_configDict.ContainsKey(configName)) {
-                    _configDict.Add(configName, new List<dynamic>());
-                    _configDict[configName].Add(null); //预留一个位置
-                    // _configDict[configName].Add();
-                    // Utils.Log(configPath + files[i].Name);
-                    try {
-                        List<JObject> jObjList = Utils.LoadJsonByPath<List<JObject>>(configPath + files[i].Name);
-                        JObject metatable = jObjList.Last();
-                        if (metatable.ContainsKey("__metatable")) {
-                            IEnumerable<JProperty> metatableProperties = metatable.Properties();
-                            if (!_typeDict.ContainsKey(configName)) {
-                                _typeDict.Add(configName, new RestrictedDictionary<string, string>());
-                            }
-                            foreach (JProperty metatableProp in metatableProperties) {
-                                if (metatableProp.Name != "__metatable") {
-                                    _typeDict[configName].EnableWrite();
-                                    _typeDict[configName].Add(metatableProp.Name, metatableProp.Value.ToString());
-                                    _typeDict[configName].ForbidWrite();
-                                }
-                            }
-                            for (int j = 0; j < jObjList.Count - 1; j++) {
-                                RestrictedDictionary<string, dynamic> table = new ();
-                                table.EnableWrite();
-                                IEnumerable<JProperty> properties = jObjList[j].Properties();
-                                foreach (JProperty prop in properties) {
-                                    switch (prop.Value.Type.ToString()) {
-                                        case "Integer":
-                                            table[prop.Name] = (int)prop.Value;
-                                            break;
-                                        case "Float":
-                                            table[prop.Name] = (float)prop.Value;
-                                            break;
-                                        case "Boolean":
-                                            table[prop.Name] = (bool)prop.Value;
-                                            break;
-                                        case "String":
-                                            table[prop.Name] = prop.Value.ToString();
-                                            break;
-                                        case "Array":
-                                            table[prop.Name] = HandleArray(prop.Value.ToArray());
-                                            break;
-                                        case "Object":
-                                            table[prop.Name] = HandleDict(prop.Value.ToObject<JObject>(), prop.Name, configName);
-                                            break;
-                                    }
-                                }
-                                table.ForbidWrite();
-                                _configDict[configName].Add(table);
-                            }
+                if (_configDict.ContainsKey(configName)) continue;
+                _configDict.Add(configName, new List<dynamic>());
+                _configDict[configName].Add(null); //预留一个位置
+                // _configDict[configName].Add();
+                // Utils.Log(configPath + files[i].Name);
+                try {
+                    var jObjList = Utils.LoadJsonByPath<List<JObject>>(ConfigPath + t.Name);
+                    var metatable = jObjList.Last();
+                    if (metatable.ContainsKey("__metatable")) {
+                        var metatableProperties = metatable.Properties();
+                        if (!_typeDict.ContainsKey(configName)) {
+                            _typeDict.Add(configName, new RestrictedDictionary<string, string>());
                         }
-                    } catch (Exception ex) {
-                        Utils.Log(logTag, configName);
-                        Utils.LogError(logTag, ex.ToString());
+                        foreach (var metatableProp in metatableProperties) {
+                            if (metatableProp.Name == "__metatable") continue;
+                            _typeDict[configName].EnableWrite();
+                            _typeDict[configName].Add(metatableProp.Name, metatableProp.Value.ToString());
+                            _typeDict[configName].ForbidWrite();
+                        }
+                        for (var j = 0; j < jObjList.Count - 1; j++) {
+                            RestrictedDictionary<string, dynamic> table = new ();
+                            table.EnableWrite();
+                            var properties = jObjList[j].Properties();
+                            foreach (var prop in properties) {
+                                table[prop.Name] = prop.Value.Type.ToString() switch {
+                                    "Integer" => prop.Value,
+                                    "Float" => prop.Value,
+                                    "Boolean" => prop.Value,
+                                    "String" => prop.Value.ToString(),
+                                    "Array" => HandleArray(prop.Value.ToArray()),
+                                    "Object" => HandleDict(prop.Value.ToObject<JObject>(), prop.Name, configName),
+                                    _ => table[prop.Name]
+                                };
+                            }
+                            table.ForbidWrite();
+                            _configDict[configName].Add(table);
+                        }
                     }
+                } catch (Exception ex) {
+                    Utils.Log(LOGTag, configName);
+                    Utils.LogError(LOGTag, ex.ToString());
                 }
             }
             _configDict.ForbidWrite();
@@ -108,10 +96,10 @@ namespace Framework.Manager {
         private dynamic HandleDict(JObject jObj, string filedName, string cfName) {
             dynamic table = new RestrictedDictionary<dynamic, dynamic>();
             table.EnableWrite();
-            RestrictedDictionary<string, string> valueTypeDict = _typeDict[cfName];
-            IEnumerable<JProperty> properties = jObj.Properties();
+            var valueTypeDict = _typeDict[cfName];
+            var properties = jObj.Properties();
             dynamic key = null;
-            foreach (JProperty prop in properties) {
+            foreach (var prop in properties) {
                 if (valueTypeDict.ContainsKey(filedName)) {
                     if (valueTypeDict[filedName].StartsWith("dict<int")) {
                         key = int.Parse(prop.Name);
@@ -145,10 +133,10 @@ namespace Framework.Manager {
         /// </summary>
         /// <param name="array">配置数组</param>
         /// <returns></returns>
-        private dynamic HandleArray(JToken[] array) {
+        private static dynamic HandleArray(IReadOnlyList<JToken> array) {
             dynamic table = new RestrictedDictionary<int, dynamic>();
             table.EnableWrite();
-            for (int i = 1; i <= array.Length; i++) {
+            for (var i = 1; i <= array.Count; i++) {
                 switch (array[i - 1].Type.ToString()) {
                     case "Integer":
                         table.Add(i, (int)array[i - 1]);
@@ -182,7 +170,7 @@ namespace Framework.Manager {
                 if (_configDict.ContainsKey(configName)) {
                     result = _configDict[configName];
                 }
-            } catch (Exception e) {
+            } catch (Exception) {
                 result = null;
             }
             return result;
@@ -202,7 +190,7 @@ namespace Framework.Manager {
                         result= _configDict[configName][id];
                     }
                 }
-            } catch (Exception e) {
+            } catch (Exception) {
                 result = null;
             }
             return result;

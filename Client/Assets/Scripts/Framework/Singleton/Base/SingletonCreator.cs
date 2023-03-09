@@ -26,6 +26,7 @@ namespace Framework.Singleton {
             }
             return ctor.Invoke(null) as T;
         }
+        // ReSharper disable Unity.PerformanceAnalysis
         /// <summary>
         /// 创建单例对象
         /// </summary>
@@ -41,8 +42,8 @@ namespace Framework.Singleton {
             instance.Initialize();
             return instance;
         }
-        
 
+        // ReSharper disable Unity.PerformanceAnalysis
         /// <summary>
         /// 查找Obj（一个嵌套查找Obj的过程）
         /// </summary>
@@ -52,40 +53,44 @@ namespace Framework.Singleton {
         /// <param name="build"></param>
         /// <param name="dontDestroy"></param>
         /// <returns></returns>
+        // ReSharper disable Unity.PerformanceCriticalCodeNullComparison
         private static GameObject FindGameObject(GameObject root, string[] subPath, int index, bool build, bool dontDestroy) {
-            GameObject client = null;
-            if (root == null) {
-                client = GameObject.Find(subPath[index]);
-            } else {
-                var child = root.transform.Find(subPath[index]);
-                if (child != null) {
-                    client = child.gameObject;
-                }
-            }
-            if (client == null) {
-                if (build) {
-                    client = new GameObject(subPath[index]);
-                    if (root != null) {
-                        client.transform.SetParent(root.transform);
-                    }
-                    if (dontDestroy && index == 0) {
-                        Object.DontDestroyOnLoad(client);
+            while (true) {
+                GameObject client = null;
+                if (root == null) {
+                    client = GameObject.Find(subPath[index]);
+                } else {
+                    var child = root.transform.Find(subPath[index]);
+                    if (child != null) {
+                        client = child.gameObject;
                     }
                 }
+                if (client == null) {
+                    if (build) {
+                        client = new GameObject(subPath[index]);
+                        if (root != null) {
+                            client.transform.SetParent(root.transform);
+                        }
+                        if (dontDestroy && index == 0) {
+                            Object.DontDestroyOnLoad(client);
+                        }
+                    }
+                }
+                if (client == null) {
+                    return null;
+                }
+                if (++index == subPath.Length) return client;
+                root = client;
             }
-            if (client == null) {
-                return null;
-            }
-            return ++index == subPath.Length ? client : FindGameObject(client, subPath, index, build, dontDestroy);
         }
 
+        // ReSharper disable Unity.PerformanceAnalysis
         /// <summary>
         /// 泛型方法：创建MonoBehaviour单例
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
         public static T CreateMonoSingleton<T>() where T : class, ISingleton {
-            T instance;
             var type = typeof(T);
 
             //判断T实例存在的条件是否满足
@@ -93,7 +98,7 @@ namespace Framework.Singleton {
                 return null;
 
             //判断当前场景中是否存在T实例
-            instance = Object.FindObjectOfType(type) as T;
+            var instance = Object.FindObjectOfType(type) as T;
             if (instance != null) {
                 instance.Initialize();
                 return instance;
@@ -131,11 +136,10 @@ namespace Framework.Singleton {
         /// <returns></returns>
         private static T CreateComponentOnGameObject<T>(string path, bool dontDestroy) where T : class {
             var obj = FindGameObject(path, true, dontDestroy);
-            if (obj == null) {
-                obj = new GameObject("Singleton of " + typeof(T).Name);
-                if (dontDestroy) {
-                    Object.DontDestroyOnLoad(obj);
-                }
+            if (obj != null) return obj.AddComponent(typeof(T)) as T;
+            obj = new GameObject("Singleton of " + typeof(T).Name);
+            if (dontDestroy) {
+                Object.DontDestroyOnLoad(obj);
             }
             return obj.AddComponent(typeof(T)) as T;
         }

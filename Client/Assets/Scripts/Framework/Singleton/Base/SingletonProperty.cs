@@ -15,14 +15,15 @@ namespace Framework.Singleton {
         /// <summary>
         /// 标签锁
         /// </summary>
-        private static readonly object _lock = new object();
+        // ReSharper disable once StaticMemberInGenericType
+        private static readonly object Lock = new ();
 
         /// <summary>
         /// 静态属性
         /// </summary>
         public static T Instance {
             get {
-                lock (_lock) {
+                lock (Lock) {
                     _instance ??= SingletonCreator.CreateSingleton<T>();
                 }
                 return _instance;

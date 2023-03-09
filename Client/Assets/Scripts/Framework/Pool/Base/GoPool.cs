@@ -5,14 +5,14 @@ using System.Collections.Generic;
 
 namespace Framework.Pool {
     public abstract class GoPool<T> : IPool<T> {
-        protected IFactory<T> _factory; //定义实现接口的类对象
-        protected readonly Stack<T> _cacheStack = new ();
+        protected IFactory<T> Factory; //定义实现接口的类对象
+        protected readonly Stack<T> CacheStack = new ();
         /// <summary>
         /// 请求分配对象
         /// </summary>
         /// <returns>实例对象</returns>
         public virtual T Allocate() {
-            return _cacheStack.Count == 0 ? _factory.Create() : _cacheStack.Pop();
+            return CacheStack.Count == 0 ? Factory.Create() : CacheStack.Pop();
         }
         /// <summary>
         /// 回收对象

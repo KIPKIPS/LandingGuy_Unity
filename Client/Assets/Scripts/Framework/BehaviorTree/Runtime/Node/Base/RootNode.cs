@@ -14,7 +14,7 @@ namespace Framework.AI.BehaviorTree {
         }
 
         public override Node Clone() {
-            RootNode node = Instantiate(this);
+            var node = Instantiate(this);
             node.child = child.Clone();
             return node;
         }

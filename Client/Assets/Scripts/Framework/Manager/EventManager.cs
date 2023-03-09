@@ -3,17 +3,22 @@
 // describe:事件机制
 using System.Collections.Generic;
 using System;
+using System.Linq;
 using Framework.Pool;
 using Framework.Singleton;
 namespace Framework.Manager {
+    // ReSharper disable ClassNeverInstantiated.Global
+    // ReSharper disable ClassNeverInstantiated.Global
+    // ReSharper disable MemberCanBeMadeStatic.Local
+    // ReSharper disable MemberCanBeMadeStatic.Global
     public class EventManager : Singleton<EventManager> {
-        private static readonly string _logTag = "EventManager";
-        private static readonly SimplePool<EventEntity> _eventEntityPool = new ();
+        private const string LOGTag = "EventManager";
+        private static readonly SimplePool<EventEntity> EventEntityPool = new ();
         //Dictionary<EventType, EventEntity>
         //这里不使用EventType作为键值的原因是枚举没有时限IEquatable接口,字典使用Enum为键时会触发装箱
-        private static readonly Dictionary<int, EventEntity> _eventDict = new ();
+        private static readonly Dictionary<int, EventEntity> EventDict = new ();
         public void Launch() {
-            Utils.Log(_logTag,"event manager is start");
+            Utils.Log(LOGTag,"event manager is start");
         }
         
         /// <summary>
@@ -22,14 +27,14 @@ namespace Framework.Manager {
         /// <param name="type">事件类型</param>
         /// <param name="callback">有参事件触发回调</param>
         public void Register(EventType type, Action<dynamic> callback) {
-            Utils.Log(_logTag,$"register => EventType.{type.ToString()}");
-            int type2Int = (int) type;
-            if (!_eventDict.ContainsKey(type2Int)) {
-                EventEntity e = _eventEntityPool.Allocate();
-                _eventDict[type2Int] = e;
+            Utils.Log(LOGTag,$"register => EventType.{type.ToString()}");
+            var type2Int = (int) type;
+            if (!EventDict.ContainsKey(type2Int)) {
+                var e = EventEntityPool.Allocate();
+                EventDict[type2Int] = e;
                 e.AddCallback(callback);
             } else {
-                _eventDict[type2Int].AddCallback(callback);
+                EventDict[type2Int].AddCallback(callback);
             }
         }
         /// <summary>
@@ -38,14 +43,14 @@ namespace Framework.Manager {
         /// <param name="type">事件类型</param>
         /// <param name="callback">无参事件触发回调</param>
         public void Register(EventType type, Action callback) {
-            Utils.Log(_logTag,$"register => EventType.{type.ToString()}");
-            int type2Int = (int) type;
-            if (!_eventDict.ContainsKey(type2Int)) {
-                EventEntity e = _eventEntityPool.Allocate();
-                _eventDict[type2Int] = e;
+            Utils.Log(LOGTag,$"register => EventType.{type.ToString()}");
+            var type2Int = (int) type;
+            if (!EventDict.ContainsKey(type2Int)) {
+                var e = EventEntityPool.Allocate();
+                EventDict[type2Int] = e;
                 e.AddCallback(callback);
             } else {
-                _eventDict[type2Int].AddCallback(callback);
+                EventDict[type2Int].AddCallback(callback);
             }
         }
         
@@ -55,14 +60,13 @@ namespace Framework.Manager {
         /// <param name="type">事件类型</param>
         /// <param name="callback">有参事件触发回调</param>
         public void Remove(EventType type, Action<dynamic> callback) {
-            Utils.Log(_logTag,$"remove => EventType.{type.ToString()}");
-            int type2Int = (int) type;
-            if (_eventDict.ContainsKey(type2Int)) {
-                _eventDict[type2Int].RemoveCallback(callback);
-                if (_eventDict[type2Int].CanRemove) {
-                    _eventEntityPool.Recycle(_eventDict[type2Int]);
-                    // EventQueue.Remove(type);
-                }
+            Utils.Log(LOGTag,$"remove => EventType.{type.ToString()}");
+            var type2Int = (int) type;
+            if (!EventDict.ContainsKey(type2Int)) return;
+            EventDict[type2Int].RemoveCallback(callback);
+            if (EventDict[type2Int].CanRemove) {
+                EventEntityPool.Recycle(EventDict[type2Int]);
+                // EventQueue.Remove(type);
             }
         }
         
@@ -72,27 +76,27 @@ namespace Framework.Manager {
         /// <param name="type">事件类型</param>
         /// <param name="callback">无参事件触发回调</param>
         public void Remove(EventType type, Action callback) {
-            Utils.Log(_logTag,$"remove => EventType.{type.ToString()}");
-            int type2Int = (int) type;
-            if (_eventDict.ContainsKey(type2Int)) {
-                _eventDict[type2Int].RemoveCallback(callback);
-                if (_eventDict[type2Int].CanRemove) {
-                    // EventQueue.Remove(type);
-                    _eventEntityPool.Recycle(_eventDict[type2Int]);
-                }
+            Utils.Log(LOGTag,$"remove => EventType.{type.ToString()}");
+            var type2Int = (int) type;
+            if (!EventDict.ContainsKey(type2Int)) return;
+            EventDict[type2Int].RemoveCallback(callback);
+            if (EventDict[type2Int].CanRemove) {
+                // EventQueue.Remove(type);
+                EventEntityPool.Recycle(EventDict[type2Int]);
             }
         }
         
+        // ReSharper disable Unity.PerformanceAnalysis
         /// <summary>
         /// 事件派发
         /// </summary>
         /// <param name="type">事件类型</param>
         /// <param name="data">事件传递数据</param>
         public void Dispatch(EventType type, dynamic data = null) {
-            Utils.Log(_logTag,$"dispatch => EventType.{type.ToString()}");
-            int type2Int = (int) type;
-            if (_eventDict != null && _eventDict.ContainsKey(type2Int)) {
-                _eventDict[type2Int].Execute(data);
+            Utils.Log(LOGTag,$"dispatch => EventType.{type.ToString()}");
+            var type2Int = (int) type;
+            if (EventDict != null && EventDict.ContainsKey(type2Int)) {
+                EventDict[type2Int].Execute(data);
             }
         }
         
@@ -123,15 +127,11 @@ namespace Framework.Manager {
             /// <param name="data"></param>
             internal void Execute(dynamic data) {
                 _lock = true;
-                foreach (var c in DynamicCallbackList) {
-                    if (!DynamicRemoveList.Contains(c)) {
-                        c?.Invoke(data);
-                    }
+                foreach (var c in DynamicCallbackList.Where(c => !DynamicRemoveList.Contains(c))) {
+                    c?.Invoke(data);
                 }
-                foreach (var c in CallbackList) {
-                    if (!RemoveList.Contains(c)) {
-                        c?.Invoke();
-                    }
+                foreach (var c in CallbackList.Where(c => !RemoveList.Contains(c))) {
+                    c?.Invoke();
                 }
                 //true remove
                 foreach (var c in DynamicRemoveList) {

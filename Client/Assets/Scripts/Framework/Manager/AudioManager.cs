@@ -9,6 +9,9 @@ using Framework.Pool;
 using Framework.Singleton;
 
 namespace Framework.Manager {
+    // ReSharper disable MemberCanBePrivate.Global
+    // ReSharper disable ClassNeverInstantiated.Global
+    // ReSharper disable Unity.PerformanceCriticalCodeInvocation
     public class AudioManager : Singleton<AudioManager> {
         public void Launch() {
             //TODO:读取用户配置文件
@@ -16,12 +19,12 @@ namespace Framework.Manager {
             GlobalVolume = 1;
             EffectVolume = 1;
             BgmVolume = 1;
-            Utils.Log(_logTag,"the audio initialization settings are complete");
+            Utils.Log(LOGTag,"the audio initialization settings are complete");
         }
         private AudioSource _bgmAudioSource;
-        private readonly string _logTag = "AudioManager";
+        private const string LOGTag = "AudioManager";
         //特效音乐列表
-        private readonly List<AudioSource> effectAudioList = new();
+        private readonly List<AudioSource> _effectAudioList = new();
         //特效音乐对象池
         private PrefabPool<AudioSource> _audioSourcePool;
         private PrefabPool<AudioSource> AudioSourcePool => _audioSourcePool ??= new PrefabPool<AudioSource>();
@@ -29,32 +32,31 @@ namespace Framework.Manager {
         private Transform _audioRoot;
         private Transform AudioRoot {
             get {
-                if (_audioRoot == null) {
-                    _audioRoot= new GameObject().transform;
-                    var trs = _audioRoot;
-                    trs.UDontDestroyOnLoad();
-                    trs.position = Vector3.zero;
-                    trs.localPosition = Vector3.zero;
-                    trs.localRotation = Quaternion.identity;
-                    trs.localScale = Vector3.one;
-                    trs.name = "AudioRoot";
-                }
+                // ReSharper disable once Unity.PerformanceCriticalCodeNullComparison
+                if (_audioRoot != null) return _audioRoot;
+                _audioRoot= new GameObject().transform;
+                var trs = _audioRoot;
+                trs.UDontDestroyOnLoad();
+                trs.position = Vector3.zero;
+                trs.localPosition = Vector3.zero;
+                trs.localRotation = Quaternion.identity;
+                trs.localScale = Vector3.one;
+                trs.name = "AudioRoot";
                 return _audioRoot;
             }
         }
         public AudioSource BgmAudioSource {
             get {
-                if (_bgmAudioSource is null) {
-                    var trs = new GameObject().transform;
-                    trs.SetParent(AudioRoot);
-                    trs.localPosition = Vector3.zero;
-                    trs.localRotation = Quaternion.identity;
-                    trs.localScale = Vector3.one;
-                    trs.name = DEF.AudioType.BGM.ToString();
-                    _bgmAudioSource = trs.UAddComponent<AudioSource>() as AudioSource;
-                    _bgmAudioSource.loop = true;
-                    _bgmAudioSource.playOnAwake = false;
-                }
+                if (_bgmAudioSource is not null) return _bgmAudioSource;
+                var trs = new GameObject().transform;
+                trs.SetParent(AudioRoot);
+                trs.localPosition = Vector3.zero;
+                trs.localRotation = Quaternion.identity;
+                trs.localScale = Vector3.one;
+                trs.name = DEF.AudioType.BGM.ToString();
+                _bgmAudioSource = trs.UAddComponent<AudioSource>() as AudioSource;
+                _bgmAudioSource.loop = true;
+                _bgmAudioSource.playOnAwake = false;
                 return _bgmAudioSource;
             }
         }
@@ -96,6 +98,7 @@ namespace Framework.Manager {
             get => _mute;
             set {
                 _mute = value;
+                // ReSharper disable once Unity.PerformanceCriticalCodeInvocation
                 SetMute();
             }   
         }
@@ -113,26 +116,28 @@ namespace Framework.Manager {
             
         }
 
+        // ReSharper disable Unity.PerformanceAnalysis
         /// <summary>
         /// 更新全局音量
         /// </summary>
-        void UpdateGlobalVolume() {
+        private void UpdateGlobalVolume() {
             UpdateBgmVolume();
             UpdateEffectVolume();
         }
         /// <summary>
         /// 更新背景音乐音量
         /// </summary>
-        void UpdateBgmVolume() {
+        private void UpdateBgmVolume() {
             BgmAudioSource.volume = BgmVolume * GlobalVolume;
         }
         /// <summary>
         /// 更新特效音乐音量
         /// </summary>
-        void UpdateEffectVolume() {
-            for (int i = effectAudioList.Count - 1; i >= 0; i--) {
-                if (effectAudioList[i] != null) {
-                    SetEffectAudioPlay(effectAudioList[i]);
+        private void UpdateEffectVolume() {
+            for (var i = _effectAudioList.Count - 1; i >= 0; i--) {
+                // ReSharper disable once Unity.PerformanceCriticalCodeNullComparison
+                if (_effectAudioList[i] != null) {
+                    SetEffectAudioPlay(_effectAudioList[i]);
                 }
             }
         }
@@ -140,6 +145,7 @@ namespace Framework.Manager {
         public void SetEffectAudioPlay(AudioSource audioSource,float spatial = -1) {
             audioSource.mute = Mute;
             audioSource.volume = EffectVolume * GlobalVolume;
+            // ReSharper disable once CompareOfFloatsByEqualityOperator
             if (spatial != -1) {
                 audioSource.spatialBlend = spatial;
             }
@@ -150,21 +156,21 @@ namespace Framework.Manager {
         
         private void RecycleAudioPlay(AudioSource audioSource) {
             AudioSourcePool.Recycle(audioSource);
-            effectAudioList.Remove(audioSource);
+            _effectAudioList.Remove(audioSource);
         }
         
         private AudioSource GetAudioPlay(bool is3d,Vector3 position) {
-            AudioSource audioSource = AudioSourcePool.Allocate();
+            var audioSource = AudioSourcePool.Allocate();
             var t = audioSource.transform;
             t.SetParent(AudioRoot);
             t.position = position;
             t.localRotation = Quaternion.identity;
             t.localScale = Vector3.one;
             if (!t.name.StartsWith($"{DEF.AudioType.EFFECT}")) {
-                t.name = $"{DEF.AudioType.EFFECT}_{effectAudioList.Count}";
+                t.name = $"{DEF.AudioType.EFFECT}_{_effectAudioList.Count}";
             }
             audioSource.spatialBlend = is3d ? 1 : 0;
-            effectAudioList.Add(audioSource);
+            _effectAudioList.Add(audioSource);
             return audioSource;
         }
 
@@ -178,9 +184,10 @@ namespace Framework.Manager {
         /// <param name="callback">播放完回调</param>
         /// <param name="callbackDelaySecond">回调延时</param>
         public void PlayAudio(AudioClip clip,Vector3 position,float volumeScale = 1,bool is3d = true,UnityAction callback = null,float callbackDelaySecond = 0) {
-            AudioSource audioSource = GetAudioPlay(is3d,position);
+            var audioSource = GetAudioPlay(is3d,position);
             audioSource.mute = Mute;
             audioSource.PlayOneShot(clip,volumeScale);
+            // ReSharper disable once Unity.PerformanceCriticalCodeNullComparison
             var clipMillisecond = clip != null ? clip.length * 1000 : 0;
             Timer.New(e => {
                 callback?.Invoke();

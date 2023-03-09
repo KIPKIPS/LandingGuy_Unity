@@ -7,6 +7,7 @@ namespace Framework.Singleton {
     /// MonoSingleton路径
     /// </summary>
     [AttributeUsage(AttributeTargets.Class)] //这个特性只能标记在Class上
+    // ReSharper disable once ClassNeverInstantiated.Global
     public class MonoSingletonPath : Attribute {
         public MonoSingletonPath(string pathInHierarchy) => PathInHierarchy = pathInHierarchy;
         public string PathInHierarchy { get; }

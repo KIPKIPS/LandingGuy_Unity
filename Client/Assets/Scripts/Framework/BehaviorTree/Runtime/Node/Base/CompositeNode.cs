@@ -8,7 +8,7 @@ namespace Framework.AI.BehaviorTree {
     public abstract class CompositeNode : Node {
         [HideInInspector]public List<Node> children = new List<Node>();
         public override Node Clone() {
-            CompositeNode node = Instantiate(this);
+            var node = Instantiate(this);
             
             node.children = children.ConvertAll(n=>n.Clone());
             return node;

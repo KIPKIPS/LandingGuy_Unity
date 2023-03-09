@@ -6,14 +6,18 @@ using Framework.Singleton;
 using UnityEngine;
 
 namespace Framework.Manager {
+    // ReSharper disable InconsistentNaming
+    // ReSharper disable ClassNeverInstantiated.Global
+    // ReSharper disable MemberCanBeMadeStatic.Local
+    // ReSharper disable MemberCanBeMadeStatic.Global
     public class MonoManager:PersistentMonoSingleton<MonoManager> {
         public event Action UPDATE;
         public event Action FIXEDUPDATE;
         public event Action ONGUI;
         public event Action LATEUPDATE;
-        private readonly string _logTag = "MonoManager";
+        private const string LOGTag = "MonoManager";
         public void Launch() {
-            Utils.Log(_logTag,"mono manager is start");
+            Utils.Log(LOGTag,"mono manager is start");
         }
 
         #region Unity生命周期函数
@@ -41,6 +45,7 @@ namespace Framework.Manager {
         public void UDontDestroyOnLoad(UnityEngine.Object obj) {
             DontDestroyOnLoad(obj);
         }
+        // ReSharper disable Unity.PerformanceAnalysis
         /// <summary>
         /// 添加组件
         /// </summary>

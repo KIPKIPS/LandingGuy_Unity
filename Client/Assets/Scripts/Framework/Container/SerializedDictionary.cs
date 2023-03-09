@@ -8,8 +8,8 @@ using System.Collections.Generic;
 namespace Framework.Container {
     [Serializable]
     public class SerializedDictionary<TKey, TValue> : Dictionary<TKey, TValue>, ISerializationCallbackReceiver {
-        [SerializeField] List<TKey> keys = new ();
-        [SerializeField] List<TValue> values = new ();
+        [SerializeField] private List<TKey> keys = new ();
+        [SerializeField] private List<TValue> values = new ();
 
         /// <summary>
         /// OnBeforeSerialize implementation.
@@ -17,9 +17,9 @@ namespace Framework.Container {
         public void OnBeforeSerialize() {
             keys.Clear();
             values.Clear();
-            foreach (var kvp in this) {
-                keys.Add(kvp.Key);
-                values.Add(kvp.Value);
+            foreach (var (key, value) in this) {
+                keys.Add(key);
+                values.Add(value);
             }
         }
 
@@ -27,7 +27,7 @@ namespace Framework.Container {
         /// OnAfterDeserialize implementation
         /// </summary>
         public void OnAfterDeserialize() {
-            for (int i = 0; i < keys.Count; i++) {
+            for (var i = 0; i < keys.Count; i++) {
                 Add(keys[i], values[i]);
             }
             keys.Clear();

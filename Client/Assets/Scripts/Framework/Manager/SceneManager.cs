@@ -7,11 +7,14 @@ using Framework.Singleton;
 using UnityEngine;
 
 namespace Framework.Manager {
+    // ReSharper disable ClassNeverInstantiated.Global
+    // ReSharper disable MemberCanBeMadeStatic.Local
+    // ReSharper disable MemberCanBeMadeStatic.Global
     public class SceneManager: Singleton<SceneManager> {
-        private readonly string _logTag = "SceneManager";
+        private const string LOGTag = "SceneManager";
 
         public void Launch() {
-            Utils.Log(_logTag, "scene manager is work");
+            Utils.Log(LOGTag, "scene manager is work");
         }
         /// <summary>
         /// 同步加载世界
@@ -22,7 +25,7 @@ namespace Framework.Manager {
             try {
                 UnityEngine.SceneManagement.SceneManager.LoadScene(sceneName);
                 callback?.Invoke();
-            } catch (Exception e) {
+            } catch (Exception) {
                 Event.Dispatch(EventType.SCENE_FAILURE,0);
             }
         }
@@ -34,14 +37,14 @@ namespace Framework.Manager {
         /// <param name="callback">加载完成回调</param>
         public void LoadSceneAsync(string sceneName,Action callback = null) {
             try {
-                this.StartCoroutine(DoLoadSceneAsync(sceneName,callback));
-            } catch (Exception e) {
+                Utils.StartCoroutine(DoLoadSceneAsync(sceneName,callback));
+            } catch (Exception) {
                 Event.Dispatch(EventType.SCENE_FAILURE,0);
             }
         }
-
+        
         private IEnumerator DoLoadSceneAsync(string sceneName,Action callback = null) {
-            AsyncOperation ao = UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(sceneName);
+            var ao = UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(sceneName);
             while (!ao.isDone) {
                 Event.Dispatch(EventType.SCENE_LOADING,ao.progress);
                 yield return ao.progress;

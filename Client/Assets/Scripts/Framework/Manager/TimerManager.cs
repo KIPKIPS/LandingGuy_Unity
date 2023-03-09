@@ -4,27 +4,29 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using Framework.Pool;
 using Framework.Singleton;
+// ReSharper disable ClassNeverInstantiated.Global
 namespace Framework.Manager {
     public class TimerManager: Singleton<TimerManager> {
-        private readonly string _logTag = "TimerManager";
+        private const string LOGTag = "TimerManager";
         private readonly Dictionary<int, TimerEntity> _timerEntityDict = new();
         private readonly Stack<int> _removeStack = new();
         
         private readonly SimplePool<TimerEntity> _timerEntityPool = new();
         private int _allocateTimerId;
-        private Coroutine triggerTimer;
+        private Coroutine _triggerTimer;
         public void Launch() {
-            triggerTimer = this.StartCoroutine(TriggerTimer());
-            Utils.Log(_logTag,"timer manager is start");
+            _triggerTimer = Utils.StartCoroutine(TriggerTimer());
+            Utils.Log(LOGTag,"timer manager is start");
         }
         /// <summary>
         /// 释放定时器的相关数据
         /// </summary>
         public override void Dispose() {
-            this.StopCoroutine(triggerTimer);
+            Utils.StopCoroutine(_triggerTimer);
             _timerEntityDict.Clear();
             _removeStack.Clear();
             _timerEntityPool.Clear();
@@ -42,7 +44,7 @@ namespace Framework.Manager {
                 _allocateTimerId = 0;
             }
             _allocateTimerId++;
-            TimerEntity e = _timerEntityPool.Allocate();
+            var e = _timerEntityPool.Allocate();
             e.SetEntity(millisecond, callback, _allocateTimerId, times);
             _timerEntityDict[_allocateTimerId] = e;
             return e;
@@ -56,7 +58,7 @@ namespace Framework.Manager {
             if (_timerEntityDict.ContainsKey(timerId)) {
                 _timerEntityPool.Recycle(_timerEntityDict[timerId]);
             } else {
-                Utils.LogError(_logTag, "Timer " + timerId + " is not exist !");
+                Utils.LogError(LOGTag, "Timer " + timerId + " is not exist !");
             }
         }
         
@@ -65,17 +67,15 @@ namespace Framework.Manager {
         /// </summary>
         /// <returns></returns>
         private IEnumerator TriggerTimer() {
-            int i, count;
             while (true) {
-                foreach (KeyValuePair<int, TimerEntity> e in _timerEntityDict) {
-                    if (!e.Value.Check()) {
-                        _removeStack.Push(e.Key);
-                    }
+                foreach (var e in _timerEntityDict.Where(e => !e.Value.Check())) {
+                    _removeStack.Push(e.Key);
                 }
                 if (_removeStack.Count > 0) {
-                    count = _removeStack.Count;
+                    var count = _removeStack.Count;
+                    int i;
                     for (i = 0; i < count; i++) {
-                        int id = _removeStack.Pop();
+                        var id = _removeStack.Pop();
                         if (_timerEntityDict.ContainsKey(id)) {
                             _timerEntityPool.Recycle(_timerEntityDict[id]);
                         }
@@ -96,7 +96,7 @@ namespace Framework.Manager {
             private int _id;
             private int _times;
             private int _curTimes;
-            private bool isStart;
+            private bool _isStart;
             private bool Loop => _times != 1;
  
             /// <summary>
@@ -104,20 +104,20 @@ namespace Framework.Manager {
             /// </summary>
             public void Start() {
                 _startTime = Time.time;
-                isStart = true;
+                _isStart = true;
             }
             /// <summary>
             /// 销毁定时器
             /// </summary>
             public void Destroy() {
                 Instance.DestroyTimer(_id);
-                isStart = false;
+                _isStart = false;
             }
             /// <summary>
             /// 回收定时器
             /// </summary>
             public void OnRecycled() {
-                isStart = false;
+                _isStart = false;
             }
             public bool IsRecycled { get; set; }
             /// <summary>
@@ -139,35 +139,30 @@ namespace Framework.Manager {
             /// <returns>是否继续执行</returns>
             internal bool Check() {
                 if (IsRecycled) return false;
-                if (isStart) {
-                    if (Loop) {
-                        //无限循环
-                        if (_times < 1) {
-                            if (Time.time - _startTime >= _gap) {
-                                _startTime = Time.time; //重置
-                                _callback?.Invoke(this);
-                            }
-                            return true;
-                        }
-                        //循环次数耗尽
-                        if (_curTimes >= _times) {
-                            return false;
-                        }
-                        //执行循环
-                        if (Time.time - _startTime >= _gap) {
-                            _startTime = Time.time; //重置
-                            _curTimes++;
-                            _callback?.Invoke(this);
-                        }
+                if (!_isStart) return true;
+                if (Loop) {
+                    //无限循环
+                    if (_times < 1) {
+                        if (!(Time.time - _startTime >= _gap)) return true;
+                        _startTime = Time.time; //重置
+                        _callback?.Invoke(this);
                         return true;
                     }
-                    //单次计时器
-                    if (Time.time - _startTime >= _gap) {
-                        _callback?.Invoke(this);
+                    //循环次数耗尽
+                    if (_curTimes >= _times) {
                         return false;
                     }
+                    //执行循环
+                    if (!(Time.time - _startTime >= _gap)) return true;
+                    _startTime = Time.time; //重置
+                    _curTimes++;
+                    _callback?.Invoke(this);
+                    return true;
                 }
-                return true;
+                //单次计时器
+                if (!(Time.time - _startTime >= _gap)) return true;
+                _callback?.Invoke(this);
+                return false;
             }
         }
     }

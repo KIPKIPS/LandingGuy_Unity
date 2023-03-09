@@ -6,9 +6,9 @@ using System.Collections.Generic;
 namespace Framework.Pool {
     public abstract class BasePool<T> : IPool<T> {
         // Gets the current count.
-        protected int CurCount =>_cacheStack.Count;
-        protected IFactory<T> _factory; //定义实现接口的类对象
-        protected readonly Stack<T> _cacheStack = new Stack<T>();
+        protected int CurCount => CacheStack.Count;
+        protected IFactory<T> Factory; //定义实现接口的类对象
+        protected readonly Stack<T> CacheStack = new();
 
         // default is 5
         protected int MaxCount = 5;
@@ -17,7 +17,7 @@ namespace Framework.Pool {
         /// </summary>
         /// <returns></returns>
         public virtual T Allocate() {
-            return _cacheStack.Count == 0 ? _factory.Create() : _cacheStack.Pop();
+            return CacheStack.Count == 0 ? Factory.Create() : CacheStack.Pop();
         }
         /// <summary>
         /// 回收对象

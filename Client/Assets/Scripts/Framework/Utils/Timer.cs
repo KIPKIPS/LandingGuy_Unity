@@ -5,17 +5,19 @@ using Framework.Manager;
 using TimerEntity = Framework.Manager.TimerManager.TimerEntity;
 using System;
 namespace Framework {
+    // ReSharper disable ClassNeverInstantiated.Global
     public class Timer {
-        private static TimerEntity entity;
+        private static TimerEntity _entity;
+        // ReSharper disable Unity.PerformanceAnalysis
         public static TimerEntity New(Action<TimerEntity> callback,int millisecond, int times = 1) {
-            entity = TimerManager.Instance.CreateTimer(callback, millisecond, times);
-            return entity;
+            _entity = TimerManager.Instance.CreateTimer(callback, millisecond, times);
+            return _entity;
         }
         public void Destroy() {
-            entity.Destroy();
+            _entity.Destroy();
         }
         public void Start() {
-            entity.Start();
+            _entity.Start();
         }
     }
 }

@@ -12,8 +12,8 @@ namespace Framework.Pool {
         /// </summary>
         /// <returns></returns>
         public T Create() {
-            T g = _prefab is null ? new GameObject().AddComponent<T>() : Object.Instantiate(_prefab, _root);
-            Transform t = g.gameObject.transform;
+            var g = _prefab is null ? new GameObject().AddComponent<T>() : Object.Instantiate(_prefab, _root);
+            var t = g.gameObject.transform;
             t.localScale = Vector3.one;
             t.localPosition = Vector3.zero;
             t.localRotation = Quaternion.identity;

@@ -8,7 +8,7 @@ namespace Framework.AI.BehaviorTree {
         [HideInInspector]public Node child;
         
         public override Node Clone() {
-            DecoratorNode node = Instantiate(this);
+            var node = Instantiate(this);
             node.child = child.Clone();
             return node;
         }
