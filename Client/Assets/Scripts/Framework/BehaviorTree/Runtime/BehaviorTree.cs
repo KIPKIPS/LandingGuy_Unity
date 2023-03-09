@@ -8,12 +8,13 @@ using State = Framework.AI.BehaviorTree.Node.State;
 using UnityEditor;
 
 namespace Framework.AI.BehaviorTree {
-    [CreateAssetMenu()]
+    // ReSharper disable MemberCanBeMadeStatic.Global
+    [CreateAssetMenu]
     public class BehaviorTree : ScriptableObject {
-        internal static string LOGTag = "BehaviorTree";
-        public Node rootNode;
-        public State treeState = State.Running;
-        public List<Node> nodes = new List<Node>();
+        internal const string LOGTag = "BehaviorTree";
+        [HideInInspector]public Node rootNode;
+        [HideInInspector]public State treeState = State.Running;
+        [HideInInspector]public List<Node> nodes = new ();
         public State Update() {
             if (rootNode.state == State.Running) {
                 treeState = rootNode.Update();
@@ -22,7 +23,7 @@ namespace Framework.AI.BehaviorTree {
         }
 
         public Node CreateNode(Type type) {
-            Node node = CreateInstance(type) as Node;
+            var node = CreateInstance(type) as Node;
             node.name = type.Name;
             node.guid = GUID.Generate().ToString();
             nodes.Add(node);
@@ -38,46 +39,46 @@ namespace Framework.AI.BehaviorTree {
         }
 
         public void AddChild(Node parent,Node child) {
-            DecoratorNode decorator = parent as DecoratorNode;
+            var decorator = parent as DecoratorNode;
             if (decorator) {
                 decorator.child = child;
             }
-            CompositeNode composite = parent as CompositeNode;
+            var composite = parent as CompositeNode;
             if (composite) {
                 composite.children.Add(child);
             }
             
-            RootNode root = parent as RootNode;
+            var root = parent as RootNode;
             if (root) {
                 root.child = child;
             }
         }
         public void RemoveChild(Node parent,Node child) {
-            DecoratorNode decorator = parent as DecoratorNode;
+            var decorator = parent as DecoratorNode;
             if (decorator) {
                 decorator.child = null;
             }
-            CompositeNode composite = parent as CompositeNode;
+            var composite = parent as CompositeNode;
             if (composite) {
                 composite.children.Remove(child);
             }
-            RootNode root = parent as RootNode;
+            var root = parent as RootNode;
             if (root) {
                 root.child = null;
             }
         }
         
         public List<Node> GetChildren(Node parent) {
-            CompositeNode composite = parent as CompositeNode;
+            var composite = parent as CompositeNode;
             if (composite) {
                 return composite.children;
             }
-            List<Node> children = new List<Node>();
-            DecoratorNode decorator = parent as DecoratorNode;
+            var children = new List<Node>();
+            var decorator = parent as DecoratorNode;
             if (decorator && decorator.child != null) {
                 children.Add(decorator.child);
             }
-            RootNode root = parent as RootNode;
+            var root = parent as RootNode;
             if (root && root.child != null) {
                 children.Add(root.child);
             }
@@ -85,7 +86,7 @@ namespace Framework.AI.BehaviorTree {
         }
 
         public BehaviorTree Clone() {
-            BehaviorTree tree = Instantiate(this);
+            var tree = Instantiate(this);
             tree.rootNode = tree.rootNode.Clone();
             return tree;
         }
