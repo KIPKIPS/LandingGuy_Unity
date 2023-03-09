@@ -2,6 +2,7 @@
 // date:2023.02.08 12:08
 // describe:行为树编辑器
 using UnityEditor;
+using UnityEditor.Callbacks;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -9,11 +10,20 @@ namespace Framework.AI.BehaviorTree {
     public class BehaviorTreeEditor : EditorWindow {
         private BehaviorTreeView _treeView;
         private InspectorView _inspectorView;
-        private static readonly string AssetPath = "Assets/Scripts/Framework/BehaviorTree/Editor/BehaviorTreeEditor";
+        private const string AssetPath = "Assets/Scripts/Framework/BehaviorTree/Editor/BehaviorTreeEditor";
         [MenuItem("Tools/AI/BehaviorTreeEditor")]
         public static void OpenWindow() {
             var wnd = GetWindow<BehaviorTreeEditor>();
             wnd.titleContent = new GUIContent("BehaviorTreeEditor");
+        }
+        
+        [OnOpenAssetAttribute(1)]
+        public static bool Open(int instanceID) {
+            var open = Selection.activeObject.name == EditorUtility.InstanceIDToObject(instanceID).name;
+            if (open) {
+                OpenWindow();
+            }
+            return open;
         }
 
         public static string GetAssetPath(string suffix) => AssetPath + suffix;
