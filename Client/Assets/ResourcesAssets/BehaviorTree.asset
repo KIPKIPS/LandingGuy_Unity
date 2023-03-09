@@ -49,5 +49,5 @@ MonoBehaviour:
   state: 0
   started: 0
   guid: 5a967181dd000894cb2af08587d991b5
-  position: {x: 320.40002, y: 79.000015}
-  message: helo
+  position: {x: 323, y: -15}
+  message: debug node execute!
