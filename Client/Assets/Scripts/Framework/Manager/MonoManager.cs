@@ -10,6 +10,7 @@ namespace Framework.Manager {
     // ReSharper disable ClassNeverInstantiated.Global
     // ReSharper disable MemberCanBeMadeStatic.Local
     // ReSharper disable MemberCanBeMadeStatic.Global
+    // ReSharper disable EventNeverSubscribedTo.Global
     public class MonoManager:PersistentMonoSingleton<MonoManager> {
         public event Action UPDATE;
         public event Action FIXEDUPDATE;
@@ -22,18 +23,10 @@ namespace Framework.Manager {
 
         #region Unity生命周期函数
 
-        private void Update() {
-            UPDATE?.Invoke();
-        }
-        private void FixedUpdate() {
-            FIXEDUPDATE?.Invoke();
-        }
-        private void OnGUI() {
-            ONGUI?.Invoke();
-        }
-        private void LateUpdate() {
-            LATEUPDATE?.Invoke();
-        }
+        private void Update() => UPDATE?.Invoke();
+        private void FixedUpdate() => FIXEDUPDATE?.Invoke();
+        private void OnGUI() => ONGUI?.Invoke();
+        private void LateUpdate() => LATEUPDATE?.Invoke();
 
         #endregion
 
@@ -42,9 +35,7 @@ namespace Framework.Manager {
         /// 切换场景时不销毁
         /// </summary>
         /// <param name="obj">不销毁的对象</param>
-        public void UDontDestroyOnLoad(UnityEngine.Object obj) {
-            DontDestroyOnLoad(obj);
-        }
+        public void UDontDestroyOnLoad(UnityEngine.Object obj) => DontDestroyOnLoad(obj);
         // ReSharper disable Unity.PerformanceAnalysis
         /// <summary>
         /// 添加组件
@@ -52,9 +43,7 @@ namespace Framework.Manager {
         /// <param name="trs">挂载的Transform组件</param>
         /// <typeparam name="T">组件类型</typeparam>
         /// <returns>添加的组件</returns>
-        public Component UAddComponent<T>(Transform trs) where T:Component {
-            return trs.gameObject.AddComponent<T>();
-        }
+        public Component UAddComponent<T>(Transform trs) where T:Component => trs.gameObject.AddComponent<T>();
             
         #endregion
     }

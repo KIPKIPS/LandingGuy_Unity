@@ -11,9 +11,7 @@ namespace Framework.Pool {
         /// <summary>
         /// 构造器
         /// </summary>
-        public SimplePool() {
-            Factory = new BaseFactory<T>();
-        }
+        public SimplePool() => Factory = new BaseFactory<T>();
         
         /// <summary>
         /// 分配函数
@@ -40,8 +38,6 @@ namespace Framework.Pool {
             return true;
         }
 
-        public void Clear() {
-            CacheStack.Clear();
-        }
+        public void Clear() => CacheStack.Clear();
     }
 }

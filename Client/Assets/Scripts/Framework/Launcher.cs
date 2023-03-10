@@ -1,7 +1,6 @@
 ﻿// author:KIPKIPS
 // date:2023.02.02 22:37
 // describe:框架启动器
-using System.Collections.Generic;
 using UnityEngine;
 using Framework.Manager;
 using SceneManager = Framework.Manager.SceneManager;
@@ -20,12 +19,6 @@ namespace Framework {
             SceneManager.Instance.Launch();
             #region Test
             Event.Register(EventType.SCENE_LOAD_FINISHED, d => { Utils.Log(d); });
-            Dictionary<string, Dictionary<int, string>> dict = new();
-            var inner = new Dictionary<int, string> {{1, "sdf"}, {2, "ssss"}};
-            dict.Add("das", inner);
-            dict.Add("ss", inner);
-            dict.Add("aaa", inner);
-            Utils.Log(dict, new[] {1, 2});
             #endregion
         }
         private void Update() {

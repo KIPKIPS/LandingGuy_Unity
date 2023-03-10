@@ -29,8 +29,6 @@ namespace Framework.Pool {
             _root = root;
         }
         
-        public GoFactory(Transform root = null) {
-            _root = root;
-        }
+        public GoFactory(Transform root = null) => _root = root;
     }
 }

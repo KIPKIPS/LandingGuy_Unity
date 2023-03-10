@@ -116,9 +116,7 @@ namespace Framework.Manager {
             /// <summary>
             /// 回收定时器
             /// </summary>
-            public void OnRecycled() {
-                _isStart = false;
-            }
+            public void OnRecycled() => _isStart = false;
             public bool IsRecycled { get; set; }
             /// <summary>
             /// 设置定时器

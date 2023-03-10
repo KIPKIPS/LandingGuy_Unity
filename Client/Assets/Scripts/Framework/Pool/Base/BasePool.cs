@@ -16,9 +16,7 @@ namespace Framework.Pool {
         /// 请求分配对象
         /// </summary>
         /// <returns></returns>
-        public virtual T Allocate() {
-            return CacheStack.Count == 0 ? Factory.Create() : CacheStack.Pop();
-        }
+        public virtual T Allocate() => CacheStack.Count == 0 ? Factory.Create() : CacheStack.Pop();
         /// <summary>
         /// 回收对象
         /// </summary>

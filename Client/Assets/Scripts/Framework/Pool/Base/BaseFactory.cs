@@ -4,8 +4,6 @@
 
 namespace Framework.Pool {
     public class BaseFactory<T> : IFactory<T> where T : new() {
-        public T Create() {
-            return new T();
-        }
+        public T Create() => new ();
     }
 }

@@ -54,18 +54,14 @@ namespace Framework.Manager {
         /// </summary>
         /// <param name="obj">存储的对象</param>
         /// <param name="fileName">文件名称</param>
-        public void SaveFileToStorage(object obj, string fileName) {
-            SaveFile(obj,DEF.DataStoragePath + fileName);
-        }
+        public void SaveFileToStorage(object obj, string fileName) => SaveFile(obj,DEF.DataStoragePath + fileName);
         /// <summary>
         /// 从本地存储目录加载文件
         /// </summary>
         /// <param name="fileName">文件名称</param>
         /// <typeparam name="T">数据类型</typeparam>
         /// <returns>文件序列化为指定类型的对象</returns>
-        public T LoadFileAtStorage<T>(string fileName) where T : class {
-            return LoadFile<T>(DEF.DataStoragePath + fileName);
-        }
+        public T LoadFileAtStorage<T>(string fileName) where T : class => LoadFile<T>(DEF.DataStoragePath + fileName);
 
         #endregion
     }

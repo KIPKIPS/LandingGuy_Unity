@@ -18,9 +18,7 @@ namespace Framework.Pool {
         /// <summary>
         /// 构造器
         /// </summary>
-        protected ObservePool() {
-            Factory = new BaseFactory<T>();
-        }
+        protected ObservePool() => Factory = new BaseFactory<T>();
         /// <summary>
         /// 单例池容器
         /// </summary>
@@ -29,9 +27,7 @@ namespace Framework.Pool {
         /// <summary>
         /// 析构函数
         /// </summary>
-        public void Dispose() {
-            SingletonProperty<ObservePool<T>>.Dispose();
-        }
+        public void Dispose() => SingletonProperty<ObservePool<T>>.Dispose();
         
         /// <summary>
         /// 初始化函数
@@ -81,9 +77,7 @@ namespace Framework.Pool {
         /// <param name="obj">回收对象</param>
         /// <returns>是否回收成功</returns>
         public override bool Recycle(T obj) {
-            if (obj == null || obj.IsRecycled) {
-                return false;
-            }
+            if (obj == null || obj.IsRecycled) return false;
             if (MaxCount > 0 && CacheStack.Count >= MaxCount) {
                 obj.OnRecycled();
                 return false;
