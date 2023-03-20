@@ -51,7 +51,6 @@ namespace Framework.AI.BehaviorTree {
             var tree = Selection.activeObject as BehaviorTree;
             if (tree && AssetDatabase.CanOpenAssetInEditor(tree.GetInstanceID())) {
                 _treeView.PopulateView(tree);
-                
             }
         }
 

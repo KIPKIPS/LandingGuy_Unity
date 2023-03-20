@@ -14,7 +14,7 @@ public class NodeView : UnityEditor.Experimental.GraphView.Node {
     public Port Output;
     
     public NodeView(Node node) {
-        this.Node = node;
+        Node = node;
         title = node.name;
         viewDataKey = node.guid;
         style.left = node.position.x;

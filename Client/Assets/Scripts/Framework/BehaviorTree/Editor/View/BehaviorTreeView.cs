@@ -25,7 +25,7 @@ public class BehaviorTreeView : GraphView {
         styleSheets.Add(styleSheet);
     }
     public void PopulateView(BehaviorTree bt) {
-        this._tree = bt;
+        _tree = bt;
         graphViewChanged -= OnGraphViewChanged;
         DeleteElements(graphElements);
         graphViewChanged += OnGraphViewChanged;
