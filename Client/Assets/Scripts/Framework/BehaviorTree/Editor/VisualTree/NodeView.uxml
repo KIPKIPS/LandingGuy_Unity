@@ -27,8 +27,8 @@
                 </ui:VisualElement>
             </ui:VisualElement>
         </ui:VisualElement>
-        <ui:VisualElement name="input" style="width: 20px; height: 20px; position: absolute; left: 0; top: auto; right: auto; bottom: 0; max-width: 20px; max-height: 20px; min-height: 20px; min-width: 20px;" />
-        <ui:VisualElement name="output" style="width: 20px; height: 20px; position: absolute; left: 25px; top: auto; right: auto; bottom: 0;" />
+        <ui:VisualElement name="input" style="width: 20px; height: 20px; position: absolute; left: 0; top: auto; right: auto; bottom: 0; max-width: 20px; max-height: 20px; min-height: 20px; min-width: 20px; display: none;" />
+        <ui:VisualElement name="output" style="width: 20px; height: 20px; position: absolute; left: 25px; top: auto; right: auto; bottom: 0; display: none;" />
     </ui:VisualElement>
     <ui:VisualElement name="selection-border" picking-mode="Ignore" />
 </ui:UXML>

@@ -47,18 +47,19 @@ public class NodeView : UnityEditor.Experimental.GraphView.Node {
         set => base.title = value;
     }
     private void CreateInputPorts() {
+        PortWrapperView v = new PortWrapperView();
         switch (Node) {
             case ActionNode:
                 // Input = InstantiatePort(Orientation.Vertical, Direction.Input, Port.Capacity.Single, typeof(bool));
-                Input = PortView.Create<Edge>(Orientation.Vertical, Direction.Input, Port.Capacity.Single, typeof(bool));
+                Input = v.CreatePortView(Orientation.Vertical, Direction.Input, Port.Capacity.Single, typeof(bool));
                 break;
             case CompositeNode:
                 // Input = InstantiatePort(Orientation.Vertical, Direction.Input, Port.Capacity.Single, typeof(bool));
-                Input = PortView.Create<Edge>(Orientation.Vertical, Direction.Input, Port.Capacity.Single, typeof(bool));
+                Input = v.CreatePortView(Orientation.Vertical, Direction.Input, Port.Capacity.Single, typeof(bool))
                 break;
             case DecoratorNode:
                 // Input = InstantiatePort(Orientation.Vertical, Direction.Input, Port.Capacity.Single, typeof(bool));
-                Input = PortView.Create<Edge>(Orientation.Vertical, Direction.Input, Port.Capacity.Single, typeof(bool));
+                Input = v.CreatePortView(Orientation.Vertical, Direction.Input, Port.Capacity.Single, typeof(bool));
                 break;
             case RootNode:
                 break;
@@ -69,20 +70,21 @@ public class NodeView : UnityEditor.Experimental.GraphView.Node {
         inputContainer.Add(Input);
     }
     private void CreateOutputPorts() {
+        PortWrapperView v = new PortWrapperView();
         switch (Node) {
             case ActionNode:
                 break;
             case CompositeNode:
-                Output = PortView.Create<Edge>(Orientation.Vertical, Direction.Output, Port.Capacity.Multi, typeof(bool));
+                Output = v.CreatePortView(Orientation.Vertical, Direction.Output, Port.Capacity.Multi, typeof(bool));
                 // Output = InstantiatePort(Orientation.Vertical, Direction.Output, Port.Capacity.Multi, typeof(bool));
                 break;
             case DecoratorNode:
                 // Output = InstantiatePort(Orientation.Vertical, Direction.Output, Port.Capacity.Single, typeof(bool));
-                Output = PortView.Create<Edge>(Orientation.Vertical, Direction.Output, Port.Capacity.Single, typeof(bool));
+                Output = v.CreatePortView(Orientation.Vertical, Direction.Output, Port.Capacity.Single, typeof(bool));
                 break;
             case RootNode:
                 // Output = InstantiatePort(Orientation.Vertical, Direction.Output, Port.Capacity.Single, typeof(bool));
-                Output = PortView.Create<Edge>(Orientation.Vertical, Direction.Output, Port.Capacity.Single, typeof(bool));
+                Output = v.CreatePortView(Orientation.Vertical, Direction.Output, Port.Capacity.Single, typeof(bool));
                 break;
         }
         if (Output is null) return;

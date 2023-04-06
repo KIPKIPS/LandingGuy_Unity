@@ -85,7 +85,7 @@ namespace Framework.AI.BehaviorTree {
                 EditorUtility.SetDirty(root);
             }
         }
-
+#endif
         public List<Node> GetChildren(Node parent) {
             var composite = parent as CompositeNode;
             if (composite) {
@@ -102,12 +102,13 @@ namespace Framework.AI.BehaviorTree {
             }
             return children;
         }
-#endif
+
 
         private void Traverse(Node node, Action<Node> callback) {
             if (!node) return;
             callback.Invoke(node);
             var children = GetChildren(node);
+            if (children == null) return;
             foreach (var c in children) {
                 Traverse(c, callback);
             }
