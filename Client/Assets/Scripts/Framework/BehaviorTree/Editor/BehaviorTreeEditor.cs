@@ -1,11 +1,11 @@
 // author:KIPKIPS
 // date:2023.02.08 12:08
 // describe:行为树编辑器
+using System;
 using UnityEditor;
 using UnityEditor.Callbacks;
 using UnityEngine;
 using UnityEngine.UIElements;
-using UnityEditor.Callbacks;
 
 namespace Framework.AI.BehaviorTree {
     public class BehaviorTreeEditor : EditorWindow {
@@ -44,16 +44,54 @@ namespace Framework.AI.BehaviorTree {
             _treeView.OnNodeSelected = OnNodeSelectionChanged;
             OnSelectionChange();
         }
-
+        private void OnEnable() {
+            EditorApplication.playModeStateChanged -= OnPlayModeStateChanged;
+            EditorApplication.playModeStateChanged += OnPlayModeStateChanged;
+        }
+        private void OnDisable() {
+            EditorApplication.playModeStateChanged -= OnPlayModeStateChanged;
+        }
+        private void OnPlayModeStateChanged(PlayModeStateChange obj) {
+            switch (obj) {
+                case PlayModeStateChange.EnteredEditMode:
+                    OnSelectionChange();
+                    break;
+                case PlayModeStateChange.EnteredPlayMode:
+                    OnSelectionChange();
+                    break;
+                case PlayModeStateChange.ExitingEditMode:
+                    break;
+                case PlayModeStateChange.ExitingPlayMode:
+                    break;
+            }
+        }
         private void OnSelectionChange() {
             var tree = Selection.activeObject as BehaviorTree;
-            if (tree && AssetDatabase.CanOpenAssetInEditor(tree.GetInstanceID())) {
-                _treeView.PopulateView(tree);
+            if (!tree) {
+                if (Selection.activeGameObject) {
+                    var runner = Selection.activeGameObject.GetComponent<BehaviorTreeRunner>();
+                    if (runner) {
+                        tree = runner.behaviorTree;
+                    }
+                }
+            }
+            if (Application.isPlaying && _treeView != null) {
+                if (tree) {
+                    _treeView.PopulateView(tree);
+                }
+            } else {
+                if (tree && AssetDatabase.CanOpenAssetInEditor(tree.GetInstanceID())) {
+                    _treeView.PopulateView(tree);
+                }
             }
         }
 
         private void OnNodeSelectionChanged(NodeView nodeView) {
-            _inspectorView.UpdateSelection(nodeView);
+            _inspectorView?.UpdateSelection(nodeView);
+        }
+
+        private void OnInspectorUpdate() {
+            _treeView?.UpdateNodeStates();
         }
     }
 }

@@ -379,7 +379,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8227350682924c9bbb0e3b9b9b2cf275, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  behaviorTree: {fileID: 11400000, guid: c470242b70e8d7245abbe47620b6de69, type: 2}
+  behaviorTree: {fileID: 11400000, guid: 19fb1e5b1b8b6fd43bae7a5658683a5a, type: 2}
 --- !u!4 &669509622
 Transform:
   m_ObjectHideFlags: 0

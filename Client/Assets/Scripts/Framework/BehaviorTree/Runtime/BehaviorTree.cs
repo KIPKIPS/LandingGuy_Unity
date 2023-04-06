@@ -12,62 +12,80 @@ namespace Framework.AI.BehaviorTree {
     [CreateAssetMenu]
     public class BehaviorTree : ScriptableObject {
         internal const string LOGTag = "BehaviorTree";
-        [HideInInspector]public Node rootNode;
-        [HideInInspector]public State treeState = State.Running;
-        [HideInInspector]public List<Node> nodes = new ();
+        [HideInInspector] public Node rootNode;
+        [HideInInspector] public State treeState = State.Running;
+        [HideInInspector] public List<Node> nodes = new();
         public State Update() {
-            if (rootNode.state == State.Running) {
+            if (rootNode && rootNode.state == State.Running) {
                 treeState = rootNode.Update();
             }
             return treeState;
         }
-
+#if UNITY_EDITOR
         public Node CreateNode(Type type) {
             var node = CreateInstance(type) as Node;
             node.name = type.Name;
             node.guid = GUID.Generate().ToString();
+            Undo.RecordObject(this, "Behavior Tree (CreateNode)");
             nodes.Add(node);
-            AssetDatabase.AddObjectToAsset(node, this);
+            if (!Application.isPlaying) {
+                AssetDatabase.AddObjectToAsset(node, this);
+            }
+            Undo.RegisterCreatedObjectUndo(node, "Behavior Tree (CreateNode)");
             AssetDatabase.SaveAssets();
             return node;
         }
 
         public void DeleteNode(Node node) {
+            Undo.RecordObject(this, "Behavior Tree (DeleteNode)");
             nodes.Remove(node);
-            AssetDatabase.RemoveObjectFromAsset(node);
+            // AssetDatabase.RemoveObjectFromAsset(node);
+            Undo.DestroyObjectImmediate(node);
+            // EditorUtility.SetDirty(node);
             AssetDatabase.SaveAssets();
         }
 
-        public void AddChild(Node parent,Node child) {
+        public void AddChild(Node parent, Node child) {
             var decorator = parent as DecoratorNode;
             if (decorator) {
+                Undo.RecordObject(decorator, "Behavior Tree (AddChild)");
                 decorator.child = child;
+                EditorUtility.SetDirty(decorator);
             }
             var composite = parent as CompositeNode;
             if (composite) {
+                Undo.RecordObject(composite, "Behavior Tree (AddChild)");
                 composite.children.Add(child);
+                EditorUtility.SetDirty(composite);
             }
-            
             var root = parent as RootNode;
             if (root) {
+                Undo.RecordObject(root, "Behavior Tree (AddChild)");
                 root.child = child;
+                EditorUtility.SetDirty(root);
             }
         }
-        public void RemoveChild(Node parent,Node child) {
+        public void RemoveChild(Node parent, Node child) {
             var decorator = parent as DecoratorNode;
             if (decorator) {
+                Undo.RecordObject(decorator, "Behavior Tree (AddChild)");
                 decorator.child = null;
+                EditorUtility.SetDirty(decorator);
             }
             var composite = parent as CompositeNode;
             if (composite) {
+                Undo.RecordObject(composite, "Behavior Tree (AddChild)");
                 composite.children.Remove(child);
+                EditorUtility.SetDirty(composite);
             }
             var root = parent as RootNode;
             if (root) {
+                Undo.RecordObject(root, "Behavior Tree (AddChild)");
                 root.child = null;
+                EditorUtility.SetDirty(root);
             }
         }
-        
+
         public List<Node> GetChildren(Node parent) {
             var composite = parent as CompositeNode;
             if (composite) {
@@ -84,10 +102,22 @@ namespace Framework.AI.BehaviorTree {
             }
             return children;
         }
+#endif
+
+        private void Traverse(Node node, Action<Node> callback) {
+            if (!node) return;
+            callback.Invoke(node);
+            var children = GetChildren(node);
+            foreach (var c in children) {
+                Traverse(c, callback);
+            }
+        }
 
         public BehaviorTree Clone() {
             var tree = Instantiate(this);
             tree.rootNode = tree.rootNode.Clone();
+            tree.nodes = new List<Node>();
+            Traverse(tree.rootNode, n => { tree.nodes.Add(n); });
             return tree;
         }
     }

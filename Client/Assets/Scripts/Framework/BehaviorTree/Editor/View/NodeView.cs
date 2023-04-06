@@ -5,6 +5,7 @@ using System;
 using UnityEngine;
 using UnityEditor.Experimental.GraphView;
 using Framework.AI.BehaviorTree;
+using UnityEditor;
 using UnityEngine.UIElements;
 using Node = Framework.AI.BehaviorTree.Node;
 public class NodeView : UnityEditor.Experimental.GraphView.Node {
@@ -23,6 +24,24 @@ public class NodeView : UnityEditor.Experimental.GraphView.Node {
 
         CreateInputPorts();
         CreateOutputPorts();
+        SetupClasses();
+    }
+
+    private void SetupClasses() {
+        switch (Node) {
+            case ActionNode:
+                AddToClassList("action");
+                break;
+            case CompositeNode:
+                AddToClassList("composite");
+                break;
+            case DecoratorNode:
+                AddToClassList("decorator");
+                break;
+            case RootNode:
+                AddToClassList("root");
+                break;
+        }
     }
     public sealed override string title {
         get => base.title;
@@ -68,12 +87,45 @@ public class NodeView : UnityEditor.Experimental.GraphView.Node {
     }
     public override void SetPosition(Rect newPos) {
         base.SetPosition(newPos);
+        Undo.RecordObject(Node,"Behavior Tree (Set Position)");
         Node.position.x = newPos.xMin;
         Node.position.y = newPos.yMin;
+        EditorUtility.SetDirty(Node);
     }
 
     public override void OnSelected() {
         base.OnSelected();
         OnNodeSelected?.Invoke(this);
+    }
+
+    public void SortChildren() {
+        var composite = Node as CompositeNode;
+        if (composite) {
+            composite.children.Sort(SortByHorizontalPosition);
+        }
+    }
+    int SortByHorizontalPosition(Node left,Node right) {
+        return left.position.x < right.position.x ? -1 : 1;
+    }
+
+    public void UpdateState() {
+        RemoveFromClassList("running");
+        RemoveFromClassList("failure");
+        RemoveFromClassList("success");
+        if (Application.isPlaying) {
+            switch (Node.state) {
+                case Node.State.Running:
+                    if (Node.started) {
+                        AddToClassList("running");
+                    }
+                    break;
+                case Node.State.Failure:
+                    AddToClassList("failure");
+                    break;
+                case Node.State.Success:
+                    AddToClassList("success");
+                    break;
+            }
+        }
     }
 }

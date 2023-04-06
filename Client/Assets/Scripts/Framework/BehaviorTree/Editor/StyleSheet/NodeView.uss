@@ -71,3 +71,80 @@
 .node {
     min-width: 150px;
 }
+
+#description {
+    font-size: 10px;
+}
+
+#divider {
+    height: 1px;
+    background-color: rgb(255, 255, 255);
+}
+
+.action #input {
+    background-color: rgb(234, 62, 76);
+}
+
+.composite #input {
+    background-color: rgb(65, 172, 66);
+}
+
+.decorator #input {
+    background-color: rgb(242, 210, 63);
+}
+
+.root #input {
+    background-color: rgb(68, 192, 255);
+}
+
+.root #description {
+    display: none;
+}
+
+#node-state {
+}
+
+.running #node-state {
+    border-left-color: rgba(255, 141, 0, 255);
+    border-right-color: rgba(255, 141, 0, 255);
+    border-top-color: rgba(255, 141, 0, 255);
+    border-bottom-color: rgba(255, 141, 0, 255);
+    border-top-left-radius: 8px;
+    border-bottom-left-radius: 8px;
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
+    border-left-width: 2px;
+    border-right-width: 2px;
+    border-top-width: 2px;
+    border-bottom-width: 2px;
+}
+
+.failure #node-state {
+    border-left-width: 2px;
+    border-right-width: 2px;
+    border-top-width: 2px;
+    border-bottom-width: 2px;
+    border-top-left-radius: 8px;
+    border-bottom-left-radius: 8px;
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
+    border-left-color: rgba(255, 0, 0, 255);
+    border-right-color: rgba(255, 0, 0, 255);
+    border-top-color: rgba(255, 0, 0, 255);
+    border-bottom-color: rgba(255, 0, 0, 255);
+}
+
+.success #node-state {
+    border-left-color: rgba(0, 255, 3, 255);
+    border-right-color: rgba(0, 255, 3, 255);
+    border-top-color: rgba(0, 255, 3, 255);
+    border-bottom-color: rgba(0, 255, 3, 255);
+    border-left-width: 2px;
+    border-right-width: 2px;
+    border-top-width: 2px;
+    border-bottom-width: 2px;
+    border-top-left-radius: 8px;
+    border-bottom-left-radius: 8px;
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
+}

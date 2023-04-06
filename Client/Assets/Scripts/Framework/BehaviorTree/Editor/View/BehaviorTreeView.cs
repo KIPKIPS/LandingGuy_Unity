@@ -23,6 +23,13 @@ public class BehaviorTreeView : GraphView {
         this.AddManipulator(new RectangleSelector());
         var styleSheet = AssetDatabase.LoadAssetAtPath<StyleSheet>("Assets/Scripts/Framework/BehaviorTree/Editor/StyleSheet/BehaviorTree.uss");
         styleSheets.Add(styleSheet);
+
+        Undo.undoRedoPerformed += OnUndoRecord;
+    }
+
+    private void OnUndoRecord() {
+        PopulateView(_tree);
+        AssetDatabase.SaveAssets();
     }
     public void PopulateView(BehaviorTree bt) {
         _tree = bt;
@@ -74,6 +81,12 @@ public class BehaviorTreeView : GraphView {
             var childView = edge.input.node as NodeView;
             _tree.AddChild(parentView.Node,childView.Node);
         });
+        if (graphViewChange.movedElements != null) {
+            graphViewChange.movedElements.ForEach(n => {
+                NodeView view = n as NodeView;
+                view.SortChildren();
+            });
+        }
         return graphViewChange;
     }
 
@@ -96,5 +109,12 @@ public class BehaviorTreeView : GraphView {
         var nodeView = new NodeView(node);
         nodeView.OnNodeSelected += OnNodeSelected; 
         AddElement(nodeView);
+    }
+
+    public void UpdateNodeStates() {
+        nodes.ForEach(n => {
+            NodeView v = n as NodeView;
+            v.UpdateState();
+        });
     }
 }
