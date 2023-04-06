@@ -14,7 +14,6 @@ public class NodeView : UnityEditor.Experimental.GraphView.Node {
     public readonly Node Node;
     public Port Input;
     public Port Output;
-    
     public NodeView(Node node):base("Assets/Scripts/Framework/BehaviorTree/Editor/VisualTree/NodeView.uxml") {
         Node = node;
         title = node.name;
@@ -50,13 +49,16 @@ public class NodeView : UnityEditor.Experimental.GraphView.Node {
     private void CreateInputPorts() {
         switch (Node) {
             case ActionNode:
-                Input = InstantiatePort(Orientation.Vertical, Direction.Input, Port.Capacity.Single, typeof(bool));
+                // Input = InstantiatePort(Orientation.Vertical, Direction.Input, Port.Capacity.Single, typeof(bool));
+                Input = PortView.Create<Edge>(Orientation.Vertical, Direction.Input, Port.Capacity.Single, typeof(bool));
                 break;
             case CompositeNode:
-                Input = InstantiatePort(Orientation.Vertical, Direction.Input, Port.Capacity.Single, typeof(bool));
+                // Input = InstantiatePort(Orientation.Vertical, Direction.Input, Port.Capacity.Single, typeof(bool));
+                Input = PortView.Create<Edge>(Orientation.Vertical, Direction.Input, Port.Capacity.Single, typeof(bool));
                 break;
             case DecoratorNode:
-                Input = InstantiatePort(Orientation.Vertical, Direction.Input, Port.Capacity.Single, typeof(bool));
+                // Input = InstantiatePort(Orientation.Vertical, Direction.Input, Port.Capacity.Single, typeof(bool));
+                Input = PortView.Create<Edge>(Orientation.Vertical, Direction.Input, Port.Capacity.Single, typeof(bool));
                 break;
             case RootNode:
                 break;
@@ -71,13 +73,16 @@ public class NodeView : UnityEditor.Experimental.GraphView.Node {
             case ActionNode:
                 break;
             case CompositeNode:
-                Output = InstantiatePort(Orientation.Vertical, Direction.Output, Port.Capacity.Multi, typeof(bool));
+                Output = PortView.Create<Edge>(Orientation.Vertical, Direction.Output, Port.Capacity.Multi, typeof(bool));
+                // Output = InstantiatePort(Orientation.Vertical, Direction.Output, Port.Capacity.Multi, typeof(bool));
                 break;
             case DecoratorNode:
-                Output = InstantiatePort(Orientation.Vertical, Direction.Output, Port.Capacity.Single, typeof(bool));
+                // Output = InstantiatePort(Orientation.Vertical, Direction.Output, Port.Capacity.Single, typeof(bool));
+                Output = PortView.Create<Edge>(Orientation.Vertical, Direction.Output, Port.Capacity.Single, typeof(bool));
                 break;
             case RootNode:
-                Output = InstantiatePort(Orientation.Vertical, Direction.Output, Port.Capacity.Single, typeof(bool));
+                // Output = InstantiatePort(Orientation.Vertical, Direction.Output, Port.Capacity.Single, typeof(bool));
+                Output = PortView.Create<Edge>(Orientation.Vertical, Direction.Output, Port.Capacity.Single, typeof(bool));
                 break;
         }
         if (Output is null) return;
@@ -112,20 +117,19 @@ public class NodeView : UnityEditor.Experimental.GraphView.Node {
         RemoveFromClassList("running");
         RemoveFromClassList("failure");
         RemoveFromClassList("success");
-        if (Application.isPlaying) {
-            switch (Node.state) {
-                case Node.State.Running:
-                    if (Node.started) {
-                        AddToClassList("running");
-                    }
-                    break;
-                case Node.State.Failure:
-                    AddToClassList("failure");
-                    break;
-                case Node.State.Success:
-                    AddToClassList("success");
-                    break;
-            }
+        if (!Application.isPlaying) return;
+        switch (Node.state) {
+            case Node.State.Running:
+                if (Node.started) {
+                    AddToClassList("running");
+                }
+                break;
+            case Node.State.Failure:
+                AddToClassList("failure");
+                break;
+            case Node.State.Success:
+                AddToClassList("success");
+                break;
         }
     }
 }

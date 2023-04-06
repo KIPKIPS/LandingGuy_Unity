@@ -1,59 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &-5447405039378401001
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 01bae2db21a348b592fbea3fbe503a7d, type: 3}
-  m_Name: SequencerNode
-  m_EditorClassIdentifier: 
-  state: 0
-  started: 0
-  guid: 67fccc9365b0e3a468e3b54c15b43358
-  position: {x: -188, y: 261}
-  children:
-  - {fileID: 7211054095781824122}
-  - {fileID: -4254443565725012838}
---- !u!114 &-4254443565725012838
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6d68ac6ba6404993b78a9479df3560f0, type: 3}
-  m_Name: DebugNode
-  m_EditorClassIdentifier: 
-  state: 0
-  started: 0
-  guid: e112e94a38432994f826e56700ff23fc
-  position: {x: -86.6749, y: 419.00003}
-  message: 2
---- !u!114 &-3736676591935053769
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e17332de8f4a446da94f6580801e8cd7, type: 3}
-  m_Name: RootNode
-  m_EditorClassIdentifier: 
-  state: 0
-  started: 0
-  guid: c53ef58d2a362c7439700e89d89433dd
-  position: {x: 0, y: 0}
-  child: {fileID: -381682321876048763}
---- !u!114 &-381682321876048763
+--- !u!114 &-4594747604665495878
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -67,9 +14,26 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   state: 0
   started: 0
-  guid: 4758a3373dee8444dac2098367382e77
-  position: {x: -181, y: 122}
-  child: {fileID: -5447405039378401001}
+  guid: 5c3bea3384228374e978b2803f65b9c1
+  position: {x: -804, y: 62.399994}
+  child: {fileID: 8905769267951048011}
+--- !u!114 &-190449870176225352
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e17332de8f4a446da94f6580801e8cd7, type: 3}
+  m_Name: RootNode
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 1
+  guid: c1407a753b7b9b445b53526b186b1c55
+  position: {x: -733.4, y: -79}
+  child: {fileID: -4594747604665495878}
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -82,15 +46,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 730929dd38624203a45ee3f1a0d81f17, type: 3}
   m_Name: New Behavior Tree
   m_EditorClassIdentifier: 
-  rootNode: {fileID: -3736676591935053769}
+  rootNode: {fileID: -190449870176225352}
   treeState: 0
   nodes:
-  - {fileID: -3736676591935053769}
-  - {fileID: -4254443565725012838}
-  - {fileID: -5447405039378401001}
-  - {fileID: -381682321876048763}
-  - {fileID: 7211054095781824122}
---- !u!114 &7211054095781824122
+  - {fileID: -190449870176225352}
+  - {fileID: 3852660231308142224}
+  - {fileID: 8905769267951048011}
+  - {fileID: -4594747604665495878}
+--- !u!114 &3852660231308142224
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -104,6 +67,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   state: 0
   started: 0
-  guid: 0f5099bfaf90b4b4a9c280b4d18d920b
-  position: {x: -309.8, y: 410.5}
-  message: 1
+  guid: 0f7347564bf73384680ae0bdc6bd664b
+  position: {x: -575.19995, y: 166}
+  message: 11
+--- !u!114 &8905769267951048011
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 01bae2db21a348b592fbea3fbe503a7d, type: 3}
+  m_Name: SequencerNode
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 0
+  guid: 2acdf5eaa25b2de4b8055602012e4b0e
+  position: {x: -829.8, y: 211.20001}
+  children: []

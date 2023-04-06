@@ -18,7 +18,7 @@ namespace Framework.AI.BehaviorTree {
         }
         
         [OnOpenAsset(1)]
-        public static bool OnOpenAsset(int instanceID,int line) {
+        public static bool Open(int instanceID,int line) {
             var open = Selection.activeObject is BehaviorTree;
             if (open) {
                 OpenWindow();
@@ -75,13 +75,13 @@ namespace Framework.AI.BehaviorTree {
                     }
                 }
             }
-            if (Application.isPlaying && _treeView != null) {
-                if (tree) {
+            if (_treeView != null && tree) {
+                if (Application.isPlaying) {
                     _treeView.PopulateView(tree);
-                }
-            } else {
-                if (tree && AssetDatabase.CanOpenAssetInEditor(tree.GetInstanceID())) {
-                    _treeView.PopulateView(tree);
+                } else {
+                    if (AssetDatabase.CanOpenAssetInEditor(tree.GetInstanceID())) {
+                        _treeView.PopulateView(tree);
+                    }
                 }
             }
         }
