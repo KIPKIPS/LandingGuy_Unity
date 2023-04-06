@@ -5,6 +5,7 @@ using System;
 using UnityEngine;
 using UnityEditor.Experimental.GraphView;
 using Framework.AI.BehaviorTree;
+using UnityEngine.UIElements;
 using Node = Framework.AI.BehaviorTree.Node;
 public class NodeView : UnityEditor.Experimental.GraphView.Node {
 
@@ -13,7 +14,7 @@ public class NodeView : UnityEditor.Experimental.GraphView.Node {
     public Port Input;
     public Port Output;
     
-    public NodeView(Node node) {
+    public NodeView(Node node):base("Assets/Scripts/Framework/BehaviorTree/Editor/VisualTree/NodeView.uxml") {
         Node = node;
         title = node.name;
         viewDataKey = node.guid;
@@ -30,19 +31,20 @@ public class NodeView : UnityEditor.Experimental.GraphView.Node {
     private void CreateInputPorts() {
         switch (Node) {
             case ActionNode:
-                Input = InstantiatePort(Orientation.Horizontal, Direction.Input, Port.Capacity.Single, typeof(bool));
+                Input = InstantiatePort(Orientation.Vertical, Direction.Input, Port.Capacity.Single, typeof(bool));
                 break;
             case CompositeNode:
-                Input = InstantiatePort(Orientation.Horizontal, Direction.Input, Port.Capacity.Single, typeof(bool));
+                Input = InstantiatePort(Orientation.Vertical, Direction.Input, Port.Capacity.Single, typeof(bool));
                 break;
             case DecoratorNode:
-                Input = InstantiatePort(Orientation.Horizontal, Direction.Input, Port.Capacity.Single, typeof(bool));
+                Input = InstantiatePort(Orientation.Vertical, Direction.Input, Port.Capacity.Single, typeof(bool));
                 break;
             case RootNode:
                 break;
         }
         if (Input is null) return;
         Input.portName = "";
+        Input.style.flexDirection = FlexDirection.Column;
         inputContainer.Add(Input);
     }
     private void CreateOutputPorts() {
@@ -50,17 +52,18 @@ public class NodeView : UnityEditor.Experimental.GraphView.Node {
             case ActionNode:
                 break;
             case CompositeNode:
-                Output = InstantiatePort(Orientation.Horizontal, Direction.Output, Port.Capacity.Multi, typeof(bool));
+                Output = InstantiatePort(Orientation.Vertical, Direction.Output, Port.Capacity.Multi, typeof(bool));
                 break;
             case DecoratorNode:
-                Output = InstantiatePort(Orientation.Horizontal, Direction.Output, Port.Capacity.Single, typeof(bool));
+                Output = InstantiatePort(Orientation.Vertical, Direction.Output, Port.Capacity.Single, typeof(bool));
                 break;
             case RootNode:
-                Output = InstantiatePort(Orientation.Horizontal, Direction.Output, Port.Capacity.Single, typeof(bool));
+                Output = InstantiatePort(Orientation.Vertical, Direction.Output, Port.Capacity.Single, typeof(bool));
                 break;
         }
         if (Output is null) return;
         Output.portName = "";
+        Output.style.flexDirection = FlexDirection.ColumnReverse;
         outputContainer.Add(Output);
     }
     public override void SetPosition(Rect newPos) {

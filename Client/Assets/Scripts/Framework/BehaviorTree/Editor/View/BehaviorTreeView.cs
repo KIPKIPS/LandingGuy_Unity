@@ -21,7 +21,7 @@ public class BehaviorTreeView : GraphView {
         this.AddManipulator(new ContentDragger());
         this.AddManipulator(new SelectionDragger());
         this.AddManipulator(new RectangleSelector());
-        var styleSheet = AssetDatabase.LoadAssetAtPath<StyleSheet>(BehaviorTreeEditor.GetAssetPath(".uss"));
+        var styleSheet = AssetDatabase.LoadAssetAtPath<StyleSheet>("Assets/Scripts/Framework/BehaviorTree/Editor/StyleSheet/BehaviorTree.uss");
         styleSheets.Add(styleSheet);
     }
     public void PopulateView(BehaviorTree bt) {

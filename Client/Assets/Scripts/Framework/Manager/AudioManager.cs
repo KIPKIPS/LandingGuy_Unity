@@ -35,26 +35,26 @@ namespace Framework.Manager {
                 // ReSharper disable once Unity.PerformanceCriticalCodeNullComparison
                 if (_audioRoot != null) return _audioRoot;
                 _audioRoot= new GameObject().transform;
-                var trs = _audioRoot;
-                trs.UDontDestroyOnLoad();
-                trs.position = Vector3.zero;
-                trs.localPosition = Vector3.zero;
-                trs.localRotation = Quaternion.identity;
-                trs.localScale = Vector3.one;
-                trs.name = "AudioRoot";
+                var t = _audioRoot;
+                t.UDontDestroyOnLoad();
+                t.position = Vector3.zero;
+                t.localPosition = Vector3.zero;
+                t.localRotation = Quaternion.identity;
+                t.localScale = Vector3.one;
+                t.name = "AudioRoot";
                 return _audioRoot;
             }
         }
         public AudioSource BgmAudioSource {
             get {
                 if (_bgmAudioSource is not null) return _bgmAudioSource;
-                var trs = new GameObject().transform;
-                trs.SetParent(AudioRoot);
-                trs.localPosition = Vector3.zero;
-                trs.localRotation = Quaternion.identity;
-                trs.localScale = Vector3.one;
-                trs.name = DEF.AudioType.BGM.ToString();
-                _bgmAudioSource = trs.UAddComponent<AudioSource>() as AudioSource;
+                var t = new GameObject().transform;
+                t.SetParent(AudioRoot);
+                t.localPosition = Vector3.zero;
+                t.localRotation = Quaternion.identity;
+                t.localScale = Vector3.one;
+                t.name = DEF.AudioType.BGM.ToString();
+                _bgmAudioSource = t.UAddComponent<AudioSource>() as AudioSource;
                 _bgmAudioSource.loop = true;
                 _bgmAudioSource.playOnAwake = false;
                 return _bgmAudioSource;

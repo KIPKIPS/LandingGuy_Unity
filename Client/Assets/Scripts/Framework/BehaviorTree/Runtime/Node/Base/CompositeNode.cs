@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Framework.AI.BehaviorTree {
     public abstract class CompositeNode : Node {
-        [HideInInspector]public List<Node> children = new List<Node>();
+        [HideInInspector]public List<Node> children = new();
         public override Node Clone() {
             var node = Instantiate(this);
             
