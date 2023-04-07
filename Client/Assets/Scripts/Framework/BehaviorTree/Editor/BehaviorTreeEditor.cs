@@ -11,6 +11,10 @@ namespace Framework.AI.BehaviorTree {
     public class BehaviorTreeEditor : EditorWindow {
         private BehaviorTreeView _treeView;
         private InspectorView _inspectorView;
+        private IMGUIContainer _blackboardView;
+
+        private SerializedObject _treeObject;
+        private SerializedProperty _blackboardProperty;
         [MenuItem("Tools/AI/BehaviorTreeEditor")]
         public static void OpenWindow() {
             var wnd = GetWindow<BehaviorTreeEditor>();
@@ -41,6 +45,14 @@ namespace Framework.AI.BehaviorTree {
 
             _treeView = root.Q<BehaviorTreeView>();
             _inspectorView = root.Q<InspectorView>();
+            _blackboardView = root.Q<IMGUIContainer>();
+            _blackboardView.onGUIHandler = () => {
+                if (_treeObject!=null && _blackboardProperty != null) {
+                    _treeObject.Update();
+                    EditorGUILayout.PropertyField(_blackboardProperty);
+                    _treeObject.ApplyModifiedProperties();
+                }
+            };
             _treeView.OnNodeSelected = OnNodeSelectionChanged;
             OnSelectionChange();
         }
@@ -83,6 +95,10 @@ namespace Framework.AI.BehaviorTree {
                         _treeView.PopulateView(tree);
                     }
                 }
+            }
+            if (tree!= null) {
+                _treeObject = new SerializedObject(tree);
+                _blackboardProperty = _treeObject.FindProperty("blackboard");
             }
         }
 

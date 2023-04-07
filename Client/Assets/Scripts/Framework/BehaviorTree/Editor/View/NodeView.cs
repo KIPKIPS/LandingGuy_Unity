@@ -51,8 +51,8 @@ public class NodeView : UnityEditor.Experimental.GraphView.Node {
             case CompositeNode:
                 AddToClassList("composite");
                 switch (Node) {
-                    case SequencerNode:
-                        AddToClassList("sequencer");
+                    case SequenceNode:
+                        AddToClassList("sequence");
                         break;
                 }
                 break;

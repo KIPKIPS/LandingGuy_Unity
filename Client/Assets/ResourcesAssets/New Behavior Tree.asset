@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &-4594747604665495878
+--- !u!114 &-3455933527841986706
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -9,15 +9,20 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 414e6b382b0448f994fdb9280b86601f, type: 3}
-  m_Name: RepeatNode
+  m_Script: {fileID: 11500000, guid: 01bae2db21a348b592fbea3fbe503a7d, type: 3}
+  m_Name: SequenceNode
   m_EditorClassIdentifier: 
   state: 0
   started: 0
-  guid: 5c3bea3384228374e978b2803f65b9c1
-  position: {x: 46, y: 174}
-  child: {fileID: 8905769267951048011}
---- !u!114 &-190449870176225352
+  guid: 00588b57dfdde134b832b64eab81c9da
+  position: {x: 145, y: -37}
+  blackboard:
+    moveToPosition: {x: 0, y: 0, z: 0}
+    moveToObject: {fileID: 0}
+  number: 0
+  children:
+  - {fileID: 7361084940153260289}
+--- !u!114 &-1775070520999109509
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -30,10 +35,14 @@ MonoBehaviour:
   m_Name: RootNode
   m_EditorClassIdentifier: 
   state: 0
-  started: 1
-  guid: c1407a753b7b9b445b53526b186b1c55
-  position: {x: -129.53214, y: 180.945}
-  child: {fileID: -4594747604665495878}
+  started: 0
+  guid: 6f48577b9de2bda45af931eab872e790
+  position: {x: -45, y: -29}
+  blackboard:
+    moveToPosition: {x: 0, y: 0, z: 0}
+    moveToObject: {fileID: 0}
+  number: 0
+  child: {fileID: -3455933527841986706}
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -46,17 +55,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 730929dd38624203a45ee3f1a0d81f17, type: 3}
   m_Name: New Behavior Tree
   m_EditorClassIdentifier: 
-  rootNode: {fileID: -190449870176225352}
+  rootNode: {fileID: -1775070520999109509}
   treeState: 0
   nodes:
-  - {fileID: -190449870176225352}
-  - {fileID: 8905769267951048011}
-  - {fileID: -4594747604665495878}
-  - {fileID: 8699271635385387078}
-  background:
+  - {fileID: -1775070520999109509}
+  - {fileID: -3455933527841986706}
+  - {fileID: 7361084940153260289}
+  backboard:
     moveToPosition: {x: 0, y: 0, z: 0}
     moveToObject: {fileID: 0}
---- !u!114 &8699271635385387078
+--- !u!114 &7361084940153260289
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -70,24 +78,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   state: 0
   started: 0
-  guid: 10e27310161d4bf44884fb0294dd82a7
-  position: {x: 394.46796, y: 189.94499}
-  message: 
---- !u!114 &8905769267951048011
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 01bae2db21a348b592fbea3fbe503a7d, type: 3}
-  m_Name: SequencerNode
-  m_EditorClassIdentifier: 
-  state: 0
-  started: 0
-  guid: 2acdf5eaa25b2de4b8055602012e4b0e
-  position: {x: 220, y: 182}
-  children:
-  - {fileID: 8699271635385387078}
+  guid: 2158660bd162f154bab3c3c7577af494
+  position: {x: 312, y: -45}
+  blackboard:
+    moveToPosition: {x: 0, y: 0, z: 0}
+    moveToObject: {fileID: 0}
+  number: 0
+  message: ??

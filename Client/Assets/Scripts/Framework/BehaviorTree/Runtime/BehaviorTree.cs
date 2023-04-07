@@ -16,7 +16,7 @@ namespace Framework.AI.BehaviorTree {
         [HideInInspector] public Node rootNode;
         [HideInInspector] public State treeState = State.Running;
         [HideInInspector] public List<Node> nodes = new();
-        public Blackboard background = new();
+        public Blackboard backboard = new();
         public State Update() {
             if (rootNode && rootNode.state == State.Running) {
                 treeState = rootNode.Update();
@@ -124,11 +124,11 @@ namespace Framework.AI.BehaviorTree {
             return tree;
         }
 
-        // public void Bind(float num) {
-        //     Traverse(rootNode, node => {
-        //         node.number = num;
-        //         node.blackboard = background;
-        //     });
-        // }
+        public void Bind(float num) {
+            Traverse(rootNode, node => {
+                node.number = num;
+                node.blackboard = backboard;
+            });
+        }
     }
 }

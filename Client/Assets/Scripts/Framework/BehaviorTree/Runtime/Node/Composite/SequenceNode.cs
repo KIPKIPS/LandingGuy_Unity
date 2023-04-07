@@ -4,13 +4,12 @@
 using System;
 
 namespace Framework.AI.BehaviorTree {
-    public class SequencerNode:CompositeNode {
+    public class SequenceNode : CompositeNode {
         private int _current;
         protected override void OnStart() {
             _current = 0;
         }
         protected override void OnStop() {
-            
         }
         protected override State OnUpdate() {
             var child = children[_current];
