@@ -8,6 +8,7 @@ namespace Framework.AI.BehaviorTree {
         public BehaviorTree behaviorTree;
         private void Start() {
             behaviorTree = behaviorTree.Clone();
+            // behaviorTree.Bind(10);
         }
         private void Update() {
             behaviorTree.Update();

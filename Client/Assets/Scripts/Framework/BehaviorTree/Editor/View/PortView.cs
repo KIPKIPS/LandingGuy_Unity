@@ -11,8 +11,8 @@ public class PortView : Port {
         style.height = 25;
     }
     public new static PortView Create<TEdge>(Orientation orientation, Direction direction, Capacity capacity, System.Type type) where TEdge : Edge, new() {
-        DefaultEdgeConnectorListener listener = new DefaultEdgeConnectorListener();
-        PortView port = new PortView(orientation, direction, capacity, type) {
+        var listener = new DefaultEdgeConnectorListener();
+        var port = new PortView(orientation, direction, capacity, type) {
             m_EdgeConnector = new EdgeConnector<TEdge>(listener)
         };
         port.AddManipulator(port.m_EdgeConnector);
@@ -20,45 +20,46 @@ public class PortView : Port {
         portConnector.style.borderTopLeftRadius = portConnector.style.borderTopRightRadius = portConnector.style.borderBottomLeftRadius = portConnector.style.borderBottomRightRadius = 0;
         var portCap = portConnector.Q("cap");
         portCap.style.borderTopLeftRadius = portCap.style.borderTopRightRadius = portCap.style.borderBottomLeftRadius = portCap.style.borderBottomRightRadius = 0;
+        port.m_ConnectorText.style.height = 15;
         return port;
     }
     private class DefaultEdgeConnectorListener : IEdgeConnectorListener {
-        private readonly GraphViewChange m_GraphViewChange;
-        private readonly List<Edge> m_EdgesToCreate;
-        private readonly List<GraphElement> m_EdgesToDelete;
+        private readonly GraphViewChange _mGraphViewChange;
+        private readonly List<Edge> _mEdgesToCreate;
+        private readonly List<GraphElement> _mEdgesToDelete;
         public DefaultEdgeConnectorListener() {
-            m_EdgesToCreate = new List<Edge>();
-            m_EdgesToDelete = new List<GraphElement>();
-            m_GraphViewChange.edgesToCreate = m_EdgesToCreate;
+            _mEdgesToCreate = new List<Edge>();
+            _mEdgesToDelete = new List<GraphElement>();
+            _mGraphViewChange.edgesToCreate = _mEdgesToCreate;
         }
         public void OnDropOutsidePort(Edge edge, Vector2 position) {
         }
         public void OnDrop(GraphView graphView, Edge edge) {
-            m_EdgesToCreate.Clear();
-            m_EdgesToCreate.Add(edge);
-            m_EdgesToDelete.Clear();
+            _mEdgesToCreate.Clear();
+            _mEdgesToCreate.Add(edge);
+            _mEdgesToDelete.Clear();
             if (edge.input.capacity == Capacity.Single) {
-                foreach (Edge connection in edge.input.connections) {
+                foreach (var connection in edge.input.connections) {
                     if (connection != edge) {
-                        m_EdgesToDelete.Add(connection);
+                        _mEdgesToDelete.Add(connection);
                     }
                 }
             }
             if (edge.output.capacity == Capacity.Single) {
-                foreach (Edge connection2 in edge.output.connections) {
+                foreach (var connection2 in edge.output.connections) {
                     if (connection2 != edge) {
-                        m_EdgesToDelete.Add(connection2);
+                        _mEdgesToDelete.Add(connection2);
                     }
                 }
             }
-            if (m_EdgesToDelete.Count > 0) {
-                graphView.DeleteElements(m_EdgesToDelete);
+            if (_mEdgesToDelete.Count > 0) {
+                graphView.DeleteElements(_mEdgesToDelete);
             }
-            List<Edge> edgesToCreate = m_EdgesToCreate;
+            var edgesToCreate = _mEdgesToCreate;
             if (graphView.graphViewChanged != null) {
-                edgesToCreate = graphView.graphViewChanged(m_GraphViewChange).edgesToCreate;
+                edgesToCreate = graphView.graphViewChanged(_mGraphViewChange).edgesToCreate;
             }
-            foreach (Edge item in edgesToCreate) {
+            foreach (var item in edgesToCreate) {
                 graphView.AddElement(item);
                 edge.input.Connect(item);
                 edge.output.Connect(item);

@@ -15,7 +15,7 @@ MonoBehaviour:
   state: 0
   started: 0
   guid: 5c3bea3384228374e978b2803f65b9c1
-  position: {x: 48.28772, y: -86.07557}
+  position: {x: 42.467896, y: 176.945}
   child: {fileID: 8905769267951048011}
 --- !u!114 &-190449870176225352
 MonoBehaviour:
@@ -32,7 +32,7 @@ MonoBehaviour:
   state: 0
   started: 1
   guid: c1407a753b7b9b445b53526b186b1c55
-  position: {x: -147.71228, y: -94.07563}
+  position: {x: -129.53214, y: 180.945}
   child: {fileID: -4594747604665495878}
 --- !u!114 &11400000
 MonoBehaviour:
@@ -50,10 +50,13 @@ MonoBehaviour:
   treeState: 0
   nodes:
   - {fileID: -190449870176225352}
-  - {fileID: 3852660231308142224}
   - {fileID: 8905769267951048011}
   - {fileID: -4594747604665495878}
---- !u!114 &3852660231308142224
+  - {fileID: 8699271635385387078}
+  background:
+    moveToPosition: {x: 0, y: 0, z: 0}
+    moveToObject: {fileID: 0}
+--- !u!114 &8699271635385387078
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -67,9 +70,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   state: 0
   started: 0
-  guid: 0f7347564bf73384680ae0bdc6bd664b
-  position: {x: -14.112305, y: 270.72433}
-  message: 11
+  guid: 10e27310161d4bf44884fb0294dd82a7
+  position: {x: 394.46796, y: 189.94499}
+  message: 
 --- !u!114 &8905769267951048011
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -85,6 +88,6 @@ MonoBehaviour:
   state: 0
   started: 0
   guid: 2acdf5eaa25b2de4b8055602012e4b0e
-  position: {x: 245.88776, y: -86.07557}
+  position: {x: 225.46788, y: 177.945}
   children:
-  - {fileID: 3852660231308142224}
+  - {fileID: 8699271635385387078}

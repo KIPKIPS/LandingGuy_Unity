@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using State = Framework.AI.BehaviorTree.Node.State;
 using UnityEditor;
+using UnityEngine.UIElements;
 
 namespace Framework.AI.BehaviorTree {
     // ReSharper disable MemberCanBeMadeStatic.Global
@@ -15,6 +16,7 @@ namespace Framework.AI.BehaviorTree {
         [HideInInspector] public Node rootNode;
         [HideInInspector] public State treeState = State.Running;
         [HideInInspector] public List<Node> nodes = new();
+        public Blackboard background = new();
         public State Update() {
             if (rootNode && rootNode.state == State.Running) {
                 treeState = rootNode.Update();
@@ -121,5 +123,12 @@ namespace Framework.AI.BehaviorTree {
             Traverse(tree.rootNode, n => { tree.nodes.Add(n); });
             return tree;
         }
+
+        // public void Bind(float num) {
+        //     Traverse(rootNode, node => {
+        //         node.number = num;
+        //         node.blackboard = background;
+        //     });
+        // }
     }
 }
