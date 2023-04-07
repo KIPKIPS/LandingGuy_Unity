@@ -135,3 +135,35 @@
     background-color: rgba(0, 0, 0, 0);
     -unity-background-image-tint-color: rgba(255, 255, 255, 0.8);
 }
+
+.folder-in #bl-center {
+    display: none;
+    visibility: hidden;
+}
+
+.folder-in #bl-bottom {
+    display: none;
+    visibility: hidden;
+}
+
+.folder-in #br-center {
+    visibility: hidden;
+    display: none;
+}
+
+.folder-in #br-bottom {
+    display: none;
+    visibility: hidden;
+}
+
+.folder-out #bl-center {
+}
+
+.folder-out #bl-bottom {
+}
+
+.folder-out #br-center {
+}
+
+.folder-out #br-bottom {
+}

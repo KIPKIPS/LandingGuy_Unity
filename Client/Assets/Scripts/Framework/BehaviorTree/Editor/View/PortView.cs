@@ -20,7 +20,7 @@ public class PortView : Port {
         portConnector.style.borderTopLeftRadius = portConnector.style.borderTopRightRadius = portConnector.style.borderBottomLeftRadius = portConnector.style.borderBottomRightRadius = 0;
         var portCap = portConnector.Q("cap");
         portCap.style.borderTopLeftRadius = portCap.style.borderTopRightRadius = portCap.style.borderBottomLeftRadius = portCap.style.borderBottomRightRadius = 0;
-        port.m_ConnectorText.style.height = 15;
+        port.m_ConnectorText.style.height = 10;
         return port;
     }
     private class DefaultEdgeConnectorListener : IEdgeConnectorListener {

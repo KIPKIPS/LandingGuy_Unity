@@ -15,7 +15,7 @@ MonoBehaviour:
   state: 0
   started: 0
   guid: 5c3bea3384228374e978b2803f65b9c1
-  position: {x: 42.467896, y: 176.945}
+  position: {x: 46, y: 174}
   child: {fileID: 8905769267951048011}
 --- !u!114 &-190449870176225352
 MonoBehaviour:
@@ -88,6 +88,6 @@ MonoBehaviour:
   state: 0
   started: 0
   guid: 2acdf5eaa25b2de4b8055602012e4b0e
-  position: {x: 225.46788, y: 177.945}
+  position: {x: 220, y: 182}
   children:
   - {fileID: 8699271635385387078}
