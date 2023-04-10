@@ -3,14 +3,13 @@
 // describe:行为树
 using System;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 using State = Framework.AI.BehaviorTree.Node.State;
-using UnityEditor;
-using UnityEngine.UIElements;
 
 namespace Framework.AI.BehaviorTree {
     // ReSharper disable MemberCanBeMadeStatic.Global
-    [CreateAssetMenu]
+    [CreateAssetMenu(fileName = "BehaviorTree", menuName = "Framework/AI/BehaviorTree")]
     public class BehaviorTree : ScriptableObject {
         internal const string LOGTag = "BehaviorTree";
         [HideInInspector] public Node rootNode;

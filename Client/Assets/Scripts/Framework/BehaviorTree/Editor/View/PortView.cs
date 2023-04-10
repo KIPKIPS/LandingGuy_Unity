@@ -1,6 +1,6 @@
 ﻿// author:KIPKIPS
 // date:2023.04.06 22:45
-// describe:
+// describe:连接端口视图
 using System.Collections.Generic;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;

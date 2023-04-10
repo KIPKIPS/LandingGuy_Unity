@@ -17,32 +17,6 @@ namespace Framework {
             AudioManager.Instance.Launch();
             LocalizationManager.Instance.Launch();
             SceneManager.Instance.Launch();
-            #region Test
-            Event.Register(EventType.SCENE_LOAD_FINISHED, d => { Utils.Log(d); });
-            #endregion
-        }
-        private void Update() {
-            #region Test
-            if (Input.GetMouseButtonDown(0)) {
-                var r = new System.Random();
-                AudioManager.Instance.PlayAudio(Resources.Load<AudioClip>("aud_button"), new Vector3(r.Next(3), r.Next(3), r.Next(3)));
-            }
-            if (Input.GetKeyDown(KeyCode.M)) {
-                AudioManager.Instance.Mute = !AudioManager.Instance.Mute;
-            }
-            if (Input.GetKeyDown(KeyCode.Equals)) {
-                AudioManager.Instance.GlobalVolume += 0.1f;
-            }
-            if (Input.GetKeyDown(KeyCode.Minus)) {
-                AudioManager.Instance.GlobalVolume -= 0.1f;
-            }
-            if (Input.GetKeyDown(KeyCode.S)) {
-                TimerManager.Instance.Dispose();
-            }
-            if (Input.GetKeyDown(KeyCode.L)) {
-                SceneManager.Instance.LoadSceneAsync("TestScene", () => { Utils.Log("TestScene scene load finished"); });
-            }
-            #endregion
         }
     }
 }

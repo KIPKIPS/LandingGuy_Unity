@@ -5,6 +5,11 @@
 namespace Framework {
     // ReSharper disable InconsistentNaming
     public static class DEF {
+        #region 系统默认值
+        public const int SYSTEM_STANDARD_DPI = 96; //系统默认dpi
+        public const int TRUE = 1;
+        public const int FASLE = 0;
+        #endregion
         //音频类型
         public enum AudioType {
             BGM = 0,
