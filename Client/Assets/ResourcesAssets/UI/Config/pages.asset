@@ -12,9 +12,3 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2eea31af9bf641839fdd96c9fce0491d, type: 3}
   m_Name: pages
   m_EditorClassIdentifier: 
-  configs:
-  - pageID: 0
-    pageName: 
-    pageType: 0
-    pageMode: 0
-    assetPath: 
