@@ -2,7 +2,8 @@
 // date:2023.04.10 21:19
 // describe:
 using System.Collections.Generic;
-using NUnit.Framework;
+using System.Linq;
+using JetBrains.Annotations;
 using UnityEditor;
 using UnityEditor.IMGUI.Controls;
 using UnityEngine;
@@ -10,80 +11,43 @@ using UnityEngine;
 namespace Framework.UI.Pages {
     public class PagesEditorWindow : EditorWindow {
         private const string LOGTag = "PagesEditorWindow";
-        private const string assetPath = "Assets/ResourcesAssets/UI/Config/pages.asset";
+        private const string ConfigAssetPath = "Assets/ResourcesAssets/UI/Config/pages.asset";
         public PagesConfig pagesConfig;
         [MenuItem("Tools/UI/PagesEditor")]
-        public static void OpenWindow() {
-            GetWindow<PagesEditorWindow>().titleContent = new GUIContent("PagesEditor");
-        }
+        public static void OpenWindow() => GetWindow<PagesEditorWindow>().titleContent = new GUIContent("PagesEditor");
         private TableView _tableView;
         private TreeViewState _treeViewState;
         private MultiColumnHeaderState _multiColHeaderState;
-        private List<PageData> allConfig = new();
+        private readonly List<PageData> _allConfig = new();
         private void OnEnable() {
             _treeViewState ??= new TreeViewState();
             _multiColHeaderState = CreateStateWith3Cols();
             var multiColHeader = new MultiColumnHeader(_multiColHeaderState);
             multiColHeader.ResizeToFit();
             _tableView = new TableView(_treeViewState, multiColHeader);
-            pagesConfig = AssetDatabase.LoadAssetAtPath<PagesConfig>(assetPath);
+            pagesConfig = AssetDatabase.LoadAssetAtPath<PagesConfig>(ConfigAssetPath);
             foreach (var config in pagesConfig.configs) {
-                allConfig.Add(new PageData(config.pageID, config.pageName, config.pageType, config.pageMode, config.assetPath));
+                _allConfig.Add(new PageData(config.pageID, config.pageName, config.pageType, config.pageMode, config.assetPath));
             }
-            _tableView.SetData(allConfig);
+            _tableView.SetData(_allConfig);
         }
-        private static MultiColumnHeaderState CreateStateWith3Cols() {
-            var columns = new[] {
-                new MultiColumnHeaderState.Column {
-                    headerContent = new GUIContent("ID"),
-                    contextMenuText = "Type",
-                    width = 20,
-                    minWidth = 20,
-                    maxWidth = 20,
-                    headerTextAlignment = TextAlignment.Center,
-                    autoResize = false,
-                    allowToggleVisibility = true,
-                },
-                new MultiColumnHeaderState.Column {
-                    headerContent = new GUIContent("PageName"),
-                    width = 150,
-                    minWidth = 150,
-                    maxWidth = 300,
-                    headerTextAlignment = TextAlignment.Left,
-                    canSort = true,
-                    autoResize = false,
-                },
-                new MultiColumnHeaderState.Column {
-                    headerContent = new GUIContent("PageType"),
-                    width = 80,
-                    minWidth = 80,
-                    maxWidth = 80,
-                    headerTextAlignment = TextAlignment.Left,
-                    canSort = true,
-                    autoResize = false,
-                },
-                new MultiColumnHeaderState.Column {
-                    headerContent = new GUIContent("PageMode"),
-                    width = 80,
-                    minWidth = 80,
-                    maxWidth = 80,
-                    headerTextAlignment = TextAlignment.Left,
-                    canSort = true,
-                    autoResize = false,
-                },
-                new MultiColumnHeaderState.Column {
-                    headerContent = new GUIContent("AssetPath"),
-                    width = 200,
-                    minWidth = 200,
-                    maxWidth = 300,
-                    headerTextAlignment = TextAlignment.Left,
-                    canSort = true,
-                    autoResize = false,
-                },
-            };
-            var state = new MultiColumnHeaderState(columns);
-            return state;
-        }
+        private static MultiColumnHeaderState.Column CreateColumn(string title, float width, float minWidth, float maxWidth, TextAlignment headerTextAlignment = TextAlignment.Left, bool canSort = false, bool autoResize = false, bool allowToggleVisibility = false) =>new() {
+            headerContent = new GUIContent(title),
+            width = width,
+            minWidth = minWidth,
+            maxWidth = maxWidth,
+            headerTextAlignment = headerTextAlignment,
+            canSort = canSort,
+            autoResize = autoResize,
+            allowToggleVisibility = allowToggleVisibility
+        };
+        private static MultiColumnHeaderState CreateStateWith3Cols() => new(new[] {
+            CreateColumn("ID", 20, 20, 20, TextAlignment.Center),
+            CreateColumn("PageName", 150, 150, 300),
+            CreateColumn("PageType", 80, 80, 80),
+            CreateColumn("PageMode", 80, 80, 80),
+            CreateColumn("AssetPath", 200, 200, 300)
+        });
 
         public void OnGUI() {
             if (_tableView == null) return;
@@ -91,8 +55,7 @@ namespace Framework.UI.Pages {
             GUILayout.FlexibleSpace();
             if (GUILayout.Button("Save", GUILayout.Width(50))) {
                 pagesConfig.configs.Clear();
-                foreach (var pageData in _tableView.PageConfigDict) {
-                    var data = pageData.Value;
+                foreach (var data in _tableView.PageConfigDict.Select(pageData => pageData.Value)) {
                     pagesConfig.configs.Add(new PageConfig {
                         pageID = data.ID,
                         pageName = data.PageName,
@@ -134,7 +97,6 @@ namespace Framework.UI.Pages {
             var textFieldRoundEdge = _textFieldRoundEdge;
             var transparentTextField = _transparentTextField;
             var gUIStyle = _inputSearchText != "" ? _textFieldRoundEdgeCancelButton : _textFieldRoundEdgeCancelButtonEmpty;
-            
             controlRect.y += 2f;
             if (UnityEngine.Event.current.type == UnityEngine.EventType.Repaint) {
                 textFieldRoundEdge.Draw(controlRect, new GUIContent(""), 0);
@@ -148,26 +110,25 @@ namespace Framework.UI.Pages {
                 DoFilter(_inputSearchText);
             }
             _lastInputSearchText = _inputSearchText;
-            
             controlRect.x += controlRect.width - gUIStyle.fixedWidth;
             controlRect.width = gUIStyle.fixedWidth;
             controlRect.height = gUIStyle.fixedHeight;
-            if (GUI.Button(controlRect, GUIContent.none, gUIStyle) && _inputSearchText != ""){
-                _inputSearchText = "";
-                DoFilter(_inputSearchText);
-                GUI.changed = true;//用户是否做了输入
-                GUIUtility.keyboardControl = 0;//把焦点移开输入框
-            }
+            if (string.IsNullOrEmpty(_inputSearchText)) return;
+            if (!GUI.Button(controlRect, GUIContent.none, gUIStyle)) return;
+            _inputSearchText = "";
+            DoFilter(_inputSearchText);
+            GUI.changed = true; //用户是否做了输入
+            GUIUtility.keyboardControl = 0; //把焦点移开输入框
         }
-        void DoFilter(string filterStr) {
+        private void DoFilter(string filterStr) {
             if (string.IsNullOrEmpty(filterStr)) {
                 _tableView.PageConfigDict.Clear();
-                _tableView.SetData(allConfig);
+                _tableView.SetData(_allConfig);
             } else {
                 _tableView.DoFilter(filterStr);
             }
         }
-        void OnDestroy() {
+        private void OnDestroy() {
             _tableView.PageConfigDict.Clear();
         }
 
@@ -192,18 +153,18 @@ namespace Framework.UI.Pages {
                     AddPageConfig(data);
                 }
             }
-            private bool Contains(object a,object b,bool ignoreCase = true) {
+            private static bool Contains(object a, object b, bool ignoreCase = true) {
                 var convertA = ignoreCase ? a.ToString().ToLower() : a.ToString();
                 var convertB = ignoreCase ? b.ToString().ToLower() : b.ToString();
                 return convertA.Contains(convertB);
             }
             public void DoFilter(string filterStr) {
                 filterStr = filterStr.ToLower();
-                Dictionary<int, PageData> newDict = new ();
+                Dictionary<int, PageData> newDict = new();
                 for (var id = 0; id < PageConfigDict.Count; ++id) {
                     var d = PageConfigDict[id];
-                    if (Contains(d.ID,filterStr) || Contains(d.PageName,filterStr)|| Contains(d.PageType,filterStr) || Contains(d.PageMode,filterStr) || Contains(d.AssetPath,filterStr)) {
-                        newDict.Add(newDict.Count,d);
+                    if (Contains(d.ID, filterStr) || Contains(d.PageName, filterStr) || Contains(d.PageType, filterStr) || Contains(d.PageMode, filterStr) || Contains(d.AssetPath, filterStr)) {
+                        newDict.Add(newDict.Count, d);
                     }
                 }
                 PageConfigDict.Clear();
@@ -219,16 +180,14 @@ namespace Framework.UI.Pages {
                 rowHeight = 24;
                 showAlternatingRowBackgrounds = true; //隔行显示颜色
                 showBorder = false; //表格边框
-                Reload();
+                // Reload();
             }
             public bool IsValid => PageConfigDict.Count > 0;
 
-            public int GetNewId() {
-                return PageConfigDict.Count;
-            }
-            protected override IList<TreeViewItem> BuildRows(TreeViewItem root) {
-                return base.BuildRows(root);
-            }
+            public int GetNewId() => PageConfigDict.Count;
+            // protected override IList<TreeViewItem> BuildRows(TreeViewItem root) {
+            //     return base.BuildRows(root);
+            // }
 
             protected override TreeViewItem BuildRoot() {
                 var rootTreeViewItem = new TreeViewItem(-1, -1); //root的depth必须为-1
@@ -242,11 +201,11 @@ namespace Framework.UI.Pages {
 
             protected override void RowGUI(RowGUIArgs args) {
                 for (var i = 0; i < args.GetNumVisibleColumns(); ++i) {
-                    CellGUI(args.GetCellRect(i), args.item, args.GetColumn(i), ref args);
+                    CellGUI(args.GetCellRect(i), args.item, args.GetColumn(i));
                 }
             }
 
-            private void CellGUI(Rect cellRect, TreeViewItem item, int col, ref RowGUIArgs args) {
+            private void CellGUI(Rect cellRect, TreeViewItem item, int col) {
                 //var kv = _pageConfigDict[item.id];
                 if (!PageConfigDict.TryGetValue(item.id, out var cellRowData)) return;
                 CenterRectUsingSingleLineHeight(ref cellRect); //控件的区域居中

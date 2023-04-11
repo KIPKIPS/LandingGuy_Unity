@@ -3,7 +3,7 @@
 // describe:
 using System;
 
-namespace Framework.UI.Pages {
+namespace Framework.UI {
     [Serializable]
     public class PageConfig {
         public int pageID;
