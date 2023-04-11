@@ -1,6 +1,7 @@
 ﻿// author:KIPKIPS
 // date:2023.04.08 20:01
 // describe:UI框架管理器
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Framework.Singleton;
@@ -9,88 +10,75 @@ using UnityEngine;
 
 namespace Framework.UI {
     public class UIManager :MonoSingleton<UIManager> {
+        private const string LOGTag = "UI";
+        public const string ConfigAssetPath = "Assets/ResourcesAssets/UI/Config/pages.asset";//配置资源路径
+        private PagesConfig _pagesConfigAsset;
         public void Launch() {
-            AnalysisWindow();
             InitUICamera();
             LoadConfig();
         }
         private void LoadConfig() {
-            
+            _pagesConfigAsset = AssetDatabase.LoadAssetAtPath<PagesConfig>(ConfigAssetPath);
+            foreach (var t in _pagesConfigAsset.configs) {
+                _pageDict.Add(t.pageName,t.pageID);
+            }
         }
-        private const string LOGTag = "UIManager";
-        private readonly Stack<BaseWindow> _windowStack = new();
-        private readonly Dictionary<int, BaseWindow> _baseWindowDict = new();
-        private readonly Dictionary<int, PageConfig> _windowDict = new ();
+        private PageConfig GetConfig(string pageName) {
+            _pageDict.TryGetValue(pageName, out var id);
+            return _pagesConfigAsset.configs.Count > id ? _pagesConfigAsset.configs[id] : null;
+        }
+        private readonly Stack<BasePage> _pageStack = new();
+        private readonly Dictionary<string, int> _pageDict = new ();
         private static Transform UICameraRoot => UICamera.transform;
         private Camera _uiCamera;
         private static Camera UICamera => Utils.Find<Camera>("[UICamera]");
-        private void InitUICamera() {
+        private static void InitUICamera() {
             DontDestroyOnLoad(UICameraRoot);
         }
 
-        public void Open(string windowName, dynamic options = null) {
-            PushWindow(windowName, options);
+        public void Open(string pageName, dynamic options = null) {
+            Utils.Log(LOGTag,$"Open Page === {pageName}");
+            PushPage(pageName, options);
         }
-        private BaseWindow GetWindow(string pageName) {
-            BaseWindow window;
-            _baseWindowDict.TryGetValue(id, out window);
-            if (window != null) {
-                return window;
-            } else {
-                string path = _windowDict[id].path;
-                GameObject windowObj = null;
-                windowObj = Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>("Assets/ResourcesAssets/" + _windowDict[id].path + ".prefab"), UICameraRoot);
-                windowObj.name = _windowDict[id].name;
-                window = windowObj.transform.GetComponent<BaseWindow>();
-                window.WindowId = (UIWindow)id;
-                _baseWindowDict.Add(id, window);
-                return window;
-            }
+        private BasePage GetPage(string pageName) {
+            var config = GetConfig(pageName);
+            if (config == null) return null;
+            var page = Instantiate(AssetDatabase.LoadAssetAtPath<BasePage>($"Assets/ResourcesAssets/{config.assetPath}"), UICameraRoot);
+            page.gameObject.name = config.pageName;
+            page.Config = config;
+            return page;
         }
-        private void PushWindow(string pageName, dynamic options = null) {
-            BaseWindow window = GetWindow(pageName);
-            Utils.Log("Open Window === ", window.name);
-            window.Canvas.sortingOrder = _windowDict[windowId].layer;
-            window.Canvas.worldCamera = UICamera;
-            if (window.IsShow) {
+        private void PushPage(string pageName, dynamic options = null) {
+            var page = GetPage(pageName);
+            page.Canvas.worldCamera = UICamera;
+            if (page.IsShow) {
                 return;
             }
-
-            //显示当前界面时,应该先去判断当前栈是否为空,不为空说明当前有界面显示,把当前的界面OnPause掉
-            if (_windowStack.Count > 0) {
-                _windowStack.Peek().OnPause();
+            if (_pageStack.Count > 0) {
+                _pageStack.Peek().OnPause();
             }
-
-            //每次入栈(显示页面的时候),触发window的OnEnter方法
-            window.OnEnter(options);
-            _windowStack.Push(window);
+            //每次入栈,触发page的OnEnter方法
+            page.OnEnter(options);
+            _pageStack.Push(page);
         }
         public void Close(string pageName) {
-            BaseWindow window = GetWindow(pageName);
-            Utils.Log("Close Window === ", window.name);
-            window.OnExit();
-        }
-        public void PopWindow() {
-            if (_windowStack.Count > 0) {
-                _windowStack.Pop(); //关闭栈顶界面
-                // Destroy(window.gameObject);
-                if (_windowStack.Count > 0) {
-                    _windowStack.Peek().OnResume(); //恢复原先的界面
-                }
+            Utils.Log(LOGTag,$"Close Page === {pageName}");
+            var page = GetPage(pageName);
+            //对各种类型界面做判断
+            switch (page.Config.pageType) {
+                case PageType.Stack:
+                    break;
+                case PageType.Freedom:
+                    break;
             }
+            PopPage();
         }
-        private void AnalysisWindow() {
-            WindowMap windowMap = null;
-#if UNITY_EDITOR
-            windowMap = AssetDatabase.LoadAssetAtPath<WindowMap>("Assets/ResourcesAssets/RuntimeDepend/UIFramework/WindowMap.asset");
-#else
-            windowMap = ResourcesLoadManager.Instance.LoadFromFile<WindowMap>("RuntimeDepend","WindowMap".ToLower());
-#endif
-            foreach (WindowData windowData in windowMap.windowDataList) {
-                windowData.AssetTag = windowData.path.Replace("/" + windowData.name, "");
-                _windowDict.Add((int)windowData.id, windowData);
+        private void PopPage() {
+            if (_pageStack.Count <= 0) return;
+            Destroy(_pageStack.Pop().gameObject);
+            if (_pageStack.Count > 0) {
+                _pageStack.Peek().OnResume(); //恢复原先的界面
             }
-            Utils.Log(LOGTag, "Window data is parsed");
         }
     }
 }

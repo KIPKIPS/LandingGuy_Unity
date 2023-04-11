@@ -1,6 +1,6 @@
 ﻿// author:KIPKIPS
 // date:2023.04.10 18:06
-// describe:BaseWindow UI面板的基类
+// describe:BasePage UI面板的基类
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,20 +9,17 @@ using Button = UnityEngine.UI.Button;
 using UnityEngine.Events;
 
 namespace Framework.UI {
-    public class BaseWindow : MonoBehaviour {
+    public class BasePage : MonoBehaviour {
+        public PageConfig Config{ get; set; }
         public bool IsShow { get; private set; }
         private Transform _content;
         private Transform _bg;
-        protected Transform Content {
-            get => _content = _content ? _content : Find<Transform>("_CONTENT_", transform);
-        }
-        protected Transform Bg {
-            get => _bg = _bg ? _bg : Find<Transform>("_BG_", transform);
-        }
+        protected Transform Content => _content ??= Find<Transform>("_CONTENT_", transform);
+        protected Transform Bg => _bg ??= Find<Transform>("_BG_", transform);
         private Canvas _canvas;
         public Canvas Canvas {
             get {
-                _canvas = _canvas ? _canvas : GetComponent<Canvas>();
+                _canvas ??= GetComponent<Canvas>();
                 _canvas.additionalShaderChannels = AdditionalCanvasShaderChannels.Tangent | AdditionalCanvasShaderChannels.TexCoord1 | AdditionalCanvasShaderChannels.Normal;
                 return _canvas;
             }
@@ -105,7 +102,7 @@ namespace Framework.UI {
 
         #endregion
 
-        #region Window life cycle
+        #region page life cycle
 
         //界面生命周期流程,这里只提供虚方法,具体的逻辑由各个业务界面进行重写
         //进入界面
@@ -129,20 +126,14 @@ namespace Framework.UI {
 
         //恢复界面
         public void OnResume() {
-            //print("on resume");
             IsShow = true;
         }
         //关闭界面
         public virtual void OnExit() {
-            Destroy(gameObject);
-            UIManager.Instance.PopWindow();
+            UIManager.Instance.Close(Config.pageName);
             IsShow = false;
         }
 
         #endregion
-
-        public string AddColor(string str, string hexColor) {
-            return Utils.AddColor(str, hexColor);
-        }
     }
 }

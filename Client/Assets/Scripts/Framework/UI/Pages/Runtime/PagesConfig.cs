@@ -5,9 +5,9 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Framework.UI.Pages {
-    [Serializable]
+namespace Framework.UI {
     [CreateAssetMenu(fileName = "PagesConfig", menuName = "Framework/UI/PagesConfig")]
+    [Serializable]
     public class PagesConfig : ScriptableObject {
         [SerializeField,NonReorderable]
         public List<PageConfig> configs = new();

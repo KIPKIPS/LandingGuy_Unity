@@ -14,17 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   configs:
   - pageID: 0
-    pageName: nn1
-    pageType: 1
-    pageMode: 0
-    assetPath: $path
-  - pageID: 1
-    pageName: $name
+    pageName: TempPage
     pageType: 0
-    pageMode: 1
-    assetPath: $path
-  - pageID: 2
-    pageName: $name
-    pageType: 1
     pageMode: 0
-    assetPath: asser
+    assetPath: UI/Pages/Temp/TempPage.prefab

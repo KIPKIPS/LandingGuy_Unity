@@ -3,6 +3,7 @@
 // describe:框架启动器
 using UnityEngine;
 using Framework.Manager;
+using Framework.UI;
 using SceneManager = Framework.Manager.SceneManager;
 
 namespace Framework {
@@ -17,6 +18,9 @@ namespace Framework {
             AudioManager.Instance.Launch();
             LocalizationManager.Instance.Launch();
             SceneManager.Instance.Launch();
+            UIManager.Instance.Launch();
+            
+            UIManager.Instance.Open("TempPage");
         }
     }
 }

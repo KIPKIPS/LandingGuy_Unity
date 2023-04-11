@@ -8,10 +8,10 @@ using UnityEditor;
 using UnityEditor.IMGUI.Controls;
 using UnityEngine;
 
-namespace Framework.UI.Pages {
+namespace Framework.UI {
     public class PagesEditorWindow : EditorWindow {
         private const string LOGTag = "PagesEditorWindow";
-        private const string ConfigAssetPath = "Assets/ResourcesAssets/UI/Config/pages.asset";
+        
         public PagesConfig pagesConfig;
         [MenuItem("Tools/UI/PagesEditor")]
         public static void OpenWindow() => GetWindow<PagesEditorWindow>().titleContent = new GUIContent("PagesEditor");
@@ -25,7 +25,7 @@ namespace Framework.UI.Pages {
             var multiColHeader = new MultiColumnHeader(_multiColHeaderState);
             multiColHeader.ResizeToFit();
             _tableView = new TableView(_treeViewState, multiColHeader);
-            pagesConfig = AssetDatabase.LoadAssetAtPath<PagesConfig>(ConfigAssetPath);
+            pagesConfig = AssetDatabase.LoadAssetAtPath<PagesConfig>(UIManager.ConfigAssetPath);
             foreach (var config in pagesConfig.configs) {
                 _allConfig.Add(new PageData(config.pageID, config.pageName, config.pageType, config.pageMode, config.assetPath));
             }
