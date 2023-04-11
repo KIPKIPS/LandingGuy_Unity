@@ -4,6 +4,7 @@
 using System;
 
 namespace Framework.UI.Pages {
+    [Serializable]
     public class PageConfig {
         public int pageID;
         public string pageName;
