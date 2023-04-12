@@ -20,19 +20,20 @@ namespace Framework.UI {
         private void LoadConfig() {
             _pagesConfigAsset = AssetDatabase.LoadAssetAtPath<PagesConfig>(ConfigAssetPath);
             foreach (var t in _pagesConfigAsset.configs) {
-                _pageDict.Add(t.pageName,t.pageID);
+                _pageName2IdMap.Add(t.pageName,t.pageID);
             }
         }
         private PageConfig GetConfig(string pageName) {
-            _pageDict.TryGetValue(pageName, out var id);
+            _pageName2IdMap.TryGetValue(pageName, out var id);
             return _pagesConfigAsset.configs.Count > id ? _pagesConfigAsset.configs[id] : null;
         }
         private readonly Stack<BasePage> _pageStack = new();
-        private readonly Dictionary<string, int> _pageDict = new ();
-        private static Transform UICameraRoot => UICamera.transform;
+        private readonly Dictionary<string, int> _pageName2IdMap = new ();
+        private readonly Dictionary<int, BasePage> _pageDict = new ();
+        private Transform UICameraRoot => UICamera.transform;
         private Camera _uiCamera;
-        private static Camera UICamera => Utils.Find<Camera>("[UICamera]");
-        private static void InitUICamera() {
+        public Camera UICamera => Utils.Find<Camera>("[UICamera]");
+        private void InitUICamera() {
             DontDestroyOnLoad(UICameraRoot);
         }
 
@@ -43,14 +44,18 @@ namespace Framework.UI {
         private BasePage GetPage(string pageName) {
             var config = GetConfig(pageName);
             if (config == null) return null;
-            var page = Instantiate(AssetDatabase.LoadAssetAtPath<BasePage>($"Assets/ResourcesAssets/{config.assetPath}"), UICameraRoot);
+            _pageDict.TryGetValue(config.pageID, out var page);
+            if (page) {
+                return page;
+            }
+            page = Instantiate(AssetDatabase.LoadAssetAtPath<BasePage>($"Assets/ResourcesAssets/{config.assetPath}"), UICameraRoot);
             page.gameObject.name = config.pageName;
             page.Config = config;
+            _pageDict.Add(config.pageID,page);
             return page;
         }
         private void PushPage(string pageName, dynamic options = null) {
             var page = GetPage(pageName);
-            page.Canvas.worldCamera = UICamera;
             if (page.IsShow) {
                 return;
             }
@@ -64,6 +69,8 @@ namespace Framework.UI {
         public void Close(string pageName) {
             Utils.Log(LOGTag,$"Close Page === {pageName}");
             var page = GetPage(pageName);
+            page.OnExit();
+            _pageDict.Remove(page.Config.pageID);
             //对各种类型界面做判断
             switch (page.Config.pageType) {
                 case PageType.Stack:
@@ -75,7 +82,8 @@ namespace Framework.UI {
         }
         private void PopPage() {
             if (_pageStack.Count <= 0) return;
-            Destroy(_pageStack.Pop().gameObject);
+            var go = _pageStack.Pop().gameObject;
+            Destroy(go);
             if (_pageStack.Count > 0) {
                 _pageStack.Peek().OnResume(); //恢复原先的界面
             }

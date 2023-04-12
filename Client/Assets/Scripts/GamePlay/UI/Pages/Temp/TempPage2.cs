@@ -3,21 +3,22 @@
 //     time:20:45
 // ]]
 using System;
-using System.Collections;
 using Framework;
 using Framework.UI;
+using UnityEditor;
 using UnityEngine.UI;
 
 namespace GamePlay.UI {
-    public class TempPage:BasePage {
-        protected override void OnEnter() {
+    public class TempPage2:BasePage {
+        private Action closeCallback;
+        public override void OnEnter(dynamic options) {
+            closeCallback = options;
             Bind(Find<Button>("_CONTENT_/Button"),()=> {
                 UIProxy.Close(Config.pageName);
-                void CloseCallback() {
-                    Utils.Log("close callback");
-                }
-                UIProxy.Open("TempPage2",(Action)CloseCallback);
             });
+        }
+        public override void OnExit() {
+            closeCallback?.Invoke();
         }
     }
 }

@@ -3,6 +3,7 @@
 // describe:BasePage UI面板的基类
 using System;
 using System.Collections.Generic;
+using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using Button = UnityEngine.UI.Button;
@@ -12,12 +13,8 @@ namespace Framework.UI {
     public class BasePage : MonoBehaviour {
         public PageConfig Config{ get; set; }
         public bool IsShow { get; private set; }
-        private Transform _content;
-        private Transform _bg;
-        protected Transform Content => _content ??= Find<Transform>("_CONTENT_", transform);
-        protected Transform Bg => _bg ??= Find<Transform>("_BG_", transform);
         private Canvas _canvas;
-        public Canvas Canvas {
+        private Canvas Canvas {
             get {
                 _canvas ??= GetComponent<Canvas>();
                 _canvas.additionalShaderChannels = AdditionalCanvasShaderChannels.Tangent | AdditionalCanvasShaderChannels.TexCoord1 | AdditionalCanvasShaderChannels.Normal;
@@ -58,11 +55,16 @@ namespace Framework.UI {
 
         #region Bind接口列表
 
-        public void Bind(Button btn, Action click) {
-            btn.onClick.AddListener(() => { click(); });
+        /// <summary>
+        /// 按钮绑定
+        /// </summary>
+        /// <param name="btn">按钮</param>
+        /// <param name="callback">点击事件</param>
+        public void Bind(Button btn, Action callback) {
+            btn.onClick.AddListener(() => { callback(); });
         }
-        public void Bind(Button btn, Action click, UnityAction<BaseEventData> mouseEnter, UnityAction<BaseEventData> mouseExit = null) {
-            btn.onClick.AddListener(() => { click(); });
+        public void Bind(Button btn, Action callback, UnityAction<BaseEventData> mouseEnter, UnityAction<BaseEventData> mouseExit = null) {
+            btn.onClick.AddListener(() => { callback(); });
             BindBtn(btn, mouseEnter, mouseExit);
         }
         public void Bind(Button btn, UnityAction<BaseEventData> mouseEnter, UnityAction<BaseEventData> mouseExit) {
@@ -104,33 +106,39 @@ namespace Framework.UI {
 
         #region page life cycle
 
-        //界面生命周期流程,这里只提供虚方法,具体的逻辑由各个业务界面进行重写
-        //进入界面
-        public virtual void OnEnter(dynamic options = null) {
-            if (options == null) {
-                OnEnter();
-                return;
-            }
-            IsShow = true;
-            gameObject.SetActive(true);
+        /// <summary>
+        /// 进入界面
+        /// </summary>
+        /// <param name="options">参数传递</param>
+        public virtual void OnEnter([CanBeNull] dynamic options) {
+            OnEnter();
         }
-        public virtual void OnEnter() {
+        /// <summary>
+        /// 进入界面
+        /// </summary>
+        protected virtual void OnEnter() {
+            Canvas.worldCamera = UIManager.Instance.UICamera;
             IsShow = true;
             gameObject.SetActive(true);
         }
 
-        //暂停界面
-        public void OnPause() {
+        /// <summary>
+        /// 暂停界面
+        /// </summary>
+        public virtual void OnPause() {
             IsShow = false;
         }
 
-        //恢复界面
-        public void OnResume() {
+        /// <summary>
+        /// 恢复界面
+        /// </summary>
+        public virtual void OnResume() {
             IsShow = true;
         }
-        //关闭界面
+        /// <summary>
+        /// 关闭界面
+        /// </summary>
         public virtual void OnExit() {
-            UIManager.Instance.Close(Config.pageName);
             IsShow = false;
         }
 

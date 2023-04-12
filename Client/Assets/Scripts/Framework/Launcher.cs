@@ -20,7 +20,7 @@ namespace Framework {
             SceneManager.Instance.Launch();
             UIManager.Instance.Launch();
             
-            UIManager.Instance.Open("TempPage");
+            UIProxy.Open("TempPage");
         }
     }
 }

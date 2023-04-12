@@ -328,12 +328,12 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 9133003604144256518}
-  - component: {fileID: 9133003604144256519}
   - component: {fileID: 9133003604144257016}
   - component: {fileID: 9133003604144257017}
   - component: {fileID: 1905856356185200200}
+  - component: {fileID: 2231779297507010818}
   m_Layer: 5
-  m_Name: TempPage
+  m_Name: TempPage2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -361,18 +361,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
---- !u!114 &9133003604144256519
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9133003604144257018}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fc8fb3fa6d3c4b90b4c2ee3c824bd38f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!222 &9133003604144257016
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -419,6 +407,18 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
+--- !u!114 &2231779297507010818
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9133003604144257018}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ae8d8063816643248b0e8aef2381a58c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &9133003604630005630
 GameObject:
   m_ObjectHideFlags: 0

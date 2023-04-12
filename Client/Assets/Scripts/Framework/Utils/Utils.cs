@@ -284,10 +284,6 @@ namespace Framework {
         /// <returns>返回着色字符串</returns>
         public static string AddColor(string str, string hexColor) => $"<color=#{hexColor}>{str}</color>";
         private static readonly System.Random Random = new ();
-        //color下划线颜色 line 线厚度
-        // public static string AddUnderLine(string msg, int colorIndex, int line) {
-        //     return string.Format("<UnderWave/color={0},thickness=${1}>{2}</UnderWave>", GetColor(colorIndex), line, msg);
-        // }
 
         /// <summary>
         /// 获取随机颜色 默认alpha=1 
