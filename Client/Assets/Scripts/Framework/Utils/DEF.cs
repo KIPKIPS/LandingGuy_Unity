@@ -7,22 +7,15 @@ namespace Framework {
     public static class DEF {
         #region 系统默认值
         public const int SYSTEM_STANDARD_DPI = 96; //系统默认dpi
-        public const int TRUE = 1;
-        public const int FASLE = 0;
         #endregion
+        public static readonly string DataStoragePath = $"{System.Environment.CurrentDirectory}\\Storage\\";
         
-        #region AUDIO
-        //音频类型
-        public enum AudioType {
-            BGM = 0,
-            EFFECT = 1,
-        }
-        public static readonly string DataStoragePath = System.Environment.CurrentDirectory+@"\Storage\";
-        #endregion
     }
-
+    #region AUDIO
     public enum AudioType {
         BGM = 0,
         EFFECT = 1,
     }
+    #endregion
+
 }

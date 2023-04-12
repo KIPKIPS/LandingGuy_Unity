@@ -53,7 +53,7 @@ namespace Framework.Manager {
                 t.localPosition = Vector3.zero;
                 t.localRotation = Quaternion.identity;
                 t.localScale = Vector3.one;
-                t.name = DEF.AudioType.BGM.ToString();
+                t.name = AudioType.BGM.ToString();
                 _bgmAudioSource = t.UAddComponent<AudioSource>() as AudioSource;
                 _bgmAudioSource.loop = true;
                 _bgmAudioSource.playOnAwake = false;
@@ -166,8 +166,8 @@ namespace Framework.Manager {
             t.position = position;
             t.localRotation = Quaternion.identity;
             t.localScale = Vector3.one;
-            if (!t.name.StartsWith($"{DEF.AudioType.EFFECT}")) {
-                t.name = $"{DEF.AudioType.EFFECT}_{_effectAudioList.Count}";
+            if (!t.name.StartsWith($"{AudioType.EFFECT}")) {
+                t.name = $"{AudioType.EFFECT}_{_effectAudioList.Count}";
             }
             audioSource.spatialBlend = is3d ? 1 : 0;
             _effectAudioList.Add(audioSource);

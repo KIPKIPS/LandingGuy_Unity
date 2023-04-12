@@ -22,7 +22,7 @@ namespace Framework.UI {
             }
         }
 
-        #region Find接口列表
+        #region Find
 
         public T Find<T>(string namePath) {
             return Utils.Find<T>(transform, namePath);
@@ -53,7 +53,7 @@ namespace Framework.UI {
 
         #endregion
 
-        #region Bind接口列表
+        #region Bind
 
         /// <summary>
         /// 按钮绑定
@@ -73,27 +73,18 @@ namespace Framework.UI {
         private void BindBtn(Button btn, UnityAction<BaseEventData> mouseEnter, UnityAction<BaseEventData> mouseExit = null) {
             var trigger = btn.gameObject.GetComponent<EventTrigger>();
             trigger = trigger ? trigger : btn.gameObject.AddComponent<EventTrigger>();
-            // 实例化delegates(trigger.trigger是注册在EventTrigger组件上的所有功能)  
             trigger.triggers = new List<EventTrigger.Entry>();
-            // 在EventSystem委托列表中进行登记 
             if (mouseEnter != null) {
                 var enterEntry = new EventTrigger.Entry {
-                    // 设置 事件类型  
                     eventID = EventTriggerType.PointerEnter,
-                    // 实例化回调函数  
                     callback = new EventTrigger.TriggerEvent()
                 };
-                //UnityAction 本质上是delegate,且有数个泛型版本(参数最多是四个),一个UnityAction可以添加多个函数(多播委托)  
-                //将方法绑定在回调上(给回调方法添加监听)  
                 enterEntry.callback.AddListener(mouseEnter);
-                // 添加事件触发记录到GameObject的事件触发组件  
                 trigger.triggers.Add(enterEntry);
             }
             if (mouseExit == null) return;
             var exitEntry = new EventTrigger.Entry {
-                // 设置 事件类型  
                 eventID = EventTriggerType.PointerExit,
-                // 实例化回调函数  
                 callback = new EventTrigger.TriggerEvent()
             };
             //将方法绑定在回调上(给回调方法添加监听)  
@@ -104,7 +95,7 @@ namespace Framework.UI {
 
         #endregion
 
-        #region page life cycle
+        #region Page Life Cycle
 
         /// <summary>
         /// 进入界面
