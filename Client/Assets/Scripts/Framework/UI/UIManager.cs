@@ -20,7 +20,7 @@ namespace Framework.UI {
         }
         private void LoadConfig() {
             _pagesConfigAsset = AssetDatabase.LoadAssetAtPath<PagesConfig>(ConfigAssetPath);
-            foreach (var t in _pagesConfigAsset.configs) {
+            foreach (var t in _pagesConfigAsset.configs) { 
                 _pageName2IdMap.Add(t.pageName,t.pageID);
             }
         }
