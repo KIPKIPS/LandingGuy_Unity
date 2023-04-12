@@ -5,6 +5,15 @@ using System;
 using Framework.Manager;
 namespace Framework {
     // ReSharper disable ClassNeverInstantiated.Global
+    #region EVENT
+    public enum EventType {
+        GameLaunch,
+        SceneLoadFinished,//场景加载完成
+        SceneLoading,//场景加载中
+        SceneFailure,//场景加载失败
+    }
+
+    #endregion
     public class Event {
         public static void Register(EventType type, Action<dynamic> callback) => EventManager.Instance.Register(type,callback);
 

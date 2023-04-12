@@ -4,6 +4,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Framework.Manager;
 using Framework.Singleton;
 using UnityEditor;
 using UnityEngine;
@@ -30,11 +31,9 @@ namespace Framework.UI {
         private readonly Stack<BasePage> _pageStack = new();
         private readonly Dictionary<string, int> _pageName2IdMap = new ();
         private readonly Dictionary<int, BasePage> _pageDict = new ();
-        private Transform UICameraRoot => UICamera.transform;
-        private Camera _uiCamera;
-        public Camera UICamera => Utils.Find<Camera>("[UICamera]");
+        
         private void InitUICamera() {
-            DontDestroyOnLoad(UICameraRoot);
+            DontDestroyOnLoad(CameraProxy.GetCameraRoot(CameraType.UI));
         }
 
         public void Open(string pageName, dynamic options = null) {
@@ -48,7 +47,7 @@ namespace Framework.UI {
             if (page) {
                 return page;
             }
-            page = Instantiate(AssetDatabase.LoadAssetAtPath<BasePage>($"Assets/ResourcesAssets/{config.assetPath}"), UICameraRoot);
+            page = Instantiate(AssetDatabase.LoadAssetAtPath<BasePage>($"Assets/ResourcesAssets/{config.assetPath}"),CameraProxy.GetCameraRoot(CameraType.UI));
             page.gameObject.name = config.pageName;
             page.Config = config;
             _pageDict.Add(config.pageID,page);

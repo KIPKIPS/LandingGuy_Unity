@@ -117,7 +117,7 @@ namespace Framework.UI {
         /// 进入界面
         /// </summary>
         protected virtual void OnEnter() {
-            Canvas.worldCamera = UIManager.Instance.UICamera;
+            Canvas.worldCamera = CameraProxy.GetCamera(CameraType.UI);
             IsShow = true;
             gameObject.SetActive(true);
         }
