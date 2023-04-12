@@ -10,6 +10,6 @@ namespace Framework.UI {
     [Serializable]
     public class PagesConfig : ScriptableObject {
         [SerializeField,NonReorderable]
-        public List<PageConfig> configs = new();
+        public List<PageConfig> configs;
     }
 }

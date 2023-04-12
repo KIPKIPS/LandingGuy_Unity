@@ -64,7 +64,9 @@ namespace Framework.UI {
                         assetPath = data.AssetPath
                     });
                 }
+                EditorUtility.SetDirty(pagesConfig);
                 AssetDatabase.SaveAssets();
+                AssetDatabase.Refresh();
                 Utils.Log(LOGTag, "page config save success");
             }
             if (GUILayout.Button("Add", GUILayout.Width(50))) {

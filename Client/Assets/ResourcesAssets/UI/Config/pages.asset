@@ -18,3 +18,8 @@ MonoBehaviour:
     pageType: 0
     pageMode: 0
     assetPath: UI/Pages/Temp/TempPage.prefab
+  - pageID: 1
+    pageName: TempPage2
+    pageType: 0
+    pageMode: 0
+    assetPath: UI/Pages/Temp/TempPage2.prefab
