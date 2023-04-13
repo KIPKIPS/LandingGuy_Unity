@@ -30,20 +30,12 @@ namespace Framework.Manager {
         private void AnalyticsConfig() {
             _configDict.EnableWrite();
             _typeDict.EnableWrite();
-            // _configDict = new Dictionary<string, List<dynamic>>();
             //获取所有配置表
-            // UIUtils.LoadJsonByPath<List<JObject>>("Data/" + tabName + ".json");
-            var dir = new DirectoryInfo(ConfigPath);
-            var files = dir.GetFileSystemInfos();
-            // string fullName = "";
-            foreach (var t in files) {
+            foreach (var t in new DirectoryInfo(ConfigPath).GetFileSystemInfos()) {
                 var configName = t.Name.Replace(".json", "");
-                // fullName = configPath + files[i].Name;
                 if (_configDict.ContainsKey(configName)) continue;
                 _configDict.Add(configName, new List<dynamic>());
                 _configDict[configName].Add(null); //预留一个位置
-                // _configDict[configName].Add();
-                // Utils.Log(configPath + files[i].Name);
                 try {
                     var jObjList = Utils.LoadJsonByPath<List<JObject>>(ConfigPath + t.Name);
                     var metatable = jObjList.Last();
@@ -177,7 +169,7 @@ namespace Framework.Manager {
         }
 
         /// <summary>
-        /// 获取配置表的指定id的Hashtable
+        /// 获取配置表的指定id配置
         /// </summary>
         /// <param name="configName">配置表名称</param>
         /// <param name="id">索引</param>

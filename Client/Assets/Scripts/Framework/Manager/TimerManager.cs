@@ -17,20 +17,29 @@ namespace Framework.Manager {
         
         private readonly SimplePool<TimerEntity> _timerEntityPool = new();
         private int _allocateTimerId;
+        private int _aliveTimerId;
         private Coroutine _triggerTimer;
-        public void Launch() {
+        private bool _isTicking;
+
+        private void Reset() {
             _triggerTimer = Utils.StartCoroutine(TriggerTimer());
-            Utils.Log(LOGTag,"timer manager is start");
+            _isTicking = true;
+            Utils.Log(LOGTag,"timer is start");
         }
         /// <summary>
         /// 释放定时器的相关数据
         /// </summary>
         public override void Dispose() {
-            Utils.StopCoroutine(_triggerTimer);
+            if (_triggerTimer != null) {
+                Utils.StopCoroutine(_triggerTimer);
+            }
+            _isTicking = false;
             _timerEntityDict.Clear();
             _removeStack.Clear();
             _timerEntityPool.Clear();
             _allocateTimerId = 0;
+            _aliveTimerId = 0;
+            Utils.Log(LOGTag,"timer shut down");
         }
         /// <summary>
         /// 创建计时器
@@ -39,11 +48,15 @@ namespace Framework.Manager {
         /// <param name="callback">回调函数</param>
         /// <param name="times">循环执行次数 默认1次</param>
         /// <returns>计时器对象</returns>
-        public TimerEntity CreateTimer(Action<TimerEntity> callback, int millisecond, int times = 1) {
+        public TimerEntity CreateTimer(Action<TimerEntity> callback, int millisecond, int times = 0) {
             if (_timerEntityDict.Count == 0) {
                 _allocateTimerId = 0;
             }
+            if (!_isTicking) {
+                Reset();
+            }
             _allocateTimerId++;
+            _aliveTimerId++;
             var e = _timerEntityPool.Allocate();
             e.SetEntity(millisecond, callback, _allocateTimerId, times);
             _timerEntityDict[_allocateTimerId] = e;
@@ -57,6 +70,10 @@ namespace Framework.Manager {
         private void DestroyTimer(int timerId) {
             if (_timerEntityDict.ContainsKey(timerId)) {
                 _timerEntityPool.Recycle(_timerEntityDict[timerId]);
+                _aliveTimerId--;
+                if (_aliveTimerId == 0) {
+                    Dispose();
+                }
             } else {
                 Utils.LogError(LOGTag, "Timer " + timerId + " is not exist !");
             }
@@ -68,8 +85,11 @@ namespace Framework.Manager {
         /// <returns></returns>
         private IEnumerator TriggerTimer() {
             while (true) {
-                foreach (var e in _timerEntityDict.Where(e => !e.Value.Check())) {
-                    _removeStack.Push(e.Key);
+                var list = new List<TimerEntity>(_timerEntityDict.Values);
+                foreach (var e in list) {
+                    if (!e.Tick()) {
+                        _removeStack.Push(e.ID);
+                    }
                 }
                 if (_removeStack.Count > 0) {
                     var count = _removeStack.Count;
@@ -94,10 +114,11 @@ namespace Framework.Manager {
             private float _startTime;
             private float _gap;
             private int _id;
+            internal int ID=>_id;
             private int _times;
             private int _curTimes;
             private bool _isStart;
-            private bool Loop => _times != 1;
+            private bool Loop => _times < 1;
  
             /// <summary>
             /// 启动定时器
@@ -125,7 +146,7 @@ namespace Framework.Manager {
             /// <param name="callback">执行回调</param>
             /// <param name="id">定时器id</param>
             /// <param name="times">执行次数</param>
-            internal void SetEntity(int gap, Action<TimerEntity> callback, int id, int times = 1) {
+            internal void SetEntity(int gap, Action<TimerEntity> callback, int id, int times = 0) {
                 _gap = (float)gap / 1000;
                 _id = id;
                 _callback = callback;
@@ -135,7 +156,7 @@ namespace Framework.Manager {
             /// 执行检测方法
             /// </summary>
             /// <returns>是否继续执行</returns>
-            internal bool Check() {
+            internal bool Tick() {
                 if (IsRecycled) return false;
                 if (!_isStart) return true;
                 if (Loop) {

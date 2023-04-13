@@ -19,6 +19,11 @@ namespace GamePlay.UI {
         }
         public override void OnExit() {
             closeCallback?.Invoke();
+            var t = Timer.New(t => {
+                Utils.Log(closeCallback.ToString());
+                t.Destroy();
+            }, 0,1);
+            t.Start();
         }
     }
 }

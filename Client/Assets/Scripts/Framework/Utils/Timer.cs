@@ -9,7 +9,7 @@ namespace Framework {
     // ReSharper disable UnusedMember.Global
     public class Timer {
         // ReSharper disable Unity.PerformanceAnalysis
-        public static TimerEntity New(Action<TimerEntity> callback,int millisecond, int times = 1) =>TimerManager.Instance.CreateTimer(callback, millisecond, times);
+        public static TimerEntity New(Action<TimerEntity> callback,int millisecond, int times = 0) =>TimerManager.Instance.CreateTimer(callback, millisecond, times);
         public static void Destroy(TimerEntity entity) => entity.Destroy();
         public static void Start(TimerEntity entity) => entity.Start();
     }
