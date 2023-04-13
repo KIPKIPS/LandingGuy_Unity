@@ -14,12 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   configs:
   - pageID: 0
-    pageName: TempPage
+    pageName: CreateRolePage
     pageType: 0
     pageMode: 0
-    assetPath: UI/Pages/Temp/TempPage.prefab
-  - pageID: 1
-    pageName: TempPage2
-    pageType: 0
-    pageMode: 0
-    assetPath: UI/Pages/Temp/TempPage2.prefab
+    assetPath: UI/Pages/CreateRole/CreateRolePage.prefab

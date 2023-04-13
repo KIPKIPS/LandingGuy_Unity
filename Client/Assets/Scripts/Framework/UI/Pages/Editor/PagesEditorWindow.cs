@@ -4,9 +4,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using JetBrains.Annotations;
+using NUnit.Framework;
 using UnityEditor;
 using UnityEditor.IMGUI.Controls;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 namespace Framework.UI {
     public class PagesEditorWindow : EditorWindow {
@@ -18,14 +20,19 @@ namespace Framework.UI {
         private TableView _tableView;
         private TreeViewState _treeViewState;
         private MultiColumnHeaderState _multiColHeaderState;
-        private readonly List<PageData> _allConfig = new();
+        private List<PageData> _allConfig = new();
         private void OnEnable() {
+            Initialize();
+        }
+        void Initialize() {
             _treeViewState ??= new TreeViewState();
             _multiColHeaderState = CreateStateWith3Cols();
             var multiColHeader = new MultiColumnHeader(_multiColHeaderState);
             multiColHeader.ResizeToFit();
             _tableView = new TableView(_treeViewState, multiColHeader);
             pagesConfig = AssetDatabase.LoadAssetAtPath<PagesConfig>(UIManager.ConfigAssetPath);
+            _allConfig.Clear();
+            _tableView.PageConfigDict.Clear();
             foreach (var config in pagesConfig.configs) {
                 _allConfig.Add(new PageData(config.pageID, config.pageName, config.pageType, config.pageMode, config.assetPath));
             }
@@ -48,6 +55,7 @@ namespace Framework.UI {
             CreateColumn("PageMode", 80, 80, 80),
             CreateColumn("AssetPath", 200, 200, 300)
         });
+        //ContextualMenuPopulateEvent
 
         public void OnGUI() {
             if (_tableView == null) return;
@@ -55,27 +63,61 @@ namespace Framework.UI {
             GUILayout.FlexibleSpace();
             if (GUILayout.Button("Save", GUILayout.Width(50))) {
                 pagesConfig.configs.Clear();
+                var idx = 0;
                 foreach (var data in _tableView.PageConfigDict.Select(pageData => pageData.Value)) {
                     pagesConfig.configs.Add(new PageConfig {
-                        pageID = data.ID,
+                        pageID = idx,
                         pageName = data.PageName,
                         pageType = data.PageType,
                         pageMode = data.PageMode,
                         assetPath = data.AssetPath
                     });
+                    idx++;
                 }
                 EditorUtility.SetDirty(pagesConfig);
                 AssetDatabase.SaveAssets();
                 AssetDatabase.Refresh();
                 Utils.Log(LOGTag, "page config save success");
+                Initialize();
             }
             if (GUILayout.Button("Add", GUILayout.Width(50))) {
-                _tableView.AddPageConfig(new PageData(_tableView.GetNewId(), "$name", PageType.Stack, PageMode.Coexist, "$path"));
+                var id = _tableView.GetNewId();
+                var pd = new PageData(id, $"name{id}Page", PageType.Stack, PageMode.Coexist, $"UI/Page/path{id}.prefab");
+                _tableView.AddPageConfig(pd);
+                _allConfig.Add(pd);
             }
             DrawInputTextField();
             GUILayout.EndHorizontal();
+            var evt = UnityEngine.Event.current;
+
+            var contextRect = new Rect(0, 20, position.width, position.height - 20);
+            if (evt.type == UnityEngine.EventType.ContextClick) {
+                if (contextRect.Contains(evt.mousePosition)){
+                    var menu = new GenericMenu();
+                    menu.AddItem(new GUIContent ("Delete Select"), false, DeleteSelect);
+                    menu.ShowAsContext ();
+                    evt.Use();
+                }
+            }
             if (!_tableView.IsValid) return;
-            _tableView.OnGUI(new Rect(0, 20, position.width, position.height - 20));
+            _tableView.OnGUI(contextRect);
+        }
+
+        private void DeleteSelect() {
+            HashSet<int> dict = new HashSet<int>();
+            foreach (var idx in _tableView.GetSelection()) {
+                dict.Add(idx);
+            }
+            var newAllConfig = new List<PageData>();
+            foreach (var c in _allConfig) {
+                if (!dict.Contains(c.ID)) {
+                    newAllConfig.Add(c);
+                }
+            }
+            _allConfig = newAllConfig;
+            _tableView.PageConfigDict.Clear();
+            _tableView.SetData(_allConfig);
+            // DoFilter(_inputSearchText);
         }
         private GUIStyle _textFieldRoundEdge;
         private GUIStyle _textFieldRoundEdgeCancelButton;
@@ -163,10 +205,10 @@ namespace Framework.UI {
             public void DoFilter(string filterStr) {
                 filterStr = filterStr.ToLower();
                 Dictionary<int, PageData> newDict = new();
-                for (var id = 0; id < PageConfigDict.Count; ++id) {
-                    var d = PageConfigDict[id];
+                foreach (var pcd in PageConfigDict) {
+                    var d = pcd.Value;
                     if (Contains(d.ID, filterStr) || Contains(d.PageName, filterStr) || Contains(d.PageType, filterStr) || Contains(d.PageMode, filterStr) || Contains(d.AssetPath, filterStr)) {
-                        newDict.Add(newDict.Count, d);
+                        newDict.Add(d.ID, d);
                     }
                 }
                 PageConfigDict.Clear();
@@ -193,10 +235,12 @@ namespace Framework.UI {
 
             protected override TreeViewItem BuildRoot() {
                 var rootTreeViewItem = new TreeViewItem(-1, -1); //root的depth必须为-1
-                for (var id = 0; id < PageConfigDict.Count; ++id) {
-                    var rowData = PageConfigDict[id];
-                    var childTreeViewItem = new TreeViewItem(rowData.ID, 0, id.ToString());
+                var idx = 0;
+                foreach (var pcd in PageConfigDict) {
+                    var rowData = pcd.Value;
+                    var childTreeViewItem = new TreeViewItem(idx, 0, rowData.ID.ToString());
                     rootTreeViewItem.AddChild(childTreeViewItem);
+                    idx++;
                 }
                 return rootTreeViewItem;
             }
@@ -219,7 +263,7 @@ namespace Framework.UI {
                                 textColor = Color.white
                             }
                         };
-                        EditorGUI.LabelField(cellRect, $"{item.id}", style);
+                        EditorGUI.LabelField(cellRect, $"{cellRowData.ID}", style);
                         break;
                     case 1:
                         cellRowData.PageName = EditorGUI.TextField(cellRect, cellRowData.PageName); //预制体选择框

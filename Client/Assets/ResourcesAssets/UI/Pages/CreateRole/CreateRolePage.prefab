@@ -25,12 +25,12 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4764985726079392388}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 9133003604630005629}
+  m_Father: {fileID: 6088605003910549847}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
@@ -79,7 +79,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: New Text
+  m_Text: Demo Page
 --- !u!1 &6081655646477209512
 GameObject:
   m_ObjectHideFlags: 0
@@ -108,6 +108,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 5273098695343385107}
   - {fileID: 4638951015396157356}
   m_Father: {fileID: 9133003604144256518}
   m_RootOrder: 1
@@ -186,7 +187,7 @@ MonoBehaviour:
   m_FontData:
     m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
     m_FontSize: 45
-    m_FontStyle: 0
+    m_FontStyle: 1
     m_BestFit: 0
     m_MinSize: 10
     m_MaxSize: 54
@@ -196,7 +197,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: "\u5173\u95ED"
+  m_Text: Close
 --- !u!1 &7263367666666885590
 GameObject:
   m_ObjectHideFlags: 0
@@ -230,7 +231,7 @@ RectTransform:
   m_Children:
   - {fileID: 639674035243490277}
   m_Father: {fileID: 6088605003910549847}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -331,9 +332,9 @@ GameObject:
   - component: {fileID: 9133003604144257016}
   - component: {fileID: 9133003604144257017}
   - component: {fileID: 1905856356185200200}
-  - component: {fileID: 2231779297507010818}
+  - component: {fileID: 3813538730419081297}
   m_Layer: 5
-  m_Name: TempPage2
+  m_Name: CreateRolePage
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -407,7 +408,7 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
---- !u!114 &2231779297507010818
+--- !u!114 &3813538730419081297
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -416,7 +417,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 9133003604144257018}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ae8d8063816643248b0e8aef2381a58c, type: 3}
+  m_Script: {fileID: 11500000, guid: fc8fb3fa6d3c4b90b4c2ee3c824bd38f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &9133003604630005630
@@ -448,8 +449,7 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 5273098695343385107}
+  m_Children: []
   m_Father: {fileID: 9133003604144256518}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

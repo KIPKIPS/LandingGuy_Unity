@@ -38,6 +38,11 @@ namespace Framework.UI {
 
         public void Open(string pageName, dynamic options = null) {
             Utils.Log(LOGTag,$"Open Page === {pageName}");
+            var config = GetConfig(pageName);
+            if (config == null) {
+                Utils.LogError(LOGTag,$"Page name [{pageName}] dont have config");
+                return;
+            }
             PushPage(pageName, options);
         }
         private BasePage GetPage(string pageName) {
