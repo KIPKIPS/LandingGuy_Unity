@@ -5,6 +5,7 @@ using Framework.UI;
 
 namespace GamePlay.UI {
     public class CreateRolePage:BasePage {
+        
         protected override void OnEnter() {
             
         }

@@ -1,14 +1,11 @@
 ﻿// author:KIPKIPS
 // date:2023.04.10 21:19
-// describe:
+// describe:ui配置编辑器
 using System.Collections.Generic;
 using System.Linq;
-using JetBrains.Annotations;
-using NUnit.Framework;
 using UnityEditor;
 using UnityEditor.IMGUI.Controls;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 namespace Framework.UI {
     public class PagesEditorWindow : EditorWindow {
