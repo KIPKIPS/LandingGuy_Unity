@@ -3,27 +3,57 @@
 // describe:ui绑定器
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using UnityEngine;
 
 namespace Framework.UI {
     [RequireComponent(typeof(BasePage))]
     public class UIBinding : MonoBehaviour {
-        [SerializeField]
-        private BasePage _page;
-
-        private static Dictionary<string, BaseBinder> _registerBinderDict = new();
-
+        [SerializeField]private BasePage _page;
+        [SerializeField]private List<string> _binderKeyList; 
+        [SerializeField]private List<BaseBinder> _binderTypeList ;
+        public List<string> BinderKeyList =>_binderKeyList??=new List<string>();
+        public List<BaseBinder> BinderTypeList => _binderTypeList ??= new List<BaseBinder>();
+        private static readonly Dictionary<string, BaseBinder> _registerBinderDict = new();
+        private static readonly Dictionary<string, Dictionary<int,string>> _registerBinderEnumDict = new();
+        private static readonly HashSet<string> _binderNameMap = new();
         public static void Register() {
-            System.Reflection.Assembly asm = System.Reflection.Assembly.GetAssembly(typeof(BinderParams));
+            // _registerBinderDict.Clear();
+            // _registerBinderEnumDict.Clear();
+            Assembly asm = Assembly.GetAssembly(typeof(BinderParams));
             Type[] types = asm.GetExportedTypes();
-            for (int i = 0; i < types.Length; i++) {
-                var o = Attribute.GetCustomAttributes(types[i], true);
+            foreach (var t in types) {
+                var o = Attribute.GetCustomAttributes(t, true);
                 foreach (Attribute a in o) {
-                    if (a is Binder binderParams) {
-                        _registerBinderDict.Add(binderParams.binderType.ToString(), (BaseBinder)System.Activator.CreateInstance(types[i]));
+                    if (a is Binder binderParams && !_registerBinderDict.ContainsKey(binderParams.binderType.ToString())) {
+                        var binder = Activator.CreateInstance(t);
+                        _binderNameMap.Add(binder.ToString());
+                        _registerBinderDict.Add(binderParams.binderType.ToString(), (BaseBinder)binder);
                     }
                 }
             }
+            Assembly binderAssembly = Assembly.GetAssembly(typeof(Binder));
+            Type[] binderTypes = binderAssembly.GetExportedTypes();
+            foreach (var t in binderTypes) {
+                var splits = t.ToString().Split("+");
+                var binderName = splits.Length > 0 ? splits[0] : "";
+                if (t.IsEnum &&_binderNameMap.Contains(binderName)&& !_registerBinderEnumDict.ContainsKey(binderName)) {
+                    var dict = new Dictionary<int, string>();
+                    var array = t.GetEnumNames();
+                    for (int i = 0; i < array.Length; i++) {
+                        dict.Add(i,array[i]);
+                    }
+                    _registerBinderEnumDict.Add(binderName,dict);
+                }
+            }
+        }
+        public static Dictionary<int,string> GetBinderEnum(string binderName) {
+            return _registerBinderEnumDict.ContainsKey(binderName) ? _registerBinderEnumDict[binderName] : null;
+        }
+
+        public static BaseBinder GetBaseBinderAtBinder(Binder binder) {
+            var key = binder.binderType.ToString();
+            return _registerBinderDict.ContainsKey(key) ? _registerBinderDict[key] : null;
         }
     }
 }

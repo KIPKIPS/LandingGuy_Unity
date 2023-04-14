@@ -3,6 +3,7 @@
 //     time:19:48
 // ]]
 using System;
+using UnityEngine;
 
 namespace Framework.UI {
     public class Binder : Attribute {
