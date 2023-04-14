@@ -2240,8 +2240,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _page: {fileID: 3813538730419081297}
-  _binderKeyList:
+  _binderNameList:
   - desc
+  _binderList:
+  - Framework.UI.LText
 --- !u!1 &9133003604630005630
 GameObject:
   m_ObjectHideFlags: 0

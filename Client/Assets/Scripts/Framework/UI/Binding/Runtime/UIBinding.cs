@@ -10,10 +10,10 @@ namespace Framework.UI {
     [RequireComponent(typeof(BasePage))]
     public class UIBinding : MonoBehaviour {
         [SerializeField]private BasePage _page;
-        [SerializeField]private List<string> _binderKeyList; 
-        [SerializeField]private List<BaseBinder> _binderTypeList ;
-        public List<string> BinderKeyList =>_binderKeyList??=new List<string>();
-        public List<BaseBinder> BinderTypeList => _binderTypeList ??= new List<BaseBinder>();
+        [SerializeField]private List<string> _binderNameList; 
+        [SerializeField]private List<string> _binderList ;
+        public List<string> BinderNameList =>_binderNameList??=new List<string>();
+        public List<string> BinderList => _binderList ??= new List<string>();
         private static readonly Dictionary<string, BaseBinder> _registerBinderDict = new();
         private static readonly Dictionary<string, Dictionary<int,string>> _registerBinderEnumDict = new();
         private static readonly HashSet<string> _binderNameMap = new();
@@ -46,6 +46,8 @@ namespace Framework.UI {
                     _registerBinderEnumDict.Add(binderName,dict);
                 }
             }
+            Utils.Log(_registerBinderDict);
+            Utils.Log(_registerBinderEnumDict);
         }
         public static Dictionary<int,string> GetBinderEnum(string binderName) {
             return _registerBinderEnumDict.ContainsKey(binderName) ? _registerBinderEnumDict[binderName] : null;
@@ -54,6 +56,9 @@ namespace Framework.UI {
         public static BaseBinder GetBaseBinderAtBinder(Binder binder) {
             var key = binder.binderType.ToString();
             return _registerBinderDict.ContainsKey(key) ? _registerBinderDict[key] : null;
+        }
+        public static BaseBinder GetBaseBinderAtBinder(string binderName) {
+            return _registerBinderDict.ContainsKey(binderName) ? _registerBinderDict[binderName] : null;
         }
     }
 }

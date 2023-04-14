@@ -62,11 +62,9 @@ namespace Framework.UI {
             _scriptSerializedProperty = serializedObject.FindProperty("_page");
             
             // _serializedPropertyDict.Clear();
-            Utils.Log(_uiBinding.BinderKeyList.Count,_uiBinding.BinderTypeList.Count);
-            for (int i = 0; i < _uiBinding.BinderKeyList.Count; i++) {
-                var binder = _uiBinding.BinderTypeList[i];
-                // UIBinding.GetBinderEnum(binder.ToString());
-                _baseBinderDict.Add(_uiBinding.BinderKeyList[i],UIBinding.GetBinderEnum(binder.ToString()));
+            // Utils.Log(_uiBinding.BinderNameList.Count,_uiBinding.BinderList.Count);
+            for (int i = 0; i < _uiBinding.BinderNameList.Count; i++) {
+                _baseBinderDict.Add(_uiBinding.BinderNameList[i],UIBinding.GetBinderEnum(UIBinding.GetBaseBinderAtBinder(_uiBinding.BinderList[i]).ToString()));
             }
             // List<SerializedProperty> values = new List<SerializedProperty>();
             // while (valueEnumerator.MoveNext()) {
@@ -78,8 +76,8 @@ namespace Framework.UI {
         }
         private void Check() {
             // _serializedPropertyDict.Clear();
-            _uiBinding.BinderKeyList.Clear();
-            _uiBinding.BinderTypeList.Clear();
+            _uiBinding.BinderNameList.Clear();
+            _uiBinding.BinderList.Clear();
             _baseBinderDict.Clear();
             //查字段
             if (_scriptSerializedProperty != null) {
@@ -90,8 +88,9 @@ namespace Framework.UI {
                         if (attribute is not Binder) continue;
                         Binder binderAttr = attribute as Binder;
                         var binder = UIBinding.GetBaseBinderAtBinder(binderAttr);
-                        _uiBinding.BinderKeyList.Add(pi.Name);
-                        _uiBinding.BinderTypeList.Add(binder);
+                        _uiBinding.BinderNameList.Add(pi.Name);
+                        // Utils.Log(binderAttr.binderType.ToString());
+                        _uiBinding.BinderList.Add(binderAttr.binderType.ToString());
                         // var prop = serGo.FindProperty(pi.Name);
                         // _serializedPropertyDict.Add(pi.Name, prop);
                         _baseBinderDict.Add(pi.Name,UIBinding.GetBinderEnum(binder.ToString()));
