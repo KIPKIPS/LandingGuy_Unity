@@ -2303,8 +2303,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fc8fb3fa6d3c4b90b4c2ee3c824bd38f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  desc: 
-  image: 
 --- !u!114 &2549994635605512594
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2320,13 +2318,17 @@ MonoBehaviour:
   _page: {fileID: 3813538730419081297}
   _binderDataList:
   - bindKey: desc
-    bindComponentType: Framework.UI.LText
-    bindEnum: 10
+    bindComponentId: 1
+    bindFieldId: 10
     bindComponent: {fileID: 1622468930720237471}
+    bindGo: {fileID: 1300899966141443734}
+    isComponent: 0
   - bindKey: image
-    bindComponentType: Framework.UI.LImage
-    bindEnum: 0
+    bindComponentId: 0
+    bindFieldId: 0
     bindComponent: {fileID: 9147802673409428146}
+    bindGo: {fileID: 6628532726893594705}
+    isComponent: 1
 --- !u!1 &9133003604630005630
 GameObject:
   m_ObjectHideFlags: 0

@@ -9,21 +9,25 @@ using System.Reflection.Emit;
 using NUnit.Framework;
 using UnityEditor;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace Framework.UI {
     [CustomEditor(typeof(UIBinding))]
     public class UIBindingInspector : Editor {
         private UIBinding _uiBinding;
-        // private SerializedProperty _serializedBinderKeyListProperty;
-        // private SerializedProperty _serializedBinderTypeListProperty;
         private bool _hasScript;
         private SerializedProperty _scriptSerializedProperty;
         class BindDataWrapper {
             public BinderData bindData;
             public Dictionary<int, string> enumDict;
+            public Dictionary<int, Component> componentEnum;
+            public Dictionary<int, string> componentNameDict;
         }
         private readonly List<BindDataWrapper> _bindDataWrapperList = new();
-        int enumInt;
+      
+        private int _lastInstanceID;
+        private int _lastBindComponentId = -1;
+        private Dictionary<string,Object> _curSelectObjDict = new Dictionary<string, Object>();
         public override void OnInspectorGUI() {
             if (_scriptSerializedProperty != null) {
                 _hasScript = true;
@@ -37,35 +41,67 @@ namespace Framework.UI {
                 if (GUILayout.Button("Check")) {
                     Check();
                 }
-                GUILayout.Space(5);
-                // List<SerializedProperty> serializedProperties = new List<SerializedProperty>(_serializedPropertyDict.Values);
+                GUILayout.Space(10);
+                EditorGUILayout.LabelField($"Bind Fields ({_bindDataWrapperList.Count})",new GUIStyle {
+                    fontStyle = FontStyle.Bold,
+                    normal = {
+                        textColor = Color.white
+                    }
+                });
                 foreach (var wrapperData in _bindDataWrapperList) {
                     GUILayout.BeginVertical();
                     var bindData = wrapperData.bindData;
                     EditorGUILayout.LabelField(bindData.bindKey);
-                    if (!string.IsNullOrEmpty(bindData.bindComponentType)) {
-                        var contextRect = EditorGUILayout.GetControlRect();
-                        var width = (contextRect.width- 20 ) / 3 ;
-                        GUILayout.BeginHorizontal();
-                        // EditorGUILayout.LabelField(bindData.bindComponentType);
-                        var rect = new Rect(contextRect.x, contextRect.y, contextRect.width / 3, contextRect.height);
-                        bindData.bindGo = (GameObject)EditorGUI.ObjectField(rect, bindData.bindGo, typeof(GameObject));
-                        rect.x += width + 10;
-                        if (bindData.bindGo == null) {
-                            bindData.bindComponent = null;
-                            bindData.bindEnum = -1;
+                    var contextRect = EditorGUILayout.GetControlRect();
+                    var width = (contextRect.width - 20 * (3 - 1)) / 3;
+                    GUILayout.BeginHorizontal();
+                    var rect = new Rect(contextRect.x, contextRect.y, contextRect.width / 3, contextRect.height);
+                    if (!_curSelectObjDict.ContainsKey(bindData.bindKey)) {
+                        if (bindData.isComponent) {
+                            bindData.bindGo = bindData.bindComponent != null ? bindData.bindComponent.gameObject : null;
+                            _curSelectObjDict.Add(bindData.bindKey,bindData.bindComponent);
+                        } else {
+                            _curSelectObjDict.Add(bindData.bindKey,bindData.bindGo);
                         }
-                        bindData.bindComponent = (Component)EditorGUI.ObjectField(rect, bindData.bindComponent, UIBinding.GetBinderType(bindData.bindComponentType));
-                        rect.x += width + 10;
-                        var keys = wrapperData.enumDict.Keys.ToArray();
-                        var enumNames = wrapperData.enumDict.Values.ToArray();
-                        if (keys.Length > 0 && enumNames.Length>0) {
-                            bindData.bindEnum = EditorGUI.IntPopup(rect,bindData.bindEnum,enumNames,keys);
-                        }
-                        GUILayout.EndHorizontal();
-                    } else {
-                        EditorGUILayout.LabelField("mount component");
                     }
+                    _curSelectObjDict[bindData.bindKey] = EditorGUI.ObjectField(rect, _curSelectObjDict[bindData.bindKey],typeof(Object));
+                    if (_curSelectObjDict[bindData.bindKey] != null) {
+                        if (_curSelectObjDict[bindData.bindKey] is GameObject go) {
+                            bindData.isComponent = false;
+                            bindData.bindGo = go.gameObject;
+                        } else {
+                            bindData.isComponent = true;
+                            bindData.bindComponent = (Component)_curSelectObjDict[bindData.bindKey];
+                            bindData.bindGo = bindData.bindComponent.gameObject;
+                            bindData.bindComponentId = UIBinding.GetRegisterBinderId(bindData.bindComponent.GetType().ToString());
+                        }
+                    }
+                    rect.x += width + 20;
+                    if (bindData.bindGo == null) {
+                        bindData.bindComponent = null;
+                        bindData.bindFieldId = -1;
+                    } else {
+                        if (_curSelectObjDict[bindData.bindKey].GetInstanceID() != _lastInstanceID) {
+                            CollectComponent(bindData.bindGo,wrapperData);
+                        }
+                    }
+                    _lastInstanceID = _curSelectObjDict[bindData.bindKey] != null ? _curSelectObjDict[bindData.bindKey].GetInstanceID() : 0;
+                    var componentKeys = wrapperData.componentNameDict.Keys.ToArray();
+                    var componentEnumNames = wrapperData.componentNameDict.Values.ToArray();
+       
+                    bindData.bindComponentId = EditorGUI.IntPopup(rect, bindData.bindComponentId, componentEnumNames, componentKeys);
+                    bindData.bindComponent = wrapperData.componentEnum.ContainsKey(bindData.bindComponentId) ? wrapperData.componentEnum[bindData.bindComponentId] : null;
+                    if (bindData.bindComponentId != _lastBindComponentId) {
+                        CollectComponentEnum(bindData.bindComponentId,wrapperData);
+                    }
+                    _lastBindComponentId = bindData.bindComponentId;
+                    rect.x += width + 20;
+                    rect.width -= 13;
+                    var fieldKeys = wrapperData.enumDict.Keys.ToArray();
+                    var fieldEnumNames = wrapperData.enumDict.Values.ToArray();
+        
+                    bindData.bindFieldId = EditorGUI.IntPopup(rect, bindData.bindFieldId, fieldEnumNames, fieldKeys);
+                    GUILayout.EndHorizontal();
                     GUILayout.EndVertical();
                 }
                 GUILayout.EndVertical();
@@ -78,16 +114,58 @@ namespace Framework.UI {
         private void OnDisable() {
             _scriptSerializedProperty = null;
         }
+        void CollectComponentEnum(int componentId,BindDataWrapper wrapperData) {
+            if (wrapperData.componentNameDict.ContainsKey(componentId)) {
+                wrapperData.enumDict = UIBinding.GetBinderEnum(UIBinding.GetBaseBinderAtBinder(wrapperData.componentNameDict[componentId]));
+                
+            } else {
+                wrapperData.enumDict = new Dictionary<int, string>();
+            }
+        }
+        void CollectComponent(GameObject go,BindDataWrapper wrapperData) {
+            var componentDict = new Dictionary<int,Component>();
+            var componentNameDict = new Dictionary<int,string>();
+            if (go != null) {
+                foreach (var component in go.GetComponents<Component>()) {
+                    var compoName = component.GetType().ToString();
+                    if (UIBinding.IsRegisterComponent(compoName)) {
+                        componentDict.Add(UIBinding.GetRegisterBinderId(compoName),component);
+                        componentNameDict.Add(UIBinding.GetRegisterBinderId(compoName),component.GetType().ToString());
+                    }
+                }
+            }
+            wrapperData.componentEnum = componentDict;
+            wrapperData.componentNameDict = componentNameDict;
+        }
         void OnEnable() {
             UIBinding.Register();
             _uiBinding = (UIBinding)target;
             _scriptSerializedProperty = serializedObject.FindProperty("_page");
-            
             foreach (var binderData in _uiBinding.BinderDataList) {
-                var dict = UIBinding.GetBinderEnum(UIBinding.GetBaseBinderAtBinder(binderData.bindComponentType));
+                Dictionary<int,string> dict = new();
+                var componentDict = new Dictionary<int, Component>();
+                var componentNameDict = new Dictionary<int, string>();
+                if (binderData.bindGo == null) {
+                    binderData.bindGo = binderData.bindComponent != null ? binderData.bindComponent.gameObject : null;
+                }
+                if (binderData.bindGo != null) {
+                    foreach (var component in binderData.bindGo.GetComponents<Component>()) {
+                        var compoName = component.GetType().ToString();
+                        if (UIBinding.IsRegisterComponent(compoName)) {
+                            // Utils.Log(UIBinding.GetRegisterBinderId(compoName),component.GetType().ToString());
+                            componentDict.Add(UIBinding.GetRegisterBinderId(compoName),component);
+                            componentNameDict.Add(UIBinding.GetRegisterBinderId(compoName),component.GetType().ToString());
+                        }
+                    }
+                    if (componentNameDict.ContainsKey(binderData.bindComponentId)) {
+                        dict = UIBinding.GetBinderEnum(UIBinding.GetBaseBinderAtBinder(componentNameDict[binderData.bindComponentId]));
+                    }
+                }
                 _bindDataWrapperList.Add(new BindDataWrapper {
                     bindData = binderData,
                     enumDict = dict,
+                    componentEnum = componentDict,
+                    componentNameDict = componentNameDict,
                 });
             }
         }
@@ -95,14 +173,14 @@ namespace Framework.UI {
             // _serializedPropertyDict.Clear();
             Dictionary<string, BinderData> cacheBindMap = new Dictionary<string, BinderData>();
             foreach (var bindData in _uiBinding.BinderDataList) {
-                cacheBindMap.Add(bindData.bindKey,bindData);
+                cacheBindMap.Add(bindData.bindKey, bindData);
             }
             _uiBinding.BinderDataList.Clear();
             _bindDataWrapperList.Clear();
             //查字段
             if (_scriptSerializedProperty != null) {
                 var serGo = new SerializedObject(EditorUtility.InstanceIDToObject(_scriptSerializedProperty.objectReferenceValue.GetInstanceID()));
-                var propertyInfos = _scriptSerializedProperty.objectReferenceValue.GetType().GetFields();
+                var propertyInfos = _scriptSerializedProperty.objectReferenceValue.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance|BindingFlags.Public);
                 foreach (var pi in propertyInfos) {
                     foreach (var attribute in pi.GetCustomAttributes()) {
                         if (attribute is not Binder) continue;
@@ -112,20 +190,32 @@ namespace Framework.UI {
                         var cache = isExist ? cacheBindMap[pi.Name] : null;
                         var data = new BinderData {
                             bindKey = pi.Name,
-                            bindComponentType = binderAttr.binderType.ToString(),
-                            bindEnum = isExist ? cache.bindEnum : 0,
+                            bindComponentId = isExist ? cache.bindComponentId : 0,
+                            bindFieldId = isExist ? cache.bindFieldId : 0,
                             bindComponent = isExist ? cache.bindComponent : null,
                             bindGo = isExist ? cache.bindGo : null,
+                            isComponent = isExist && cache.isComponent,
                         };
-                        Utils.Log(pi.Name,binderAttr.binderType.ToString());
+                        // Utils.Log(pi.Name, binderAttr.binderType.ToString());
                         _uiBinding.BinderDataList.Add(data);
+                        var componentDict = new Dictionary<int,Component>();
+                        var componentNameDict = new Dictionary<int,string>();
+                        if (cache.bindGo != null) {
+                            foreach (var component in cache.bindGo.GetComponents<Component>()) {
+                                var compoName = component.GetType().ToString();
+                                if (UIBinding.IsRegisterComponent(compoName)) {
+                                    // Utils.Log(UIBinding.GetRegisterBinderId(compoName),component.GetType().ToString());
+                                    componentDict.Add(UIBinding.GetRegisterBinderId(compoName),component);
+                                    componentNameDict.Add(UIBinding.GetRegisterBinderId(compoName),component.GetType().ToString());
+                                }
+                            }
+                        }
                         _bindDataWrapperList.Add(new BindDataWrapper {
                             bindData = data,
-                            enumDict = UIBinding.GetBinderEnum(binder.ToString())
+                            enumDict = UIBinding.GetBinderEnum(binder.ToString()),
+                            componentEnum = componentDict,
+                            componentNameDict = componentNameDict,
                         });
-                        // var prop = serGo.FindProperty(pi.Name);
-                        // _serializedPropertyDict.Add(pi.Name, prop);
-                        // _baseBinderDict.Add(pi.Name,UIBinding.GetBinderEnum(binder.ToString()));
                         break;
                     }
                 }

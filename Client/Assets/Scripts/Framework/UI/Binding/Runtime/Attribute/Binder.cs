@@ -6,6 +6,7 @@ using System;
 using UnityEngine;
 
 namespace Framework.UI {
+    [HideInInspector]
     public class Binder : Attribute {
         public Type binderType;
         public Binder(Type binderType) {

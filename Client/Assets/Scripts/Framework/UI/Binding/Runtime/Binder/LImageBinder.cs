@@ -6,14 +6,14 @@ namespace Framework.UI {
     public class LImageBinder : BaseBinder {
         [BinderParams(typeof(LImage))]
         public enum AttributeType {
-            Sprite = LinkerType.String,
-            Size = LinkerType.String,
+            sprite = LinkerType.String,
+            size = LinkerType.String,
         }
         public override void SetString(UnityEngine.Object mono, int linkerType, string value) {
             if (mono == null) return;
             var target = mono as LText;
             switch ((AttributeType)linkerType) {
-                case AttributeType.Sprite:
+                case AttributeType.sprite:
                     target.text = value;
                     break;
             }
