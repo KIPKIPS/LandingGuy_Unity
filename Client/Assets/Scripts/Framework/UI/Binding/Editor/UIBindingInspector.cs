@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
+using NUnit.Framework;
 using UnityEditor;
 using UnityEngine;
 
@@ -17,7 +18,11 @@ namespace Framework.UI {
         // private SerializedProperty _serializedBinderTypeListProperty;
         private bool _hasScript;
         private SerializedProperty _scriptSerializedProperty;
-        private readonly Dictionary<string, Dictionary<int,string>> _baseBinderDict = new();
+        class BindDataWrapper {
+            public BinderData bindData;
+            public Dictionary<int, string> enumDict;
+        }
+        private readonly List<BindDataWrapper> _bindDataWrapperList = new();
         int enumInt;
         public override void OnInspectorGUI() {
             if (_scriptSerializedProperty != null) {
@@ -34,17 +39,34 @@ namespace Framework.UI {
                 }
                 GUILayout.Space(5);
                 // List<SerializedProperty> serializedProperties = new List<SerializedProperty>(_serializedPropertyDict.Values);
-                foreach (var kvp in _baseBinderDict) {
-                    GUILayout.BeginHorizontal();
-                    EditorGUILayout.LabelField(kvp.Key);
-                    if (kvp.Value!=null) {
-                        var ints = kvp.Value.Keys.ToArray();
-                        var s = kvp.Value.Values.ToArray();
-                        if (ints.Length > 0 && s.Length>0) {
-                            enumInt=EditorGUILayout.IntPopup(enumInt,s,ints);
+                foreach (var wrapperData in _bindDataWrapperList) {
+                    GUILayout.BeginVertical();
+                    var bindData = wrapperData.bindData;
+                    EditorGUILayout.LabelField(bindData.bindKey);
+                    if (!string.IsNullOrEmpty(bindData.bindComponentType)) {
+                        var contextRect = EditorGUILayout.GetControlRect();
+                        var width = (contextRect.width- 20 ) / 3 ;
+                        GUILayout.BeginHorizontal();
+                        // EditorGUILayout.LabelField(bindData.bindComponentType);
+                        var rect = new Rect(contextRect.x, contextRect.y, contextRect.width / 3, contextRect.height);
+                        bindData.bindGo = (GameObject)EditorGUI.ObjectField(rect, bindData.bindGo, typeof(GameObject));
+                        rect.x += width + 10;
+                        if (bindData.bindGo == null) {
+                            bindData.bindComponent = null;
+                            bindData.bindEnum = -1;
                         }
+                        bindData.bindComponent = (Component)EditorGUI.ObjectField(rect, bindData.bindComponent, UIBinding.GetBinderType(bindData.bindComponentType));
+                        rect.x += width + 10;
+                        var keys = wrapperData.enumDict.Keys.ToArray();
+                        var enumNames = wrapperData.enumDict.Values.ToArray();
+                        if (keys.Length > 0 && enumNames.Length>0) {
+                            bindData.bindEnum = EditorGUI.IntPopup(rect,bindData.bindEnum,enumNames,keys);
+                        }
+                        GUILayout.EndHorizontal();
+                    } else {
+                        EditorGUILayout.LabelField("mount component");
                     }
-                    GUILayout.EndHorizontal();
+                    GUILayout.EndVertical();
                 }
                 GUILayout.EndVertical();
             }
@@ -61,24 +83,22 @@ namespace Framework.UI {
             _uiBinding = (UIBinding)target;
             _scriptSerializedProperty = serializedObject.FindProperty("_page");
             
-            // _serializedPropertyDict.Clear();
-            // Utils.Log(_uiBinding.BinderNameList.Count,_uiBinding.BinderList.Count);
-            for (int i = 0; i < _uiBinding.BinderNameList.Count; i++) {
-                _baseBinderDict.Add(_uiBinding.BinderNameList[i],UIBinding.GetBinderEnum(UIBinding.GetBaseBinderAtBinder(_uiBinding.BinderList[i]).ToString()));
+            foreach (var binderData in _uiBinding.BinderDataList) {
+                var dict = UIBinding.GetBinderEnum(UIBinding.GetBaseBinderAtBinder(binderData.bindComponentType));
+                _bindDataWrapperList.Add(new BindDataWrapper {
+                    bindData = binderData,
+                    enumDict = dict,
+                });
             }
-            // List<SerializedProperty> values = new List<SerializedProperty>();
-            // while (valueEnumerator.MoveNext()) {
-            //     // values.Add(valueEnumerator.Current.);
-            // }
-            // for (int i = 0; i < keys.Count; i++) {
-            //     _serializedPropertyDict.Add(keys[i],values[i]);
-            // }
         }
         private void Check() {
             // _serializedPropertyDict.Clear();
-            _uiBinding.BinderNameList.Clear();
-            _uiBinding.BinderList.Clear();
-            _baseBinderDict.Clear();
+            Dictionary<string, BinderData> cacheBindMap = new Dictionary<string, BinderData>();
+            foreach (var bindData in _uiBinding.BinderDataList) {
+                cacheBindMap.Add(bindData.bindKey,bindData);
+            }
+            _uiBinding.BinderDataList.Clear();
+            _bindDataWrapperList.Clear();
             //查字段
             if (_scriptSerializedProperty != null) {
                 var serGo = new SerializedObject(EditorUtility.InstanceIDToObject(_scriptSerializedProperty.objectReferenceValue.GetInstanceID()));
@@ -88,12 +108,24 @@ namespace Framework.UI {
                         if (attribute is not Binder) continue;
                         Binder binderAttr = attribute as Binder;
                         var binder = UIBinding.GetBaseBinderAtBinder(binderAttr);
-                        _uiBinding.BinderNameList.Add(pi.Name);
-                        // Utils.Log(binderAttr.binderType.ToString());
-                        _uiBinding.BinderList.Add(binderAttr.binderType.ToString());
+                        bool isExist = cacheBindMap.ContainsKey(pi.Name);
+                        var cache = isExist ? cacheBindMap[pi.Name] : null;
+                        var data = new BinderData {
+                            bindKey = pi.Name,
+                            bindComponentType = binderAttr.binderType.ToString(),
+                            bindEnum = isExist ? cache.bindEnum : 0,
+                            bindComponent = isExist ? cache.bindComponent : null,
+                            bindGo = isExist ? cache.bindGo : null,
+                        };
+                        Utils.Log(pi.Name,binderAttr.binderType.ToString());
+                        _uiBinding.BinderDataList.Add(data);
+                        _bindDataWrapperList.Add(new BindDataWrapper {
+                            bindData = data,
+                            enumDict = UIBinding.GetBinderEnum(binder.ToString())
+                        });
                         // var prop = serGo.FindProperty(pi.Name);
                         // _serializedPropertyDict.Add(pi.Name, prop);
-                        _baseBinderDict.Add(pi.Name,UIBinding.GetBinderEnum(binder.ToString()));
+                        // _baseBinderDict.Add(pi.Name,UIBinding.GetBinderEnum(binder.ToString()));
                         break;
                     }
                 }

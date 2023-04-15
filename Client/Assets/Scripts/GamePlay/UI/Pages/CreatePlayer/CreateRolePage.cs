@@ -8,6 +8,7 @@ using UnityEngine;
 namespace GamePlay.UI {
     public class CreateRolePage:BasePage {
         [Binder(typeof(LText)),HideInInspector] public string desc;
+        [Binder(typeof(LImage)),HideInInspector] public string image;
 
         protected override void OnEnter() {
             

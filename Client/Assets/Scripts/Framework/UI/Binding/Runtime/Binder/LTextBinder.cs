@@ -7,26 +7,26 @@ namespace Framework.UI {
     public class LTextBinder : BaseBinder {
         [BinderParams(typeof(LText))]
         public enum AttributeType {
-            Text = LinkerType.String,
-            Duration = LinkerType.Single,
-            ResizeTextForBestFit = LinkerType.Boolean,
-            ResizeTextMinSize = LinkerType.Int32,
-            ResizeTextMaxSize = LinkerType.Int32,
-            AlignByGeometry = LinkerType.Boolean,
-            FontSize = LinkerType.Int32,
-            LineSpacing = LinkerType.Single,
-            Maskable = LinkerType.Boolean,
-            IsMaskingGraphic = LinkerType.Boolean,
-            Color = LinkerType.Color,
-            RaycastTarget = LinkerType.Boolean,
-            Enabled = LinkerType.Boolean,
-            Alignment = LinkerType.Int32
+            text = LinkerType.String,
+            duration = LinkerType.Single,
+            resizeTextForBestFit = LinkerType.Boolean,
+            resizeTextMinSize = LinkerType.Int32,
+            resizeTextMaxSize = LinkerType.Int32,
+            alignByGeometry = LinkerType.Boolean,
+            fontSize = LinkerType.Int32,
+            lineSpacing = LinkerType.Single,
+            maskable = LinkerType.Boolean,
+            isMaskingGraphic = LinkerType.Boolean,
+            color = LinkerType.Color,
+            raycastTarget = LinkerType.Boolean,
+            enabled = LinkerType.Boolean,
+            alignment = LinkerType.Int32
         }
         public override void SetString(UnityEngine.Object mono, int linkerType, string value) {
             if (mono == null) return;
             var target = mono as LText;
             switch ((AttributeType)linkerType) {
-                case AttributeType.Text:
+                case AttributeType.text:
                     target.text = value;
                     break;
             }

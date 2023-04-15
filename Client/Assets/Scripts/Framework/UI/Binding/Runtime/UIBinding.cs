@@ -7,16 +7,26 @@ using System.Reflection;
 using UnityEngine;
 
 namespace Framework.UI {
+    [Serializable]
+    public class BinderData {
+        [SerializeField]public string bindKey;
+        [SerializeField]public string bindComponentType;
+        [SerializeField]public int bindEnum;
+        [SerializeField]public Component bindComponent;
+        [SerializeField]public GameObject bindGo;
+    }
     [RequireComponent(typeof(BasePage))]
     public class UIBinding : MonoBehaviour {
-        [SerializeField]private BasePage _page;
-        [SerializeField]private List<string> _binderNameList; 
-        [SerializeField]private List<string> _binderList ;
-        public List<string> BinderNameList =>_binderNameList??=new List<string>();
-        public List<string> BinderList => _binderList ??= new List<string>();
-        private static readonly Dictionary<string, BaseBinder> _registerBinderDict = new();
-        private static readonly Dictionary<string, Dictionary<int,string>> _registerBinderEnumDict = new();
-        private static readonly HashSet<string> _binderNameMap = new();
+        [SerializeField] private BasePage _page;
+        [SerializeField] private List<BinderData> _binderDataList;
+
+        public List<BinderData> BinderDataList => _binderDataList ??= new List<BinderData>();//filed
+
+        //查询用数据
+        private static readonly Dictionary<string, BaseBinder> _registerBinderDict = new();//Framework.UI.LImage:Framework.UI.LImageBinder
+        private static readonly Dictionary<string, Dictionary<int, string>> _registerBinderEnumDict = new();//Framework.UI.LImageBinder:Enums
+        private static readonly HashSet<string> _binderNameMap = new();//Framework.UI.LImageBinder
+        private static readonly Dictionary<string, Type> _binderMap = new();//Framework.UI.LImageBinder
         public static void Register() {
             // _registerBinderDict.Clear();
             // _registerBinderEnumDict.Clear();
@@ -29,6 +39,7 @@ namespace Framework.UI {
                         var binder = Activator.CreateInstance(t);
                         _binderNameMap.Add(binder.ToString());
                         _registerBinderDict.Add(binderParams.binderType.ToString(), (BaseBinder)binder);
+                        _binderMap.Add(binderParams.binderType.ToString(),binderParams.binderType);
                     }
                 }
             }
@@ -37,28 +48,33 @@ namespace Framework.UI {
             foreach (var t in binderTypes) {
                 var splits = t.ToString().Split("+");
                 var binderName = splits.Length > 0 ? splits[0] : "";
-                if (t.IsEnum &&_binderNameMap.Contains(binderName)&& !_registerBinderEnumDict.ContainsKey(binderName)) {
+                if (t.IsEnum && _binderNameMap.Contains(binderName) && !_registerBinderEnumDict.ContainsKey(binderName)) {
                     var dict = new Dictionary<int, string>();
+                    //todo:sort
                     var array = t.GetEnumNames();
                     for (int i = 0; i < array.Length; i++) {
-                        dict.Add(i,array[i]);
+                        dict.Add(i, array[i]);
                     }
-                    _registerBinderEnumDict.Add(binderName,dict);
+                    _registerBinderEnumDict.Add(binderName, dict);
                 }
             }
             Utils.Log(_registerBinderDict);
             Utils.Log(_registerBinderEnumDict);
         }
-        public static Dictionary<int,string> GetBinderEnum(string binderName) {
+        public static Dictionary<int, string> GetBinderEnum(BaseBinder binder) {
+            return GetBinderEnum(binder.ToString());
+        }
+        public static Dictionary<int, string> GetBinderEnum(string binderName) {
             return _registerBinderEnumDict.ContainsKey(binderName) ? _registerBinderEnumDict[binderName] : null;
         }
-
         public static BaseBinder GetBaseBinderAtBinder(Binder binder) {
-            var key = binder.binderType.ToString();
-            return _registerBinderDict.ContainsKey(key) ? _registerBinderDict[key] : null;
+            return GetBaseBinderAtBinder(binder.binderType.ToString());
         }
         public static BaseBinder GetBaseBinderAtBinder(string binderName) {
             return _registerBinderDict.ContainsKey(binderName) ? _registerBinderDict[binderName] : null;
+        }
+        public static Type GetBinderType(string binderType) {
+            return _binderMap.ContainsKey(binderType) ? _binderMap[binderType] : null;
         }
     }
 }
