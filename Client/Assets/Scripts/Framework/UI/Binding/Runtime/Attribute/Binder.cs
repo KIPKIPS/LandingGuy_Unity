@@ -6,7 +6,6 @@ using System;
 using UnityEngine;
 
 namespace Framework.UI {
-    [HideInInspector]
     public class Binder : Attribute {
         public Type binderType;
         public Binder(Type binderType) {
@@ -19,5 +18,8 @@ namespace Framework.UI {
         public BinderParams(Type binderType) {
             this.binderType = binderType;
         }
+    }
+    public class Bindable : Attribute {
+        
     }
 }

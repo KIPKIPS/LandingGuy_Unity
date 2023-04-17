@@ -15,6 +15,7 @@ namespace Framework.UI {
         public const string ConfigAssetPath = "Assets/ResourcesAssets/UI/Config/pages.asset";//配置资源路径
         private PagesConfig _pagesConfigAsset;
         public void Launch() {
+            UIBinding.Register();
             InitUICamera();
             LoadConfig();
         }

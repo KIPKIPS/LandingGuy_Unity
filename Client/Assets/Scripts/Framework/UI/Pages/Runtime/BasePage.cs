@@ -11,6 +11,7 @@ using UnityEngine.Events;
 
 namespace Framework.UI {
     public class BasePage : MonoBehaviour {
+        // public List<BinderData>
         public PageConfig Config{ get; set; }
         public bool IsShow { get; private set; }
         private Canvas _canvas;

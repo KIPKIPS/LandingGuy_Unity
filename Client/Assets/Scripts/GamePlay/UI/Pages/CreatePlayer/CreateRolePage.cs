@@ -11,7 +11,7 @@ namespace GamePlay.UI {
         [Binder(typeof(LImage))] private string image;
 
         protected override void OnEnter() {
-            
+            desc = "wkp";
         }
     }
 }
