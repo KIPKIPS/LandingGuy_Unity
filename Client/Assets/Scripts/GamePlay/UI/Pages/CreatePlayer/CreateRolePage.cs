@@ -7,11 +7,11 @@ using UnityEngine;
 
 namespace GamePlay.UI {
     public class CreateRolePage:BasePage {
-        [Binder(typeof(LText))] private string desc;
-        [Binder(typeof(LImage))] private string image;
+        private Bindable<string> desc;
+        private Bindable<string> image;
 
         protected override void OnEnter() {
-            desc = "wkp";
+            desc.Value = "wkp";
         }
     }
 }

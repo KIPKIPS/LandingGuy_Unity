@@ -185,43 +185,47 @@ namespace Framework.UI {
             //查字段
             if (_scriptSerializedProperty != null) {
                 var serGo = new SerializedObject(EditorUtility.InstanceIDToObject(_scriptSerializedProperty.objectReferenceValue.GetInstanceID()));
-                var propertyInfos = _scriptSerializedProperty.objectReferenceValue.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance|BindingFlags.Public);
+                var propertyInfos = _scriptSerializedProperty.objectReferenceValue.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
                 foreach (var pi in propertyInfos) {
-                    foreach (var attribute in pi.GetCustomAttributes()) {
-                        if (attribute is not Binder binderAttr) continue;
-                        var binder = UIBinding.GetBaseBinderAtBinder(binderAttr);
-                        bool isExist = cacheBindMap.ContainsKey(pi.Name);
-                        var cache = isExist ? cacheBindMap[pi.Name] : null;
-                        var data = new BinderData {
-                            bindKey = pi.Name,
-                            bindComponentId = isExist ? cache.bindComponentId : 0,
-                            bindFieldId = isExist ? cache.bindFieldId : 0,
-                            bindComponent = isExist ? cache.bindComponent : null,
-                            bindGo = isExist ? cache.bindGo : null,
-                            isComponent = isExist && cache.isComponent,
-                        };
-                        // Utils.Log();
-                        _uiBinding.BinderDataList.Add(data);
-                        var componentDict = new Dictionary<int,Component>();
-                        var componentDisplayDict = new Dictionary<int,string>();
-                        if (cache != null && cache.bindGo != null) {
-                            foreach (var component in cache.bindGo.GetComponents<Component>()) {
-                                var compoName = component.GetType().ToString();
-                                if (UIBinding.IsRegisterComponent(compoName)) {
-                                    // Utils.Log(UIBinding.GetRegisterBinderId(compoName),component.GetType().ToString());
-                                    componentDict.Add(UIBinding.GetRegisterBinderId(compoName),component);
-                                    componentDisplayDict.Add(UIBinding.GetRegisterBinderId(compoName),component.GetType().ToString());
-                                }
+                    var t = pi.FieldType;
+                    // Utils.Log(t.DeclaringType);
+                    if (!t.Name.StartsWith("Bindable")) continue;
+                    // var binder = UIBinding.GetBaseBinderAtBinder(binderAttr);
+                    bool isExist = cacheBindMap.ContainsKey(pi.Name);
+                    var cache = isExist ? cacheBindMap[pi.Name] : null;
+                    var data = new BinderData {
+                        bindKey = pi.Name,
+                        bindComponentId = isExist ? cache.bindComponentId : 0,
+                        bindFieldId = isExist ? cache.bindFieldId : 0,
+                        bindComponent = isExist ? cache.bindComponent : null,
+                        bindGo = isExist ? cache.bindGo : null,
+                        isComponent = isExist && cache.isComponent,
+                    };
+                    // Utils.Log();
+                    _uiBinding.BinderDataList.Add(data);
+                    var componentDict = new Dictionary<int,Component>();
+                    var componentDisplayDict = new Dictionary<int,string>();
+                    if (cache != null && cache.bindGo != null) {
+                        foreach (var component in cache.bindGo.GetComponents<Component>()) {
+                            var compoName = component.GetType().ToString();
+                            if (UIBinding.IsRegisterComponent(compoName)) {
+                                // Utils.Log(UIBinding.GetRegisterBinderId(compoName),component.GetType().ToString());
+                                componentDict.Add(UIBinding.GetRegisterBinderId(compoName),component);
+                                componentDisplayDict.Add(UIBinding.GetRegisterBinderId(compoName),component.GetType().ToString());
                             }
                         }
-                        _bindDataWrapperList.Add(new BindDataWrapper {
-                            bindData = data,
-                            fieldEnumDict = UIBinding.GetBinderEnum(binder.ToString()),
-                            componentEnumDict = componentDict,
-                            componentDisplayDict = componentDisplayDict,
-                        });
-                        break;
                     }
+                    
+                    
+                    _bindDataWrapperList.Add(new BindDataWrapper {
+                        bindData = data,
+                        fieldEnumDict = new Dictionary<int, string>(),//UIBinding.GetBinderEnum(componentDict[isExist ? cache.bindComponentId : 0].GetType().Name),
+                        componentEnumDict = componentDict,
+                        componentDisplayDict = componentDisplayDict,
+                    });
+                    // foreach (var attribute in pi.GetCustomAttributes()) {
+                    //     break;
+                    // }
                 }
             }
             EditorUtility.SetDirty(_uiBinding);

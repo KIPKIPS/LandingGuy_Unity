@@ -39,6 +39,17 @@ namespace Framework.UI {
             Assembly asm = Assembly.GetAssembly(typeof(BinderParams));
             Type[] types = asm.GetExportedTypes();
             foreach (var t in types) {
+                var splits = t.ToString().Split("+");
+                var binderName = splits.Length > 0 ? splits[0] : "";
+                if (t.IsEnum && _binderNameMap.Contains(binderName) && !_registerBinderEnumDict.ContainsKey(binderName)) {
+                    var dict = new Dictionary<int, string>();
+                    //todo:sort
+                    var array = t.GetEnumNames();
+                    for (int i = 0; i < array.Length; i++) {
+                        dict.Add(i, array[i]);
+                    }
+                    _registerBinderEnumDict.Add(binderName, dict);
+                }
                 var o = Attribute.GetCustomAttributes(t, true);
                 foreach (Attribute a in o) {
                     if (a is Binder binderParams && !_registerBinderDict.ContainsKey(binderParams.binderType.ToString())) {
@@ -51,21 +62,11 @@ namespace Framework.UI {
                     }
                 }
             }
-            Assembly binderAssembly = Assembly.GetAssembly(typeof(Binder));
-            Type[] binderTypes = binderAssembly.GetExportedTypes();
-            foreach (var t in binderTypes) {
-                var splits = t.ToString().Split("+");
-                var binderName = splits.Length > 0 ? splits[0] : "";
-                if (t.IsEnum && _binderNameMap.Contains(binderName) && !_registerBinderEnumDict.ContainsKey(binderName)) {
-                    var dict = new Dictionary<int, string>();
-                    //todo:sort
-                    var array = t.GetEnumNames();
-                    for (int i = 0; i < array.Length; i++) {
-                        dict.Add(i, array[i]);
-                    }
-                    _registerBinderEnumDict.Add(binderName, dict);
-                }
-            }
+            // Assembly binderAssembly = Assembly.GetAssembly(typeof(Binder));
+            // Type[] binderTypes = binderAssembly.GetExportedTypes();
+            // foreach (var t in binderTypes) {
+            //     
+            // }
             // Utils.Log(_registerBinderDict);
             // Utils.Log(_registerBinderEnumDict);
         }
