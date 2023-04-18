@@ -7,6 +7,7 @@ using UnityEngine;
 
 namespace GamePlay.UI {
     public class CreateRolePage:BasePage {
+        //todo:简化
         private Bindable<string> desc = new(0,"desc");
         private Bindable<string> imageSize = new(0,"imageSize");
 
