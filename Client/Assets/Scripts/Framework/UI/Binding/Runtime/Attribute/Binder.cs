@@ -6,20 +6,20 @@ using System;
 using UnityEngine;
 
 namespace Framework.UI {
-    public class Binder : Attribute {
+    public class BinderComponent : Attribute {
         public Type binderType;
-        public Binder(Type binderType) {
+        public BinderComponent(Type binderType) {
             this.binderType = binderType;
         }
     }
 
-    public class BinderParams : Attribute {
+    public class BinderField : Attribute {
         public Type binderType;
-        public BinderParams(Type binderType) {
+        public BinderField(Type binderType) {
             this.binderType = binderType;
         }
     }
-    public class Bindable : Attribute {
-        
-    }
+    // public class Bindable : Attribute {
+    //     
+    // }
 }

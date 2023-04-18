@@ -2,9 +2,9 @@
 // date:2023.04.15 04:20
 // describe:
 namespace Framework.UI {
-    [Binder(typeof(LImage))]
+    [BinderComponent(typeof(LImage))]
     public class LImageBinder : BaseBinder {
-        [BinderParams(typeof(LImage))]
+        [BinderField(typeof(LImage))]
         public enum AttributeType {
             sprite = LinkerType.String,
             size = LinkerType.String,

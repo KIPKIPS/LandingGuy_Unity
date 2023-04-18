@@ -3,9 +3,9 @@
 //     time:19:49
 // ]]
 namespace Framework.UI {
-    [Binder(typeof(LText))]
+    [BinderComponent(typeof(LText))]
     public class LTextBinder : BaseBinder {
-        [BinderParams(typeof(LText))]
+        [BinderField(typeof(LText))]
         public enum AttributeType {
             text = LinkerType.String,
             duration = LinkerType.Single,

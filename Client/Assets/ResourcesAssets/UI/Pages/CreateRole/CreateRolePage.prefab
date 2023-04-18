@@ -2318,17 +2318,17 @@ MonoBehaviour:
   _page: {fileID: 3813538730419081297}
   _binderDataList:
   - bindKey: desc
-    bindComponentId: 1
+    bindComponentId: -1416040275
     bindFieldId: 10
     bindComponent: {fileID: 1622468930720237471}
     bindGo: {fileID: 1300899966141443734}
     isComponent: 0
   - bindKey: image
-    bindComponentId: 0
+    bindComponentId: 324364555
     bindFieldId: 1
     bindComponent: {fileID: 9147802673409428146}
     bindGo: {fileID: 6628532726893594705}
-    isComponent: 0
+    isComponent: 1
 --- !u!1 &9133003604630005630
 GameObject:
   m_ObjectHideFlags: 0

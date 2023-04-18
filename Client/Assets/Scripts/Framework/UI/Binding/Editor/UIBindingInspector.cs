@@ -82,7 +82,19 @@ namespace Framework.UI {
                         bindData.bindFieldId = -1;
                     } else {
                         if (_curSelectObjDict[bindData.bindKey].GetInstanceID() != _lastSelectObjInstanceID) {
-                            CollectComponent(bindData.bindGo,wrapperData);
+                            var componentDict = new Dictionary<int,Component>();
+                            var componentDisplayDict = new Dictionary<int,string>();
+                            if (bindData.bindGo != null) {
+                                foreach (var component in bindData.bindGo.GetComponents<Component>()) {
+                                    var compoName = component.GetType().ToString();
+                                    if (UIBinding.IsRegisterComponent(compoName)) {
+                                        componentDict.Add(UIBinding.GetRegisterBinderId(compoName),component);
+                                        componentDisplayDict.Add(UIBinding.GetRegisterBinderId(compoName),component.GetType().ToString());
+                                    }
+                                }
+                            }
+                            wrapperData.componentEnumDict = componentDict;
+                            wrapperData.componentDisplayDict = componentDisplayDict;
                         }
                     }
                     _lastSelectObjInstanceID = _curSelectObjDict[bindData.bindKey] != null ? _curSelectObjDict[bindData.bindKey].GetInstanceID() : 0;
@@ -92,7 +104,7 @@ namespace Framework.UI {
                     bindData.bindComponentId = EditorGUI.IntPopup(rect, bindData.bindComponentId, componentEnumNames, componentKeys);
                     bindData.bindComponent = wrapperData.componentEnumDict.ContainsKey(bindData.bindComponentId) ? wrapperData.componentEnumDict[bindData.bindComponentId] : null;
                     if (bindData.bindComponentId != _lastBindComponentId) {
-                        CollectComponentEnum(bindData.bindComponentId,wrapperData);
+                        wrapperData.fieldEnumDict = UIBinding.GetComponentBindableField(bindData.bindComponent.GetType().ToString());
                     }
                     _lastBindComponentId = bindData.bindComponentId;
                     rect.x += width + 20;
@@ -128,24 +140,7 @@ namespace Framework.UI {
         private void OnDisable() {
             _scriptSerializedProperty = null;
         }
-        private static void CollectComponentEnum(int componentId,BindDataWrapper wrapperData) {
-            wrapperData.fieldEnumDict = wrapperData.componentDisplayDict.ContainsKey(componentId) ? UIBinding.GetBinderEnum(UIBinding.GetBaseBinderAtBinder(wrapperData.componentDisplayDict[componentId])) : new Dictionary<int, string>();
-        }
-        private static void CollectComponent(GameObject go,BindDataWrapper wrapperData) {
-            var componentDict = new Dictionary<int,Component>();
-            var componentDisplayDict = new Dictionary<int,string>();
-            if (go != null) {
-                foreach (var component in go.GetComponents<Component>()) {
-                    var compoName = component.GetType().ToString();
-                    if (UIBinding.IsRegisterComponent(compoName)) {
-                        componentDict.Add(UIBinding.GetRegisterBinderId(compoName),component);
-                        componentDisplayDict.Add(UIBinding.GetRegisterBinderId(compoName),component.GetType().ToString());
-                    }
-                }
-            }
-            wrapperData.componentEnumDict = componentDict;
-            wrapperData.componentDisplayDict = componentDisplayDict;
-        }
+        
         private void OnEnable() {
             UIBinding.Register();
             _uiBinding = (UIBinding)target;
@@ -166,7 +161,7 @@ namespace Framework.UI {
                     }
                     if (componentDisplayDict.ContainsKey(binderData.bindComponentId)) {
                         // Utils.Log(UIBinding.GetBaseBinderAtBinder(componentDisplayDict[binderData.bindComponentId]));
-                        dict = UIBinding.GetBinderEnum(UIBinding.GetBaseBinderAtBinder(componentDisplayDict[binderData.bindComponentId]));
+                        dict = UIBinding.GetComponentBindableField(binderData.bindComponent.GetType().ToString());
                     }
                 }
                 _bindDataWrapperList.Add(new BindDataWrapper {

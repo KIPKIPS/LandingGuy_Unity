@@ -7,8 +7,8 @@ using UnityEngine;
 
 namespace GamePlay.UI {
     public class CreateRolePage:BasePage {
-        private Bindable<string> desc;
-        private Bindable<string> image;
+        private Bindable<string> desc = new();
+        private Bindable<string> image = new();
 
         protected override void OnEnter() {
             desc.Value = "wkp";
