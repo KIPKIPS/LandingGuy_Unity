@@ -21,7 +21,7 @@ namespace Framework.UI {
         private void OnEnable() {
             Initialize();
         }
-        void Initialize() {
+        private void Initialize() {
             _treeViewState ??= new TreeViewState();
             _multiColHeaderState = CreateStateWith3Cols();
             var multiColHeader = new MultiColumnHeader(_multiColHeaderState);

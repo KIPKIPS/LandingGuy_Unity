@@ -29,7 +29,7 @@ namespace Framework.UI {
         private int _lastBindComponentId = -1;
         private readonly Dictionary<string,Object> _curSelectObjDict = new();
         public override void OnInspectorGUI() {
-            if (_scriptSerializedProperty != null) {
+            if (_scriptSerializedProperty != null && _scriptSerializedProperty.objectReferenceValue != null) {
                 _hasScript = true;
                 EditorGUILayout.PropertyField(_scriptSerializedProperty);
             } else {
@@ -103,7 +103,7 @@ namespace Framework.UI {
        
                     bindData.bindComponentId = EditorGUI.IntPopup(rect, bindData.bindComponentId, componentEnumNames, componentKeys);
                     bindData.bindComponent = wrapperData.componentEnumDict.ContainsKey(bindData.bindComponentId) ? wrapperData.componentEnumDict[bindData.bindComponentId] : null;
-                    if (bindData.bindComponentId != _lastBindComponentId) {
+                    if (bindData.bindComponentId != _lastBindComponentId && bindData.bindComponent != null) {
                         wrapperData.fieldEnumDict = UIBinding.GetComponentBindableField(bindData.bindComponent.GetType().ToString());
                     }
                     _lastBindComponentId = bindData.bindComponentId;
@@ -140,13 +140,13 @@ namespace Framework.UI {
         private void OnDisable() {
             _scriptSerializedProperty = null;
         }
-        private static readonly Dictionary<string, int> _pageName2IdDict = new();
-        private int _pageId;
+        // private static readonly Dictionary<string, int> _pageName2IdDict = new();
+        // private int _pageId;
         private void OnEnable() {
-            var pagesConfig = AssetDatabase.LoadAssetAtPath<PagesConfig>(UIManager.ConfigAssetPath);
-            foreach (var config in pagesConfig.configs) {
-                _pageName2IdDict.Add(config.pageName,config.pageID);
-            }
+            // var pagesConfig = AssetDatabase.LoadAssetAtPath<PagesConfig>(UIManager.ConfigAssetPath);
+            // foreach (var config in pagesConfig.configs) {
+            //     _pageName2IdDict.Add(config.pageName,config.pageID);
+            // }
             // _pageId = 
             
             UIBinding.Register();

@@ -20,16 +20,13 @@ namespace Framework.UI {
         //用event存储值改变的事件
         public event Action<T> OnValueChanged;
         //初始化
-        public Bindable(T value) {
-            BindEvent();
+        public Bindable(int pageId,string key,T value = default) {
+            BindEvent(pageId,key);
             _value = value;
         }
-        public Bindable() {
-            BindEvent();
-            _value = default;
-        }
-        private void BindEvent() {
-            // OnValueChanged = v=> Utils.Log("Bindable",v,typeof(T));
+        private void BindEvent(int pageId,string key) {
+            var t = typeof(T).Name;
+            OnValueChanged = v=> UIManager.Instance.UpdateData<T>(pageId,key,_value);
         }
     }
 }

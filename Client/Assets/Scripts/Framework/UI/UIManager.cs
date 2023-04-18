@@ -1,10 +1,7 @@
 ﻿// author:KIPKIPS
 // date:2023.04.08 20:01
 // describe:UI框架管理器
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using Framework.Manager;
 using Framework.Singleton;
 using UnityEditor;
 using UnityEngine;
@@ -15,6 +12,7 @@ namespace Framework.UI {
         public const string ConfigAssetPath = "Assets/ResourcesAssets/UI/Config/pages.asset";//配置资源路径
         private PagesConfig _pagesConfigAsset;
         public void Launch() {
+            _pageDict.Clear();
             UIBinding.Register();
             InitUICamera();
             LoadConfig();
@@ -53,8 +51,10 @@ namespace Framework.UI {
             if (page) {
                 return page;
             }
-            page = Instantiate(AssetDatabase.LoadAssetAtPath<BasePage>($"Assets/ResourcesAssets/{config.assetPath}"),CameraProxy.GetCameraRoot(CameraType.UI));
-            page.gameObject.name = config.pageName;
+            GameObject go = Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>($"Assets/ResourcesAssets/{config.assetPath}"),CameraProxy.GetCameraRoot(CameraType.UI));
+            page = go.GetComponent<BasePage>();
+            page.UIBinding = go.GetComponent<UIBinding>();
+            go.name = config.pageName;
             page.Config = config;
             _pageDict.Add(config.pageID,page);
             return page;
@@ -94,10 +94,17 @@ namespace Framework.UI {
             }
         }
         
-        //Data Center
-        private BindingDataMeta bindingDataMeta;
-        public void AddData() {
-            
+        public void UpdateData<T>(int pageId,string key,T value) {
+            if (_pageDict.TryGetValue(pageId,out var page) ) {
+                foreach (var data in page.UIBinding.BinderDataList) {
+                    if (data.bindKey == key) {
+                        // data.bindComponent
+                        var baseBinder = UIBinding.GetBaseBinder(data.bindComponent.GetType().ToString());
+                        baseBinder.SetString(data.bindComponent,5,value.ToString());
+                        break;
+                    }
+                }
+            }
         }
     }
 }

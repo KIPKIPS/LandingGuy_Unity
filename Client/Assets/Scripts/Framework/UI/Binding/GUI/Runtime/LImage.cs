@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 namespace Framework.UI {
     [DisallowMultipleComponent]
-    [AddComponentMenu("UGUI/LImage")]
+    [AddComponentMenu("GUI/LImage",100)]
     public class LImage:Image {
         
     }

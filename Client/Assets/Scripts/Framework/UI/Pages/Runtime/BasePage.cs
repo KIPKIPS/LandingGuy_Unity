@@ -22,9 +22,7 @@ namespace Framework.UI {
                 return _canvas;
             }
         }
-        void Awake() {
-            
-        }
+        public UIBinding UIBinding { get; set; }
 
         #region Find
 

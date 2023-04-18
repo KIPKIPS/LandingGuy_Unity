@@ -2303,6 +2303,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fc8fb3fa6d3c4b90b4c2ee3c824bd38f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  UIBinding: {fileID: 0}
 --- !u!114 &2549994635605512594
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2322,8 +2323,8 @@ MonoBehaviour:
     bindFieldId: 10
     bindComponent: {fileID: 1622468930720237471}
     bindGo: {fileID: 1300899966141443734}
-    isComponent: 0
-  - bindKey: image
+    isComponent: 1
+  - bindKey: imageSize
     bindComponentId: 324364555
     bindFieldId: 1
     bindComponent: {fileID: 9147802673409428146}

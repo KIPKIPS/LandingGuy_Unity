@@ -7,19 +7,16 @@ using UnityEngine;
 
 namespace Framework.UI {
     public class BinderComponent : Attribute {
-        public Type binderType;
+        public readonly Type binderType;
         public BinderComponent(Type binderType) {
             this.binderType = binderType;
         }
     }
 
     public class BinderField : Attribute {
-        public Type binderType;
+        public readonly Type binderType;
         public BinderField(Type binderType) {
             this.binderType = binderType;
         }
     }
-    // public class Bindable : Attribute {
-    //     
-    // }
 }

@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 namespace Framework.UI {
     [DisallowMultipleComponent]
-    [AddComponentMenu("UGUI/LText")]
+    [AddComponentMenu("GUI/LText",101)]
     public class LText:Text {
         
     }
