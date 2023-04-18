@@ -93,5 +93,11 @@ namespace Framework.UI {
                 _pageStack.Peek().OnResume(); //恢复原先的界面
             }
         }
+        
+        //Data Center
+        private BindingDataMeta bindingDataMeta;
+        public void AddData() {
+            
+        }
     }
 }

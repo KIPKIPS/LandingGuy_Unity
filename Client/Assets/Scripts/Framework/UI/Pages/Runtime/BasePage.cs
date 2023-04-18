@@ -22,6 +22,9 @@ namespace Framework.UI {
                 return _canvas;
             }
         }
+        void Awake() {
+            
+        }
 
         #region Find
 

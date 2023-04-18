@@ -2,6 +2,7 @@
 // date:2023.04.17 23:27
 // describe:
 using System;
+using System.Diagnostics;
 
 namespace Framework.UI {
     public class Bindable<T> {
@@ -28,7 +29,7 @@ namespace Framework.UI {
             _value = default;
         }
         private void BindEvent() {
-            OnValueChanged = v=> Utils.Log("Bindable",v,typeof(T));
+            // OnValueChanged = v=> Utils.Log("Bindable",v,typeof(T));
         }
     }
 }

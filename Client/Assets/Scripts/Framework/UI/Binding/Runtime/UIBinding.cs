@@ -3,6 +3,7 @@
 // describe:ui绑定器
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using UnityEngine;
 
@@ -20,7 +21,17 @@ namespace Framework.UI {
     public class UIBinding : MonoBehaviour {
         [SerializeField] private BasePage _page;
         [SerializeField] private List<BinderData> _binderDataList;
-
+        private void OnEnable() {
+            foreach (var data in BinderDataList) {
+                foreach (var bd in _registerBinderDict) {
+                    if (bd.Value.id == data.bindComponentId) {
+                        // bd.Value.baseBinder.set
+                        Utils.Log(bd.Value.bindableFieldDict[data.bindFieldId]);
+                    }
+                }
+                // Utils.Log(data.bindFieldId);
+            }
+        }
         public List<BinderData> BinderDataList => _binderDataList ??= new List<BinderData>();
         
         private static readonly Dictionary<string, BindInfo> _registerBinderDict = new();//Framework.UI.LImage:BindInfo

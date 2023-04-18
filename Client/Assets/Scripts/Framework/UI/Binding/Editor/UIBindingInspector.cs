@@ -140,8 +140,15 @@ namespace Framework.UI {
         private void OnDisable() {
             _scriptSerializedProperty = null;
         }
-        
+        private static readonly Dictionary<string, int> _pageName2IdDict = new();
+        private int _pageId;
         private void OnEnable() {
+            var pagesConfig = AssetDatabase.LoadAssetAtPath<PagesConfig>(UIManager.ConfigAssetPath);
+            foreach (var config in pagesConfig.configs) {
+                _pageName2IdDict.Add(config.pageName,config.pageID);
+            }
+            // _pageId = 
+            
             UIBinding.Register();
             _uiBinding = (UIBinding)target;
             _scriptSerializedProperty = serializedObject.FindProperty("_page");
@@ -227,4 +234,5 @@ namespace Framework.UI {
             serializedObject.ApplyModifiedProperties();
         }
     }
+
 }
