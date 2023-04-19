@@ -20,14 +20,14 @@ namespace Framework.UI {
     [RequireComponent(typeof(BasePage))]
     public class UIBinding : MonoBehaviour {
         [SerializeField] private BasePage _page;
-        [SerializeField] private List<BinderData> _binderDataList;
+        [SerializeField,NonReorderable] private List<BinderData> _binderDataList;
         public List<BinderData> BinderDataList => _binderDataList ??= new List<BinderData>();
         
         private static readonly Dictionary<string, BindInfo> _registerBinderDict = new();//Framework.UI.LImage:BindInfo
 
         private class BindInfo {
             public BaseBinder baseBinder;
-            public Dictionary<int, string> bindableFieldDict;
+            public Dictionary<string,int> bindableFieldDict;
             public int id;
         }
         public static void Register() {
@@ -39,7 +39,7 @@ namespace Framework.UI {
                         var binder = Activator.CreateInstance(t);
                         var key = component.binderType.ToString();
                         if (!_registerBinderDict.ContainsKey(key)) {
-                            _registerBinderDict.Add(key,new() {
+                            _registerBinderDict.Add(key,new BindInfo {
                                 baseBinder = (BaseBinder)binder,
                                 id = key.GetHashCode(),
                             });
@@ -52,10 +52,16 @@ namespace Framework.UI {
                     if (a is BinderField field) {
                         var binder = Activator.CreateInstance(t);
                         var key = field.binderType.ToString();
-                        var dict = new Dictionary<int, string>();
-                        var array = t.GetEnumNames();//todo:sort
-                        for (int i = 0; i < array.Length; i++) {
-                            dict.Add(i, array[i]);
+                        var dict = new Dictionary<string,int>();
+                        var nameArray = t.GetEnumNames();
+                        var enums = t.GetEnumValues();
+                        List<int> enumList = new List<int>();
+                        foreach (var e in enums) {
+                            enumList.Add((int)e);
+                        }
+                        var enumArray = enumList.ToArray();
+                        for (int i = 0; i < nameArray.Length; i++) {
+                            dict.Add(nameArray[i],enumArray[i]);
                         }
                         if (!_registerBinderDict.ContainsKey(key)) {
                             _registerBinderDict.Add(key,new() {
@@ -71,7 +77,7 @@ namespace Framework.UI {
         public static BaseBinder GetBaseBinder(string componentType) {
             return _registerBinderDict.ContainsKey(componentType) ? _registerBinderDict[componentType].baseBinder : null;
         }
-        public static Dictionary<int, string> GetComponentBindableField(string componentType) {
+        public static Dictionary<string,int> GetComponentBindableField(string componentType) {
             return _registerBinderDict.ContainsKey(componentType) ? _registerBinderDict[componentType].bindableFieldDict : null;
         }
         public static bool IsRegisterComponent(string binderName) {

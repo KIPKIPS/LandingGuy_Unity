@@ -10,6 +10,7 @@ namespace GamePlay.UI {
         //todo:简化
         private Bindable<string> desc = new(0,"desc");
         private Bindable<string> imageSize = new(0,"imageSize");
+        private Bindable<string> textfont = new(0,"textfont");
 
         protected override void OnEnter() {
             desc.Value = "wkp";

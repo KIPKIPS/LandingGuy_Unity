@@ -97,9 +97,12 @@ namespace Framework.UI {
             foreach (var data in page.UIBinding.BinderDataList) {
                 if (data.bindKey == key) {
                     // data.bindComponent
-                    var baseBinder = UIBinding.GetBaseBinder(data.bindComponent.GetType().ToString());
-                    baseBinder.SetString(data.bindComponent, 5, value.ToString());//bug 修复
-                    break;
+                    switch (typeof(T).Name) {
+                        case "String": 
+                            var baseBinder = UIBinding.GetBaseBinder(data.bindComponent.GetType().ToString());
+                            baseBinder.SetString(data.bindComponent, data.bindFieldId, value.ToString());
+                            break;
+                    }
                 }
             }
         }

@@ -25,7 +25,6 @@ namespace Framework.UI {
             _value = value;
         }
         private void BindEvent(int pageId,string key) {
-            var t = typeof(T).Name;
             OnValueChanged = v=> UIManager.Instance.UpdateData<T>(pageId,key,_value);
         }
     }

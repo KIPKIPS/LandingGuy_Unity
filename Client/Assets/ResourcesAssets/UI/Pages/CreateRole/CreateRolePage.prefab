@@ -2303,7 +2303,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fc8fb3fa6d3c4b90b4c2ee3c824bd38f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  UIBinding: {fileID: 0}
 --- !u!114 &2549994635605512594
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2320,16 +2319,22 @@ MonoBehaviour:
   _binderDataList:
   - bindKey: desc
     bindComponentId: -1416040275
-    bindFieldId: 10
+    bindFieldId: 5
     bindComponent: {fileID: 1622468930720237471}
     bindGo: {fileID: 1300899966141443734}
     isComponent: 1
   - bindKey: imageSize
     bindComponentId: 324364555
-    bindFieldId: 1
+    bindFieldId: 5
     bindComponent: {fileID: 9147802673409428146}
     bindGo: {fileID: 6628532726893594705}
     isComponent: 1
+  - bindKey: textfont
+    bindComponentId: -1416040275
+    bindFieldId: 7
+    bindComponent: {fileID: 1622468930720237471}
+    bindGo: {fileID: 1300899966141443734}
+    isComponent: 0
 --- !u!1 &9133003604630005630
 GameObject:
   m_ObjectHideFlags: 0
