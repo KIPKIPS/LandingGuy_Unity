@@ -13,7 +13,7 @@ namespace Framework.UI {
     public class BasePage : MonoBehaviour {
         // public List<BinderData>
         public PageConfig Config{ get; set; }
-        public bool IsShow { get; private set; }
+        public bool IsShow { get; set; }
         private Canvas _canvas;
         private Canvas Canvas {
             get {

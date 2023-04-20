@@ -67,12 +67,15 @@ namespace Framework.UI {
             }
             //每次入栈,触发page的OnEnter方法
             page.OnEnter(options);
+            page.IsShow = true;
             _pageStack.Push(page);
         }
         public void Close(string pageName) {
             Utils.Log(LOGTag, $"Close Page === {pageName}");
             var page = GetPage(pageName);
+            if (page == null) return;
             page.OnExit();
+            page.IsShow = false;
             _pageDict.Remove(page.Config.pageID);
             //对各种类型界面做判断
             switch (page.Config.pageType) {
@@ -92,18 +95,22 @@ namespace Framework.UI {
             }
         }
         public void UpdateData<T>(int pageId, string key, T value) {
-            if (!_pageDict.TryGetValue(pageId, out var page)) return;
-            //todo:优化  
-            foreach (var data in page.UIBinding.BinderDataList) {
-                if (data.bindKey == key) {
-                    // data.bindComponent
-                    switch (typeof(T).Name) {
-                        case "String": 
-                            var baseBinder = UIBinding.GetBaseBinder(data.bindComponent.GetType().ToString());
-                            baseBinder.SetString(data.bindComponent, data.bindFieldId, value.ToString());
-                            break;
-                    }
-                }
+            Utils.Log(LOGTag,typeof(T).Name);
+            if (!_pageDict.TryGetValue(pageId, out var page) || !page.UIBinding.BinderDataDict.TryGetValue(key, out var data)) return;
+            var baseBinder = UIBinding.GetBaseBinder(data.bindComponent.GetType().ToString());
+            switch (typeof(T).Name) {
+                case "String": 
+                    baseBinder.SetString(data.bindComponent, data.bindFieldId, value.ToString());
+                    break;
+                case "Int32":
+                    if (value is int intValue) baseBinder.SetInt32(data.bindComponent, data.bindFieldId,intValue);
+                    break;
+                case "Boolean":
+                    if (value is bool boolValue) baseBinder.SetBoolean(data.bindComponent, data.bindFieldId,boolValue );
+                    break;
+                case "Color":
+                    if (value is Color colorValue) baseBinder.SetColor(data.bindComponent, data.bindFieldId,colorValue );
+                    break;
             }
         }
     }

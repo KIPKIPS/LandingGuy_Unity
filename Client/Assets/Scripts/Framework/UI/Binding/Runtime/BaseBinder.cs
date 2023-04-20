@@ -16,7 +16,7 @@ namespace Framework.UI {
         public virtual void SetInt32(UnityEngine.Object mono, int linkerType, int value) {
         }
 
-        public virtual void SetString(UnityEngine.Object mono, int linkerType, string value) {
+        public virtual void SetString(Object mono, int linkerType, string value) {
         }
         public virtual void SetSingle(UnityEngine.Object mono, int linkerType, float value) {
         }

@@ -2317,21 +2317,33 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _page: {fileID: 3813538730419081297}
   _binderDataList:
-  - bindKey: desc
+  - bindKey: text
     bindComponentId: -1416040275
-    bindFieldId: 5
+    bindFieldId: 10005
     bindComponent: {fileID: 1622468930720237471}
     bindGo: {fileID: 1300899966141443734}
-    isComponent: 1
-  - bindKey: imageSize
+    isComponent: 0
+  - bindKey: textEnable
+    bindComponentId: -1416040275
+    bindFieldId: 50003
+    bindComponent: {fileID: 1622468930720237471}
+    bindGo: {fileID: 1300899966141443734}
+    isComponent: 0
+  - bindKey: textFont
+    bindComponentId: -1416040275
+    bindFieldId: 20004
+    bindComponent: {fileID: 1622468930720237471}
+    bindGo: {fileID: 1300899966141443734}
+    isComponent: 0
+  - bindKey: imageColor
     bindComponentId: 324364555
-    bindFieldId: 5
+    bindFieldId: 20007
     bindComponent: {fileID: 9147802673409428146}
     bindGo: {fileID: 6628532726893594705}
-    isComponent: 1
-  - bindKey: textfont
+    isComponent: 0
+  - bindKey: textColor
     bindComponentId: -1416040275
-    bindFieldId: 7
+    bindFieldId: 30007
     bindComponent: {fileID: 1622468930720237471}
     bindGo: {fileID: 1300899966141443734}
     isComponent: 0

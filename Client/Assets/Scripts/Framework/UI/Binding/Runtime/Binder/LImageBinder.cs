@@ -1,20 +1,32 @@
 ﻿// author:KIPKIPS
 // date:2023.04.15 04:20
 // describe:
+using UnityEngine;
+
 namespace Framework.UI {
     [BinderComponent(typeof(LImage))]
     public class LImageBinder : BaseBinder {
         [BinderField(typeof(LImage))]
         public enum AttributeType {
-            sprite = LinkerType.String,
-            size = LinkerType.String,
+            sprite = 10000 + LinkerType.String,
+            color = 20000 + LinkerType.Color,
         }
-        public override void SetString(UnityEngine.Object mono, int linkerType, string value) {
+        public override void SetString(Object mono, int linkerType, string value) {
             if (mono == null) return;
-            var target = mono as LText;
+            var target = mono as LImage;
             switch ((AttributeType)linkerType) {
                 case AttributeType.sprite:
-                    target.text = value;
+                    // target.sprite = value;
+                    break;
+                
+            }
+        }
+        public override void SetColor(Object mono, int linkerType, Color value) {
+            if (mono == null) return;
+            var target = mono as LImage;
+            switch ((AttributeType)linkerType) {
+                case AttributeType.color:
+                    target.color = value;
                     break;
             }
         }
