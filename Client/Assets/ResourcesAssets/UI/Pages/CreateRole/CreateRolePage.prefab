@@ -1689,7 +1689,7 @@ GameObject:
   - component: {fileID: 4638951015396157356}
   - component: {fileID: 5385824988811362730}
   - component: {fileID: 489413283445335291}
-  - component: {fileID: 8413007954101061194}
+  - component: {fileID: 314072388229918834}
   m_Layer: 5
   m_Name: Button
   m_TagString: Untagged
@@ -1756,7 +1756,7 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &8413007954101061194
+--- !u!114 &314072388229918834
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1765,7 +1765,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 7263367666666885590}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Script: {fileID: 11500000, guid: 80b15d191c744178b093a0f6f56053ed, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
@@ -2214,6 +2214,7 @@ GameObject:
   - component: {fileID: 1905856356185200200}
   - component: {fileID: 3813538730419081297}
   - component: {fileID: 2549994635605512594}
+  - component: {fileID: 1653996320666373178}
   m_Layer: 5
   m_Name: CreateRolePage
   m_TagString: Untagged
@@ -2316,6 +2317,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _page: {fileID: 3813538730419081297}
+  _pagePath: UI/Pages/CreatePlayer/CreateRolePage
   _binderDataList:
   - bindKey: text
     bindComponentId: -1416040275
@@ -2347,6 +2349,35 @@ MonoBehaviour:
     bindComponent: {fileID: 1622468930720237471}
     bindGo: {fileID: 1300899966141443734}
     isComponent: 0
+  - bindKey: button
+    bindComponentId: 44969768
+    bindFieldId: 10014
+    bindComponent: {fileID: 314072388229918834}
+    bindGo: {fileID: 7263367666666885590}
+    isComponent: 0
+--- !u!114 &1653996320666373178
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9133003604144257018}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_UiScaleMode: 1
+  m_ReferencePixelsPerUnit: 100
+  m_ScaleFactor: 1
+  m_ReferenceResolution: {x: 1920, y: 1080}
+  m_ScreenMatchMode: 1
+  m_MatchWidthOrHeight: 0
+  m_PhysicalUnit: 3
+  m_FallbackScreenDPI: 96
+  m_DefaultSpriteDPI: 96
+  m_DynamicPixelsPerUnit: 1
+  m_PresetInfoIsWorld: 0
 --- !u!1 &9133003604630005630
 GameObject:
   m_ObjectHideFlags: 0

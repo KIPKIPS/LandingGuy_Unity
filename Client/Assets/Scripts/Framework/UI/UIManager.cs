@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using Framework.Singleton;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace Framework.UI {
     public class UIManager : MonoSingleton<UIManager> {
@@ -51,9 +52,10 @@ namespace Framework.UI {
             }
             GameObject go = Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>($"Assets/ResourcesAssets/{config.assetPath}"), CameraProxy.GetCameraRoot(CameraType.UI));
             page = go.GetComponent<BasePage>();
+            page.Config = config;
+            page.OnBind();
             page.UIBinding = go.GetComponent<UIBinding>();
             go.name = config.pageName;
-            page.Config = config;
             _pageDict.Add(config.pageID, page);
             return page;
         }
@@ -99,8 +101,8 @@ namespace Framework.UI {
             if (!_pageDict.TryGetValue(pageId, out var page) || !page.UIBinding.BinderDataDict.TryGetValue(key, out var data)) return;
             var baseBinder = UIBinding.GetBaseBinder(data.bindComponent.GetType().ToString());
             switch (typeof(T).Name) {
-                case "String": 
-                    baseBinder.SetString(data.bindComponent, data.bindFieldId, value.ToString());
+                case "String":
+                    if (value is string stringValue) baseBinder.SetString(data.bindComponent, data.bindFieldId, stringValue);
                     break;
                 case "Int32":
                     if (value is int intValue) baseBinder.SetInt32(data.bindComponent, data.bindFieldId,intValue);
@@ -110,6 +112,9 @@ namespace Framework.UI {
                     break;
                 case "Color":
                     if (value is Color colorValue) baseBinder.SetColor(data.bindComponent, data.bindFieldId,colorValue );
+                    break;
+                case "UnityAction":
+                    if (value is UnityAction unityActionValue) baseBinder.SetAction(data.bindComponent, data.bindFieldId,unityActionValue );
                     break;
             }
         }

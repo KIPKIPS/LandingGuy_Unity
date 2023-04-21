@@ -3,8 +3,11 @@
 // describe:ui绑定器检视面板
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text;
+using System.Text.RegularExpressions;
 using UnityEditor;
 using UnityEngine;
 using Object = UnityEngine.Object;
@@ -15,6 +18,7 @@ namespace Framework.UI {
         private UIBinding _uiBinding;
         private bool _hasScript;
         private SerializedProperty _scriptSerializedProperty;
+        private SerializedProperty _pathSerializedProperty;
         private class BindDataWrapper {
             public BinderData bindData;
             public Dictionary<string, int> fieldEnumDict;
@@ -32,6 +36,7 @@ namespace Framework.UI {
             } else {
                 _scriptSerializedProperty = serializedObject.FindProperty("_page");
             }
+            EditorGUILayout.PropertyField(_pathSerializedProperty);
             if (_hasScript) {
                 GUILayout.BeginVertical();
                 GUILayout.Space(5);
@@ -166,7 +171,19 @@ namespace Framework.UI {
             UIBinding.Register();
             _bindDataWrapperList.Clear();
             _uiBinding = (UIBinding)target;
+            _pathSerializedProperty = serializedObject.FindProperty("_pagePath");
             _scriptSerializedProperty = serializedObject.FindProperty("_page");
+            if (!string.IsNullOrEmpty(_pathSerializedProperty.stringValue)) {
+                var path = Path.Combine(Application.dataPath, $"Scripts/GamePlay/{_pathSerializedProperty.stringValue}.cs");
+                if (File.Exists(path)) {
+                    string content = File.ReadAllText(path, Encoding.UTF8);
+                    var matches = Regex.Matches(content, @"Bind<.+>\("".+""\);");
+                    Utils.Log(matches.Count);
+                    foreach (var match in matches) {
+                        Utils.Log("",match);
+                    }
+                }
+            }
             var fieldInfos = _scriptSerializedProperty.objectReferenceValue.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
             var bindKeyDict = new HashSet<string>();
             foreach (var field in fieldInfos) {

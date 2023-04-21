@@ -16,19 +16,19 @@ namespace Framework.UI {
                 if (!_isInit && _value is not null && Equals(value, _value)) return;
                 _value = value;
                 _isInit = false;
-                OnValueChanged?.Invoke(value);
+                OnValueChanged?.Invoke();
             }
         }
         //用event存储值改变的事件
-        public event Action<T> OnValueChanged;
+        public event Action OnValueChanged;
         //初始化
-        public Bindable(int pageId,string key,T value = default) {
-            BindEvent(pageId,key);
+        public Bindable(int pageId,string key, T value = default) {
+            BindEvent(pageId, key);
             _value = value;
             _isInit = true;
         }
-        private void BindEvent(int pageId,string key) {
-            OnValueChanged = v=> UIManager.Instance.UpdateData<T>(pageId,key,_value);
+        private void BindEvent(int pageId, string key) {
+            OnValueChanged = () => UIManager.Instance.UpdateData(pageId, key, _value);
         }
     }
 }

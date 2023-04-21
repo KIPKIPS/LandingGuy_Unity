@@ -20,6 +20,7 @@ namespace Framework.UI {
     [RequireComponent(typeof(BasePage))]
     public class UIBinding : MonoBehaviour {
         [SerializeField] private BasePage _page;
+        [SerializeField] private string _pagePath;
         [SerializeField,NonReorderable] private List<BinderData> _binderDataList;
         public List<BinderData> BinderDataList {
             get => _binderDataList ??= new List<BinderData>();
