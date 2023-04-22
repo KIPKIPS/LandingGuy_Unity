@@ -7,7 +7,7 @@ using System;
 namespace Framework {
     // ReSharper disable ClassNeverInstantiated.Global
     // ReSharper disable UnusedMember.Global
-    public class Timer {
+    public class LTimer {
         // ReSharper disable Unity.PerformanceAnalysis
         public static TimerEntity New(Action<TimerEntity> callback,int millisecond, int times = 0) =>TimerManager.Instance.CreateTimer(callback, millisecond, times);
         public static void Destroy(TimerEntity entity) => entity.Destroy();

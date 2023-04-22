@@ -5,7 +5,7 @@
 using Framework.UI;
 
 namespace Framework {
-    public static class UIProxy {
+    public static class LUI {
         public static void Open(string pageName,dynamic options = null) {
             UIManager.Instance.Open(pageName,options);
         } 

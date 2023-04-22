@@ -26,7 +26,7 @@ namespace Framework.Manager {
                 UnityEngine.SceneManagement.SceneManager.LoadScene(sceneName);
                 callback?.Invoke();
             } catch (Exception) {
-                Event.Dispatch(EventType.SceneFailure,0);
+                LEvent.Dispatch(EventType.SceneFailure,0);
             }
         }
         
@@ -39,17 +39,17 @@ namespace Framework.Manager {
             try {
                 Utils.StartCoroutine(DoLoadSceneAsync(sceneName,callback));
             } catch (Exception) {
-                Event.Dispatch(EventType.SceneFailure,0);
+                LEvent.Dispatch(EventType.SceneFailure,0);
             }
         }
         
         private IEnumerator DoLoadSceneAsync(string sceneName,Action callback = null) {
             var ao = UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(sceneName);
             while (!ao.isDone) {
-                Event.Dispatch(EventType.SceneLoading,ao.progress);
+                LEvent.Dispatch(EventType.SceneLoading,ao.progress);
                 yield return ao.progress;
             }
-            Event.Dispatch(EventType.SceneLoadFinished,1);
+            LEvent.Dispatch(EventType.SceneLoadFinished,1);
             callback?.Invoke();
         }
     }

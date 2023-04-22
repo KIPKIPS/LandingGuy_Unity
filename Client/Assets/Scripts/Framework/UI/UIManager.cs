@@ -1,11 +1,12 @@
 ﻿// author:KIPKIPS
 // date:2023.04.08 20:01
 // describe:UI框架管理器
+using System;
 using System.Collections.Generic;
 using Framework.Singleton;
 using UnityEditor;
 using UnityEngine;
-using UnityEngine.Events;
+using UnityEngine.Profiling;
 
 namespace Framework.UI {
     public class UIManager : MonoSingleton<UIManager> {
@@ -28,11 +29,11 @@ namespace Framework.UI {
             _pageName2IdMap.TryGetValue(pageName, out var id);
             return _pagesConfigAsset.configs.Count > id ? _pagesConfigAsset.configs[id] : null;
         }
-        private readonly Stack<BasePage> _pageStack = new();
+        private readonly Stack<UIBinding> _pageStack = new();
         private readonly Dictionary<string, int> _pageName2IdMap = new();
-        private readonly Dictionary<int, BasePage> _pageDict = new();
+        private readonly Dictionary<int, UIBinding> _pageDict = new();
         private void InitUICamera() {
-            DontDestroyOnLoad(CameraProxy.GetCameraRoot(CameraType.UI));
+            DontDestroyOnLoad(LCamera.GetCameraRoot(CameraType.UI));
         }
         public void Open(string pageName, dynamic options = null) {
             Utils.Log(LOGTag, $"Open Page === {pageName}");
@@ -43,38 +44,47 @@ namespace Framework.UI {
             }
             PushPage(pageName, options);
         }
-        private BasePage GetPage(string pageName) {
+        private UIBinding GetPageUIBinding(string pageName) {
             var config = GetConfig(pageName);
             if (config == null) return null;
-            _pageDict.TryGetValue(config.pageID, out var page);
-            if (page) {
-                return page;
+            _pageDict.TryGetValue(config.pageID, out var uiBinding);
+            if (uiBinding) {
+                return uiBinding;
             }
-            GameObject go = Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>($"Assets/ResourcesAssets/{config.assetPath}"), CameraProxy.GetCameraRoot(CameraType.UI));
-            page = go.GetComponent<BasePage>();
+            GameObject go = Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>($"Assets/ResourcesAssets/{config.assetPath}"), LCamera.GetCameraRoot(CameraType.UI));
+            uiBinding = go.GetComponent<UIBinding>();
+            BasePage page = Activator.CreateInstance(UIBinding.GetPageType(uiBinding.PageType)) as BasePage;
+            uiBinding.Page = page;
+            page.UIBinding = uiBinding;
             page.Config = config;
+            page.Canvas = go.GetComponent<Canvas>();
+            page.Canvas.additionalShaderChannels = AdditionalCanvasShaderChannels.Tangent | AdditionalCanvasShaderChannels.TexCoord1 | AdditionalCanvasShaderChannels.Normal;
             page.OnBind();
-            page.UIBinding = go.GetComponent<UIBinding>();
             go.name = config.pageName;
-            _pageDict.Add(config.pageID, page);
-            return page;
+            _pageDict.Add(config.pageID, uiBinding);
+            return uiBinding;
         }
+
         private void PushPage(string pageName, dynamic options = null) {
-            var page = GetPage(pageName);
+            var uiBinding = GetPageUIBinding(pageName);
+            var page = uiBinding.Page;
             if (page.IsShow) {
                 return;
             }
             if (_pageStack.Count > 0) {
-                _pageStack.Peek().OnPause();
+                uiBinding.Page.OnPause();
             }
             //每次入栈,触发page的OnEnter方法
             page.OnEnter(options);
+            page.
+            Canvas.worldCamera = LCamera.GetCamera(CameraType.UI);
             page.IsShow = true;
-            _pageStack.Push(page);
+            _pageStack.Push(uiBinding);
         }
         public void Close(string pageName) {
             Utils.Log(LOGTag, $"Close Page === {pageName}");
-            var page = GetPage(pageName);
+            var uiBinding = GetPageUIBinding(pageName);
+            var page = uiBinding.Page;
             if (page == null) return;
             page.OnExit();
             page.IsShow = false;
@@ -93,30 +103,9 @@ namespace Framework.UI {
             var go = _pageStack.Pop().gameObject;
             Destroy(go);
             if (_pageStack.Count > 0) {
-                _pageStack.Peek().OnResume(); //恢复原先的界面
+                _pageStack.Peek().Page.OnResume(); //恢复原先的界面
             }
         }
-        public void UpdateData<T>(int pageId, string key, T value) {
-            Utils.Log(LOGTag,typeof(T).Name);
-            if (!_pageDict.TryGetValue(pageId, out var page) || !page.UIBinding.BinderDataDict.TryGetValue(key, out var data)) return;
-            var baseBinder = UIBinding.GetBaseBinder(data.bindComponent.GetType().ToString());
-            switch (typeof(T).Name) {
-                case "String":
-                    if (value is string stringValue) baseBinder.SetString(data.bindComponent, data.bindFieldId, stringValue);
-                    break;
-                case "Int32":
-                    if (value is int intValue) baseBinder.SetInt32(data.bindComponent, data.bindFieldId,intValue);
-                    break;
-                case "Boolean":
-                    if (value is bool boolValue) baseBinder.SetBoolean(data.bindComponent, data.bindFieldId,boolValue );
-                    break;
-                case "Color":
-                    if (value is Color colorValue) baseBinder.SetColor(data.bindComponent, data.bindFieldId,colorValue );
-                    break;
-                case "UnityAction":
-                    if (value is UnityAction unityActionValue) baseBinder.SetAction(data.bindComponent, data.bindFieldId,unityActionValue );
-                    break;
-            }
-        }
+        
     }
 }

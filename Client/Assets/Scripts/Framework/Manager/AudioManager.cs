@@ -189,7 +189,7 @@ namespace Framework.Manager {
             audioSource.PlayOneShot(clip,volumeScale);
             // ReSharper disable once Unity.PerformanceCriticalCodeNullComparison
             var clipMillisecond = clip != null ? clip.length * 1000 : 0;
-            Timer.New(e => {
+            LTimer.New(e => {
                 callback?.Invoke();
                 RecycleAudioPlay(audioSource);
                 e.Destroy();

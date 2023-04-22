@@ -2212,7 +2212,6 @@ GameObject:
   - component: {fileID: 9133003604144257016}
   - component: {fileID: 9133003604144257017}
   - component: {fileID: 1905856356185200200}
-  - component: {fileID: 3813538730419081297}
   - component: {fileID: 2549994635605512594}
   - component: {fileID: 1653996320666373178}
   m_Layer: 5
@@ -2292,18 +2291,6 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
---- !u!114 &3813538730419081297
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9133003604144257018}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fc8fb3fa6d3c4b90b4c2ee3c824bd38f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &2549994635605512594
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2316,7 +2303,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 149e5f9721d048efb82307836a18998a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _page: {fileID: 3813538730419081297}
+  _pageType: GamePlay.UI.CreateRolePage
   _pagePath: UI/Pages/CreatePlayer/CreateRolePage
   _binderDataList:
   - bindKey: text
@@ -2330,13 +2317,13 @@ MonoBehaviour:
     bindFieldId: 50003
     bindComponent: {fileID: 1622468930720237471}
     bindGo: {fileID: 1300899966141443734}
-    isComponent: 0
+    isComponent: 1
   - bindKey: textFont
     bindComponentId: -1416040275
     bindFieldId: 20004
     bindComponent: {fileID: 1622468930720237471}
     bindGo: {fileID: 1300899966141443734}
-    isComponent: 0
+    isComponent: 1
   - bindKey: imageColor
     bindComponentId: 324364555
     bindFieldId: 20007
@@ -2348,13 +2335,13 @@ MonoBehaviour:
     bindFieldId: 30007
     bindComponent: {fileID: 1622468930720237471}
     bindGo: {fileID: 1300899966141443734}
-    isComponent: 0
+    isComponent: 1
   - bindKey: button
     bindComponentId: 44969768
     bindFieldId: 10014
     bindComponent: {fileID: 314072388229918834}
     bindGo: {fileID: 7263367666666885590}
-    isComponent: 0
+    isComponent: 1
 --- !u!114 &1653996320666373178
 MonoBehaviour:
   m_ObjectHideFlags: 0

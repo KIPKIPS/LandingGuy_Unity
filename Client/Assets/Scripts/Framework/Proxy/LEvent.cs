@@ -14,7 +14,7 @@ namespace Framework {
     }
 
     #endregion
-    public class Event {
+    public class LEvent {
         public static void Register(EventType type, Action<dynamic> callback) => EventManager.Instance.Register(type,callback);
 
         public static void Register(EventType type, Action callback) => EventManager.Instance.Register(type,callback);

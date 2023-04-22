@@ -3,61 +3,70 @@
 // describe:BasePage UI面板的基类
 using System;
 using System.Collections.Generic;
-using JetBrains.Annotations;
 using UnityEngine;
-using UnityEngine.EventSystems;
-using Button = UnityEngine.UI.Button;
 using UnityEngine.Events;
 
 namespace Framework.UI {
-    public class BasePage : MonoBehaviour {
+    public class BasePage {
         // public List<BinderData>
-        public PageConfig Config{ get; set; }
-        public bool IsShow { get; set; }
+        public PageConfig Config { get; set; }
         private Canvas _canvas;
-        private Canvas Canvas {
-            get {
-                _canvas ??= GetComponent<Canvas>();
-                _canvas.additionalShaderChannels = AdditionalCanvasShaderChannels.Tangent | AdditionalCanvasShaderChannels.TexCoord1 | AdditionalCanvasShaderChannels.Normal;
-                return _canvas;
-            }
+        public Canvas Canvas {
+            get => _canvas != null ? _canvas : null;
+            set => _canvas = value;
         }
-        public UIBinding UIBinding { get; set; }
+        public bool IsShow { get; set; }
+        private static UIBinding _uiBinding;
+        public UIBinding UIBinding {
+            get => _uiBinding;
+            set => _uiBinding = value;
+        }
+        private static readonly Dictionary<string, dynamic> _bindDict = new();
 
-        protected static Bindable<T> Bind<T>(string key,T value = default) {
-            return new Bindable<T>(pageID,key,value);
+        /// <summary>
+        /// 绑定字段
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="value"></param>
+        /// <typeparam name="T"></typeparam>
+        protected static void Bind<T>(string key, T value = default) {
+            _bindDict[key].Value = value;
         }
-        public static int pageID;
+        protected static void DOBind<T>(string key, T value = default) {
+            _bindDict.Add(key,new Bindable<T>(_uiBinding, key, value));
+        }
+        protected static void DOBind(string key, UnityAction action) {
+            _bindDict.Add(key,new Bindable<UnityAction>(_uiBinding, key, action));
+        }
 
         #region Page Life Cycle
 
-        public virtual void OnBind() {
-            pageID = Config.pageID;
+        public void OnBind() {
+            Values();
+            Methods();
         }
-
+        protected virtual void Values() {
+        }
+        protected virtual void Methods() {
+        }
         /// <summary>
         /// 进入界面
         /// </summary>
         /// <param name="options">参数传递</param>
-        public virtual void OnEnter([CanBeNull] dynamic options) {
+        public virtual void OnEnter(dynamic options) {
             OnEnter();
         }
         /// <summary>
         /// 进入界面
         /// </summary>
         protected virtual void OnEnter() {
-            Canvas.worldCamera = CameraProxy.GetCamera(CameraType.UI);
-            IsShow = true;
-            gameObject.SetActive(true);
         }
-
         /// <summary>
         /// 暂停界面
         /// </summary>
         public virtual void OnPause() {
             IsShow = false;
         }
-
         /// <summary>
         /// 恢复界面
         /// </summary>

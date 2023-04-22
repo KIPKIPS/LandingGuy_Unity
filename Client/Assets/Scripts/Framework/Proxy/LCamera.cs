@@ -9,7 +9,7 @@ namespace Framework {
     public enum CameraType {
         UI,Main,
     }
-    public static class CameraProxy {
+    public static class LCamera {
         public static Transform GetCameraRoot(CameraType cameraType) {
             switch (cameraType) {
                 case CameraType.UI:

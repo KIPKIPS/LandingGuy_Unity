@@ -19,7 +19,7 @@ namespace Framework {
             SceneManager.Instance.Launch();
             UIManager.Instance.Launch();
 
-            UIProxy.Open("CreateRolePage");
+            LUI.Open("CreateRolePage");
         }
     }
 }
