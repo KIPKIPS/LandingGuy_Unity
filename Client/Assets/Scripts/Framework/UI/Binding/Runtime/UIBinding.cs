@@ -96,7 +96,7 @@ namespace Framework.UI {
                     }
                 }
             }
-            Utils.Log("RegisterPageDict",_pageDict);
+            // Utils.Log("RegisterPageDict",_pageDict);
         }
         public static BaseBinder GetBaseBinder(string componentType) {
             return _registerBinderDict.ContainsKey(componentType) ? _registerBinderDict[componentType].baseBinder : null;

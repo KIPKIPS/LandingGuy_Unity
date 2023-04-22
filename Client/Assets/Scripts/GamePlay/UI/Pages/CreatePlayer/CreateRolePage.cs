@@ -18,7 +18,6 @@ namespace GamePlay.UI {
             DOBind("button",() => LUI.Close("CreateRolePage"));
         }
         protected override void OnEnter() {
-            Utils.Log("CreateRolePage on enter");
             Bind("text", "wkp");
             Bind("textEnable", true);
             Bind("textFont", 130);
