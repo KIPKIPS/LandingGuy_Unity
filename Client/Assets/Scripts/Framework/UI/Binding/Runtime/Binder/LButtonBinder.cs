@@ -1,6 +1,6 @@
 ﻿// author:KIPKIPS
 // date:2023.04.21 23:26
-// describe:
+// describe:Button绑定类
 using UnityEngine;
 using UnityEngine.Events;
 

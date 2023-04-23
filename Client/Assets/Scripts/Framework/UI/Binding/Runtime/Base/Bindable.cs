@@ -1,6 +1,6 @@
 ﻿// author:KIPKIPS
 // date:2023.04.17 23:27
-// describe:
+// describe:可绑定处理
 using System;
 using System.Diagnostics;
 using UnityEngine;
@@ -55,7 +55,7 @@ namespace Framework.UI {
                     if (value is Color colorValue) baseBinder.SetColor(data.bindComponent, data.bindFieldId,colorValue );
                     break;
                 default:
-                    Utils.LogWarning("Failure Binding",$"Unregistered binding type : {typeof(T).Name}");
+                    LUtils.LogWarning("Failure Binding",$"Unregistered binding type : {typeof(T).Name}");
                     break;
             }
         }

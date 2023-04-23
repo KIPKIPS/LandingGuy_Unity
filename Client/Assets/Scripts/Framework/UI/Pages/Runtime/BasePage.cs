@@ -1,7 +1,6 @@
 ﻿// author:KIPKIPS
 // date:2023.04.10 18:06
 // describe:BasePage UI面板的基类
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
@@ -24,17 +23,26 @@ namespace Framework.UI {
         private static readonly Dictionary<string, dynamic> _bindDict = new();
 
         /// <summary>
-        /// 绑定字段
+        /// 更新绑定字段的值
         /// </summary>
-        /// <param name="key"></param>
-        /// <param name="value"></param>
-        /// <typeparam name="T"></typeparam>
+        /// <param name="key">绑定字段</param>
+        /// <param name="value">绑定的值</param>
         protected static void Bind<T>(string key, T value = default) {
             _bindDict[key].Value = value;
         }
+        /// <summary>
+        /// 字段值绑定
+        /// </summary>
+        /// <param name="key">绑定字段</param>
+        /// <param name="value">绑定值</param>
         protected static void DOBind<T>(string key, T value = default) {
             _bindDict.Add(key,new Bindable<T>(_uiBinding, key, value));
         }
+        /// <summary>
+        /// 事件绑定
+        /// </summary>
+        /// <param name="key">绑定字段</param>
+        /// <param name="action">绑定事件</param>
         protected static void DOBind(string key, UnityAction action) {
             _bindDict.Add(key,new Bindable<UnityAction>(_uiBinding, key, action));
         }

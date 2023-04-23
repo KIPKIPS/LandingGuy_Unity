@@ -36,10 +36,10 @@ namespace Framework.UI {
             DontDestroyOnLoad(LCamera.GetCameraRoot(CameraType.UI));
         }
         public void Open(string pageName, dynamic options = null) {
-            Utils.Log(LOGTag, $"Open Page === {pageName}");
+            LUtils.Log(LOGTag, $"Open Page === {pageName}");
             var config = GetConfig(pageName);
             if (config == null) {
-                Utils.LogError(LOGTag, $"Page name [{pageName}] dont have config");
+                LUtils.LogError(LOGTag, $"Page name [{pageName}] dont have config");
                 return;
             }
             PushPage(pageName, options);
@@ -82,7 +82,7 @@ namespace Framework.UI {
             _pageStack.Push(uiBinding);
         }
         public void Close(string pageName) {
-            Utils.Log(LOGTag, $"Close Page === {pageName}");
+            LUtils.Log(LOGTag, $"Close Page === {pageName}");
             var uiBinding = GetPageUIBinding(pageName);
             var page = uiBinding.Page;
             if (page == null) return;

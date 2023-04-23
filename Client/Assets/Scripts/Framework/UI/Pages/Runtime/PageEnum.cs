@@ -1,9 +1,9 @@
 ﻿// author:KIPKIPS
 // date:2023.04.10 21:31
-// describe:
+// describe:界面类型枚举
 namespace Framework.UI {
     /// <summary>
-    /// 打开模式
+    /// 界面模式
     /// </summary>
     public enum PageMode {
         Coexist,//共存

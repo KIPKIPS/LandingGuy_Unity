@@ -1,14 +1,11 @@
 ﻿// author:KIPKIPS
 // date:2023.04.14 17:25
 // describe:ui绑定器检视面板
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
-using GamePlay.UI;
 using UnityEditor;
 using UnityEngine;
 using Object = UnityEngine.Object;
@@ -29,14 +26,10 @@ namespace Framework.UI {
         private readonly Dictionary<string, int> _lastSelectObjDict = new();
         private readonly Dictionary<string, int> _lastBindComponentDict = new();
         private readonly Dictionary<string, Object> _curSelectObjDict = new();
-        bool IsValid {
+        private bool IsValid {
             get {
-                if (_pathSerializedProperty == null) {
-                    _pathSerializedProperty = serializedObject.FindProperty("_pagePath");
-                }
-                if (string.IsNullOrEmpty(_pathSerializedProperty.stringValue)) return false;
-                var path = Path.Combine(Application.dataPath, $"Scripts/GamePlay/{_pathSerializedProperty.stringValue}.cs");
-                return File.Exists(path);
+                _pathSerializedProperty ??= serializedObject.FindProperty("_pagePath");
+                return !string.IsNullOrEmpty(_pathSerializedProperty.stringValue) && File.Exists(Path.Combine(Application.dataPath, $"Scripts/GamePlay/{_pathSerializedProperty.stringValue}.cs"));
             }
         }
         public override void OnInspectorGUI() {
@@ -66,8 +59,8 @@ namespace Framework.UI {
                     textColor = Color.white
                 }
             });
-            foreach (var field in fields) {
-                DrawRow(field);
+            for (var i = 0; i < fields.Count; i++) {
+                DrawRow(fields[i]);
             }
             GUILayout.Space(10);
             EditorGUILayout.LabelField($"Bind Methods ({methods.Count})", new GUIStyle {
@@ -76,14 +69,14 @@ namespace Framework.UI {
                     textColor = Color.white
                 }
             });
-            foreach (var method in methods) {
-                DrawRow(method);
+            for (var i = 0; i < methods.Count; i++) {
+                DrawRow(methods[i]);
             }
             GUILayout.EndVertical();
             if (GUI.changed) {
                 EditorUtility.SetDirty(_uiBinding);
             }
-            serializedObject.ApplyModifiedProperties();
+            // serializedObject.ApplyModifiedProperties();
         }
         void DrawRow(BindDataWrapper wrapperData) {
             GUILayout.BeginVertical();
@@ -109,8 +102,9 @@ namespace Framework.UI {
                     bindData.bindGo = go.gameObject;
                 } else {
                     bindData.isComponent = true;
-                    bindData.bindComponent = (Component)_curSelectObjDict[bindData.bindKey];
-                    bindData.bindGo = bindData.bindComponent.gameObject;
+                    var comp = (Component)_curSelectObjDict[bindData.bindKey];
+                    bindData.bindComponent = comp;
+                    bindData.bindGo = comp.gameObject;
                     bindData.bindComponentId = UIBinding.GetRegisterBinderId(bindData.bindComponent.GetType().ToString());
                 }
             } else {
@@ -192,8 +186,6 @@ namespace Framework.UI {
             }
             return newArr;
         }
-        private void OnDisable() {
-        }
         private void OnEnable() {
             UIBinding.Register();
             _bindDataWrapperList.Clear();
@@ -214,7 +206,7 @@ namespace Framework.UI {
                         bindKeyDict.Add(m.Value.Replace(@"""", ""));
                     }
                 }
-                var methods = Regex.Matches(content, @"DOBind\s*<UnityAction>\s*\(\s*"".+""\s*,\S+\)");
+                var methods = Regex.Matches(content, @"DOBind\s*(<UnityAction>)?\s*\(\s*"".+""\s*,\S+\)");
                 foreach (var match in methods) {
                     if (Regex.IsMatch(@match.ToString(), @""".+""")) {
                         var m = Regex.Match(@match.ToString(), @""".+""");
@@ -260,15 +252,22 @@ namespace Framework.UI {
                     }
                 }
                 _bindDataWrapperList.Add(new BindDataWrapper {
-                    bindData = binderData,
+                    bindData = new () {
+                        bindKey = binderData.bindKey,
+                        bindComponentId = binderData.bindComponentId,
+                        bindFieldId = binderData.bindFieldId,
+                        bindComponent = binderData.bindComponent,
+                        bindGo = binderData.bindGo,
+                        isComponent = binderData.isComponent,
+                    },
                     fieldEnumDict = dict,
                     componentEnumDict = componentDict,
                     componentDisplayDict = componentDisplayDict,
                     isMethod = methodMap.Contains(binderData.bindKey)
                 });
             }
-            EditorUtility.SetDirty(_uiBinding);
-            serializedObject.ApplyModifiedProperties();
+            // EditorUtility.SetDirty(_uiBinding);
+            // serializedObject.ApplyModifiedProperties();
         }
         private void Check() {
             UIBinding.Register();
@@ -304,7 +303,7 @@ namespace Framework.UI {
                         list.Add(key);
                     }
                 }
-                var methods = Regex.Matches(content, @"DOBind\s*<UnityAction>\s*\(\s*"".+""\s*,\S+\)");
+                var methods = Regex.Matches(content, @"DOBind\s*(<UnityAction>)?\s*\(\s*"".+""\s*,\S+\)");
                 foreach (var match in methods) {
                     if (Regex.IsMatch(@match.ToString(), @""".+""")) {
                         var m = Regex.Match(@match.ToString(), @""".+""");
@@ -313,7 +312,7 @@ namespace Framework.UI {
                         checkDict.Add(key);
                     }
                 }
-                // Utils.Log(matches.Count);
+                // LUtils.Log(list);
                 foreach (var key in list) {
                     bool isExist = cacheBindMap.ContainsKey(key);
                     var cache = isExist ? cacheBindMap[key] : null;
@@ -357,7 +356,7 @@ namespace Framework.UI {
                 }
             }
             EditorUtility.SetDirty(_uiBinding);
-            serializedObject.ApplyModifiedProperties();
+            // serializedObject.ApplyModifiedProperties();
         }
     }
 }

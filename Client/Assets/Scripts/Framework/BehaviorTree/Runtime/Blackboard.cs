@@ -1,7 +1,6 @@
-﻿// --[[
-//     author:{wkp}
-//     time:15:33
-// ]]
+﻿// author:KIPKIPS
+// date:2023.03.18 15:33
+// describe:行为树黑板
 using System;
 using UnityEngine;
 

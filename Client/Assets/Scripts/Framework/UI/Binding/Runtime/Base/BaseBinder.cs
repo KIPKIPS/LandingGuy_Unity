@@ -1,5 +1,6 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿// author:KIPKIPS
+// date:2023.04.17 11:52
+// describe:绑定基类
 using UnityEngine;
 using UnityEngine.Events;
 

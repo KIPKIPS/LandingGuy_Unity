@@ -1,7 +1,6 @@
-﻿// --[[
-//     author:{wkp}
-//     time:20:01
-// ]]
+﻿// author:KIPKIPS
+// date:2023.04.17 20:01
+// describe:可绑定类型
 namespace Framework.UI {
     public enum LinkerType {
         Vector2,

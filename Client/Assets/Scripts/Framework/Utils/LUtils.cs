@@ -13,7 +13,7 @@ using Framework.Pool;
 namespace Framework {
     // ReSharper disable UnusedMember.Global
     // ReSharper disable MemberCanBePrivate.Global
-    public static class Utils {
+    public static class LUtils {
         #region File Load 文件加载
         
         /// <summary>

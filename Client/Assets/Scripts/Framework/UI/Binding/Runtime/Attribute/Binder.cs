@@ -1,9 +1,7 @@
-﻿// --[[
-//     author:{wkp}
-//     time:19:48
-// ]]
+﻿// author:KIPKIPS
+// date:2023.04.16 19:48
+// describe:绑定特性
 using System;
-using UnityEngine;
 
 namespace Framework.UI {
     public class BinderComponent : Attribute {

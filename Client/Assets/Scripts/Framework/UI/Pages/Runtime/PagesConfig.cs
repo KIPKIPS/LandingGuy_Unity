@@ -1,6 +1,6 @@
 ﻿// author:KIPKIPS
 // date:2023.04.10 21:27
-// describe:
+// describe:界面配置数据存储
 using System;
 using System.Collections.Generic;
 using UnityEngine;

@@ -8,10 +8,10 @@ namespace Framework.Manager {
     public class CameraManager:Singleton<CameraManager> {
         public Transform UICameraRoot => UICamera.transform;
         private Camera _uiCamera;
-        public Camera UICamera => _uiCamera ??= Utils.Find<Camera>("[UICamera]");
+        public Camera UICamera => _uiCamera ??= LUtils.Find<Camera>("[UICamera]");
         
         public Transform MainCameraRoot => MainCamera.transform;
         private Camera _mainCamera;
-        public Camera MainCamera => _mainCamera ??= Utils.Find<Camera>("[MainCamera]");
+        public Camera MainCamera => _mainCamera ??= LUtils.Find<Camera>("[MainCamera]");
     }
 }

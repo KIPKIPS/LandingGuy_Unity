@@ -1,6 +1,6 @@
 ﻿// author:KIPKIPS
 // date:2023.04.10 21:29
-// describe:
+// describe:界面配置类
 using System;
 
 namespace Framework.UI {

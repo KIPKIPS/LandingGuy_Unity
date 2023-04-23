@@ -1,6 +1,6 @@
 ﻿// author:KIPKIPS
 // date:2023.04.15 04:20
-// describe:
+// describe:Image绑定类
 using UnityEngine;
 
 namespace Framework.UI {
