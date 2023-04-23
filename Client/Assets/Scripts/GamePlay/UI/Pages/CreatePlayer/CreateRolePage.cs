@@ -13,6 +13,8 @@ namespace GamePlay.UI {
             DOBind<int>("textFont");
             DOBind<Color>("imageColor");
             DOBind<Color>("textColor");
+            DOBind<Vector2>("pos");
+            DOBind<bool>("active");
         }
         protected override void Methods() {
             DOBind("closeBtn",() => LUI.Close("CreateRolePage"));

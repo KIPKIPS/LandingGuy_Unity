@@ -137,6 +137,7 @@ namespace Framework.UI {
                     if (bindData.bindGo != null) {
                         foreach (var component in bindData.bindGo.GetComponents<Component>()) {
                             var compoName = component.GetType().ToString();
+                            LUtil.Log(compoName);
                             if (UIBinding.IsRegisterComponent(compoName)) {
                                 componentDict.Add(UIBinding.GetRegisterBinderId(compoName), component);
                                 componentDisplayDict.Add(UIBinding.GetRegisterBinderId(compoName), component.GetType().ToString());

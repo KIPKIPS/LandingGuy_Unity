@@ -1,13 +1,13 @@
 ﻿// author:KIPKIPS
 // date:2023.04.15 19:49
 // describe:Text绑定类
+// ReSharper disable InconsistentNaming
 using UnityEngine;
 
 namespace Framework.UI {
     [BinderComponent(typeof(LText))]
     public class LTextBinder : BaseBinder {
         [BinderField(typeof(LText))]
-        // ReSharper disable InconsistentNaming
         public enum AttributeType {
             text = 10000 + LinkerType.String,
             fontSize = 20000 + LinkerType.Int32,
