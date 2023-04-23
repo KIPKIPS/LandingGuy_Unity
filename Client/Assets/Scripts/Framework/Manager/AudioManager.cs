@@ -19,7 +19,7 @@ namespace Framework.Manager {
             GlobalVolume = 1;
             EffectVolume = 1;
             BgmVolume = 1;
-            LUtils.Log(LOGTag,"the audio initialization settings are complete");
+            LUtil.Log(LOGTag,"the audio initialization settings are complete");
         }
         private AudioSource _bgmAudioSource;
         private const string LOGTag = "AudioManager";

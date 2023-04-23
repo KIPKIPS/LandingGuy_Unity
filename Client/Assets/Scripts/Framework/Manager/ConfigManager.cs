@@ -19,7 +19,7 @@ namespace Framework.Manager {
         private readonly RestrictedDictionary<string, RestrictedDictionary<string, string>> _typeDict = new ();
         public void Launch() {
             AnalyticsConfig();
-            LUtils.Log(LOGTag, "config data load finished");
+            LUtil.Log(LOGTag, "config data load finished");
         }
         // private ConfigManager() {
         //     
@@ -37,7 +37,7 @@ namespace Framework.Manager {
                 _configDict.Add(configName, new List<dynamic>());
                 _configDict[configName].Add(null); //预留一个位置
                 try {
-                    var jObjList = LUtils.LoadJsonByPath<List<JObject>>(ConfigPath + t.Name);
+                    var jObjList = LUtil.LoadJsonByPath<List<JObject>>(ConfigPath + t.Name);
                     var metatable = jObjList.Last();
                     if (metatable.ContainsKey("__metatable")) {
                         var metatableProperties = metatable.Properties();
@@ -70,8 +70,8 @@ namespace Framework.Manager {
                         }
                     }
                 } catch (Exception ex) {
-                    LUtils.Log(LOGTag, configName);
-                    LUtils.LogError(LOGTag, ex.ToString());
+                    LUtil.Log(LOGTag, configName);
+                    LUtil.LogError(LOGTag, ex.ToString());
                 }
             }
             _configDict.ForbidWrite();

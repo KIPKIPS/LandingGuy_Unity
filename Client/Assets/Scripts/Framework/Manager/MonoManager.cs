@@ -18,7 +18,7 @@ namespace Framework.Manager {
         public event Action LATEUPDATE;
         private const string LOGTag = "MonoManager";
         public void Launch() {
-            LUtils.Log(LOGTag,"mono manager is start");
+            LUtil.Log(LOGTag,"mono manager is start");
         }
 
         #region Unity生命周期函数

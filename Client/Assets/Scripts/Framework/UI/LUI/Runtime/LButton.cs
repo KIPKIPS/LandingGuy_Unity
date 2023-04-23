@@ -5,8 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 namespace Framework.UI {
-    [DisallowMultipleComponent]
-    [AddComponentMenu("GUI/LButton",100)]
+    [AddComponentMenu("LUI/LButton",30)]
     public class LButton:Button {
         
     }

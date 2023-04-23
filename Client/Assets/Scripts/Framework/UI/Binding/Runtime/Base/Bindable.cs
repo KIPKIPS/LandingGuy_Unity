@@ -55,7 +55,7 @@ namespace Framework.UI {
                     if (value is Color colorValue) baseBinder.SetColor(data.bindComponent, data.bindFieldId,colorValue );
                     break;
                 default:
-                    LUtils.LogWarning("Failure Binding",$"Unregistered binding type : {typeof(T).Name}");
+                    LUtil.LogWarning("Failure Binding",$"Unregistered binding type : {typeof(T).Name}");
                     break;
             }
         }

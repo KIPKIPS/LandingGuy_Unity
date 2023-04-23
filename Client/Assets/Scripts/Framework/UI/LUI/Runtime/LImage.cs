@@ -3,10 +3,9 @@
 // describe:扩展Image
 using UnityEngine;
 using UnityEngine.UI;
+
 namespace Framework.UI {
-    [DisallowMultipleComponent]
-    [AddComponentMenu("GUI/LImage",100)]
+    [AddComponentMenu("LUI/LImage",11),ExecuteAlways]
     public class LImage:Image {
-        
     }
 }

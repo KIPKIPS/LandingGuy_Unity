@@ -16,8 +16,8 @@ namespace GamePlay.UI {
         }
         protected override void Methods() {
             DOBind("closeBtn",() => LUI.Close("CreateRolePage"));
-            DOBind("onLast",() => LUtils.Log("onLast"));
-            DOBind("onNext",() => LUtils.Log("onNext"));
+            DOBind("onLast",() => LUtil.Log("onLast"));
+            DOBind("onNext",() => LUtil.Log("onNext"));
         }
         protected override void OnEnter() {
             Bind("text", "wkp");

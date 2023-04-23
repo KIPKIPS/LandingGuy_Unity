@@ -6,7 +6,7 @@ namespace Framework.AI.BehaviorTree {
     public class DebugNode : ActionNode {
         public string message;
         protected override void OnStart() {
-            LUtils.Log(BehaviorTree.LOGTag,message);
+            LUtil.Log(BehaviorTree.LOGTag,message);
         }
         protected override State OnUpdate() {
             return State.Success;

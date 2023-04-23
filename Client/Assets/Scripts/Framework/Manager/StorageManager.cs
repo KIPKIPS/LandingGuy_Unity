@@ -13,7 +13,7 @@ namespace Framework.Manager {
         private readonly BinaryFormatter _binaryFormatter = new ();
         // ReSharper disable once MemberCanBeMadeStatic.Global
         public void Launch() {
-            LUtils.Log(LOGTag, "the local data is loaded");
+            LUtil.Log(LOGTag, "the local data is loaded");
             var path = LDefine.DataStoragePath;
                 //不存在目录则创建
             if (!Directory.Exists(path)) {

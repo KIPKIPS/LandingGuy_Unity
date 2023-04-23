@@ -74,7 +74,7 @@ namespace Framework.UI {
                 EditorUtility.SetDirty(pagesConfig);
                 AssetDatabase.SaveAssets();
                 AssetDatabase.Refresh();
-                LUtils.Log(LOGTag, "page config save success");
+                LUtil.Log(LOGTag, "page config save success");
                 Initialize();
             }
             if (GUILayout.Button("Add", GUILayout.Width(50))) {

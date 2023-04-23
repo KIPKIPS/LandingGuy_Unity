@@ -8,7 +8,7 @@ namespace Framework.Manager {
         // private const string LOGTag = "FrameScheduler";
         // private Action _onUpdate;
         // public void Launch() {
-        //     LUtils.AddUpdate(Update);
+        //     LUtil.AddUpdate(Update);
         // }
         // public void AddTask(Action task, int delayFrame = 0) {
         //     _onUpdate += task;

@@ -13,7 +13,7 @@ using Framework.Pool;
 namespace Framework {
     // ReSharper disable UnusedMember.Global
     // ReSharper disable MemberCanBePrivate.Global
-    public static class LUtils {
+    public static class LUtil {
         #region File Load 文件加载
         
         /// <summary>
@@ -117,7 +117,7 @@ namespace Framework {
                     count++;
                 }
             } else {
-                msg = msgObj.ToString();
+                msg = msgObj != null ? msgObj.ToString() : "Null";
             }
             var logEntity = LOGEntityPool.Allocate();
             logEntity.Create(msg, innerLine);

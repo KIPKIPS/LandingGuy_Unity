@@ -18,7 +18,7 @@ namespace Framework.Manager {
         //这里不使用EventType作为键值的原因是枚举没有时限IEquatable接口,字典使用Enum为键时会触发装箱
         private static readonly Dictionary<int, EventEntity> EventDict = new ();
         public void Launch() {
-            LUtils.Log(LOGTag,"event manager is start");
+            LUtil.Log(LOGTag,"event manager is start");
         }
         
         /// <summary>
@@ -27,7 +27,7 @@ namespace Framework.Manager {
         /// <param name="type">事件类型</param>
         /// <param name="callback">有参事件触发回调</param>
         public void Register(EventType type, Action<dynamic> callback) {
-            LUtils.Log(LOGTag,$"register => EventType.{type.ToString()}");
+            LUtil.Log(LOGTag,$"register => EventType.{type.ToString()}");
             var type2Int = (int) type;
             if (!EventDict.ContainsKey(type2Int)) {
                 var e = EventEntityPool.Allocate();
@@ -43,7 +43,7 @@ namespace Framework.Manager {
         /// <param name="type">事件类型</param>
         /// <param name="callback">无参事件触发回调</param>
         public void Register(EventType type, Action callback) {
-            LUtils.Log(LOGTag,$"register => EventType.{type.ToString()}");
+            LUtil.Log(LOGTag,$"register => EventType.{type.ToString()}");
             var type2Int = (int) type;
             if (!EventDict.ContainsKey(type2Int)) {
                 var e = EventEntityPool.Allocate();
@@ -60,7 +60,7 @@ namespace Framework.Manager {
         /// <param name="type">事件类型</param>
         /// <param name="callback">有参事件触发回调</param>
         public void Remove(EventType type, Action<dynamic> callback) {
-            LUtils.Log(LOGTag,$"remove => EventType.{type.ToString()}");
+            LUtil.Log(LOGTag,$"remove => EventType.{type.ToString()}");
             var type2Int = (int) type;
             if (!EventDict.ContainsKey(type2Int)) return;
             EventDict[type2Int].RemoveCallback(callback);
@@ -76,7 +76,7 @@ namespace Framework.Manager {
         /// <param name="type">事件类型</param>
         /// <param name="callback">无参事件触发回调</param>
         public void Remove(EventType type, Action callback) {
-            LUtils.Log(LOGTag,$"remove => EventType.{type.ToString()}");
+            LUtil.Log(LOGTag,$"remove => EventType.{type.ToString()}");
             var type2Int = (int) type;
             if (!EventDict.ContainsKey(type2Int)) return;
             EventDict[type2Int].RemoveCallback(callback);
@@ -93,7 +93,7 @@ namespace Framework.Manager {
         /// <param name="type">事件类型</param>
         /// <param name="data">事件传递数据</param>
         public void Dispatch(EventType type, dynamic data = null) {
-            LUtils.Log(LOGTag,$"dispatch => EventType.{type.ToString()}");
+            LUtil.Log(LOGTag,$"dispatch => EventType.{type.ToString()}");
             var type2Int = (int) type;
             if (EventDict != null && EventDict.ContainsKey(type2Int)) {
                 EventDict[type2Int].Execute(data);

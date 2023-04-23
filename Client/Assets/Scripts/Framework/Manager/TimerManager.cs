@@ -22,16 +22,16 @@ namespace Framework.Manager {
         private bool _isTicking;
 
         private void Reset() {
-            _triggerTimer = LUtils.StartCoroutine(TriggerTimer());
+            _triggerTimer = LUtil.StartCoroutine(TriggerTimer());
             _isTicking = true;
-            LUtils.Log(LOGTag,"timer is start");
+            LUtil.Log(LOGTag,"timer is start");
         }
         /// <summary>
         /// 释放定时器的相关数据
         /// </summary>
         public override void Dispose() {
             if (_triggerTimer != null) {
-                LUtils.StopCoroutine(_triggerTimer);
+                LUtil.StopCoroutine(_triggerTimer);
             }
             _isTicking = false;
             _timerEntityDict.Clear();
@@ -39,7 +39,7 @@ namespace Framework.Manager {
             _timerEntityPool.Clear();
             _allocateTimerId = 0;
             _aliveTimerId = 0;
-            LUtils.Log(LOGTag,"timer shut down");
+            LUtil.Log(LOGTag,"timer shut down");
         }
         /// <summary>
         /// 创建计时器
@@ -75,7 +75,7 @@ namespace Framework.Manager {
                     Dispose();
                 }
             } else {
-                LUtils.LogError(LOGTag, "Timer " + timerId + " is not exist !");
+                LUtil.LogError(LOGTag, "Timer " + timerId + " is not exist !");
             }
         }
         

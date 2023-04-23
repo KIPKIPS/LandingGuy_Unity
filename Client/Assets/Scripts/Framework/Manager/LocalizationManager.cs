@@ -9,7 +9,7 @@ namespace Framework.Manager {
     public class LocalizationManager: Singleton<LocalizationManager> {
         private const string LOGTag = "LocalizationManager";
         public void Launch() {
-            LUtils.Log(LOGTag,"localization manager is start");
+            LUtil.Log(LOGTag,"localization manager is start");
         }
     }
 }

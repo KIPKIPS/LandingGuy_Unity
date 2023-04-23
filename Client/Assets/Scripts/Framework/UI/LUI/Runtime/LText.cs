@@ -5,9 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 namespace Framework.UI {
-    [DisallowMultipleComponent]
-    [AddComponentMenu("GUI/LText",101)]
+    [AddComponentMenu("LUI/LText",10),ExecuteAlways]
     public class LText:Text {
-        
     }
 }

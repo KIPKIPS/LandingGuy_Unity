@@ -14,7 +14,7 @@ namespace Framework.Manager {
         private const string LOGTag = "SceneManager";
 
         public void Launch() {
-            LUtils.Log(LOGTag, "scene manager is work");
+            LUtil.Log(LOGTag, "scene manager is work");
         }
         /// <summary>
         /// 同步加载世界
@@ -37,7 +37,7 @@ namespace Framework.Manager {
         /// <param name="callback">加载完成回调</param>
         public void LoadSceneAsync(string sceneName,Action callback = null) {
             try {
-                LUtils.StartCoroutine(DoLoadSceneAsync(sceneName,callback));
+                LUtil.StartCoroutine(DoLoadSceneAsync(sceneName,callback));
             } catch (Exception) {
                 LEvent.Dispatch(EventType.SceneFailure,0);
             }
