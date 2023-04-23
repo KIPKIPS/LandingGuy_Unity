@@ -51,14 +51,14 @@ namespace Framework.UI {
             if (uiBinding) {
                 return uiBinding;
             }
-            GameObject go = Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>($"Assets/ResourcesAssets/{config.assetPath}"), LCamera.GetCameraRoot(CameraType.UI));
+            var go = Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>($"Assets/ResourcesAssets/{config.assetPath}"), LCamera.GetCameraRoot(CameraType.UI));
             uiBinding = go.GetComponent<UIBinding>();
-            BasePage page = Activator.CreateInstance(UIBinding.GetPageType(uiBinding.PageType)) as BasePage;
+            var page = Activator.CreateInstance(UIBinding.GetPageType(uiBinding.PageType)) as BasePage;
             uiBinding.Page = page;
             page.UIBinding = uiBinding;
             page.Config = config;
             page.Canvas = go.GetComponent<Canvas>();
-            page.Canvas.additionalShaderChannels = AdditionalCanvasShaderChannels.Tangent | AdditionalCanvasShaderChannels.TexCoord1 | AdditionalCanvasShaderChannels.Normal;
+            // page.Canvas.additionalShaderChannels = AdditionalCanvasShaderChannels.Tangent | AdditionalCanvasShaderChannels.TexCoord1 | AdditionalCanvasShaderChannels.Normal;
             page.OnBind();
             go.name = config.pageName;
             _pageDict.Add(config.pageID, uiBinding);

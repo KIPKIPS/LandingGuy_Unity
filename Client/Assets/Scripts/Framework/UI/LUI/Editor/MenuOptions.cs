@@ -20,11 +20,13 @@ namespace Framework.UI {
         private const string DropdownArrowPath = "UI/Skin/DropdownArrow.psd";
         private const string MaskPath = "UI/Skin/UIMask.psd";
         private const string MenuPrefix = "GameObject/UI/";
-        
-        private static  LDefaultControls.Resources _standardResources;
-        
+
+        private static LDefaultControls.Resources _standardResources;
+
         enum MenuOptionsPriorityOrder {
-            Image = -102,
+            Text = -1000,
+            Image = -999,
+            Button = -998,
             RawImage = 2002,
             Panel = 2003,
             Toggle = 2021,
@@ -33,8 +35,6 @@ namespace Framework.UI {
             ScrollView = 2026,
             Canvas = 2060,
             EventSystem = 2061,
-            Text = -101,
-            Button = -103,
             Dropdown = 2082,
             InputField = 2083,
         };
@@ -47,7 +47,7 @@ namespace Framework.UI {
             }
             PlaceUIElementRoot(go, menuCommand);
         }
-        
+
         [MenuItem(MenuPrefix + "Image", false, (int)MenuOptionsPriorityOrder.Image)]
         public static void AddImage(MenuCommand menuCommand) {
             GameObject go;
@@ -56,9 +56,16 @@ namespace Framework.UI {
             }
             PlaceUIElementRoot(go, menuCommand);
         }
-        
-        private class FactorySwapToEditor : IDisposable
-        {
+        [MenuItem(MenuPrefix + "Button", false, (int)MenuOptionsPriorityOrder.Button)]
+        public static void AddButton(MenuCommand menuCommand) {
+            GameObject go;
+            using (new FactorySwapToEditor()) {
+                go = LDefaultControls.CreateButton(GetStandardResources());
+            }
+            PlaceUIElementRoot(go, menuCommand);
+        }
+
+        private class FactorySwapToEditor : IDisposable {
             private readonly LDefaultControls.IFactoryControls _factory;
             public FactorySwapToEditor() {
                 _factory = LDefaultControls.Factory;
@@ -69,6 +76,7 @@ namespace Framework.UI {
                 LDefaultControls.Factory = _factory;
             }
         }
+
         private class DefaultEditorFactory : LDefaultControls.IFactoryControls {
             public static readonly DefaultEditorFactory Default = new();
             public GameObject CreateGameObject(string name, params Type[] components) {
@@ -151,33 +159,27 @@ namespace Framework.UI {
             Undo.SetCurrentGroupName("Create " + element.name);
             Selection.activeGameObject = element;
         }
-        
+
         private static void SetPositionVisibleInSceneView(RectTransform canvasRectTransform, RectTransform itemTransform) {
             var sceneView = SceneView.lastActiveSceneView;
             if (sceneView == null || sceneView.camera == null) return;
-
             var camera = sceneView.camera;
             var position = Vector3.zero;
             if (RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRectTransform, new Vector2(camera.pixelWidth / 2f, camera.pixelHeight / 2f), camera, out var localPlanePosition)) {
                 localPlanePosition.x += canvasRectTransform.sizeDelta.x * canvasRectTransform.pivot.x;
                 localPlanePosition.y += canvasRectTransform.sizeDelta.y * canvasRectTransform.pivot.y;
-
                 localPlanePosition.x = Mathf.Clamp(localPlanePosition.x, 0, canvasRectTransform.sizeDelta.x);
                 localPlanePosition.y = Mathf.Clamp(localPlanePosition.y, 0, canvasRectTransform.sizeDelta.y);
-                
                 var sizeDelta = canvasRectTransform.sizeDelta;
                 var anchorMin = itemTransform.anchorMin;
                 position.x = localPlanePosition.x - sizeDelta.x * anchorMin.x;
                 position.y = localPlanePosition.y - sizeDelta.y * anchorMin.y;
-
                 Vector3 minLocalPosition;
                 minLocalPosition.x = sizeDelta.x * (0 - canvasRectTransform.pivot.x) + itemTransform.sizeDelta.x * itemTransform.pivot.x;
                 minLocalPosition.y = canvasRectTransform.sizeDelta.y * (0 - canvasRectTransform.pivot.y) + itemTransform.sizeDelta.y * itemTransform.pivot.y;
-
                 Vector3 maxLocalPosition;
                 maxLocalPosition.x = canvasRectTransform.sizeDelta.x * (1 - canvasRectTransform.pivot.x) - itemTransform.sizeDelta.x * itemTransform.pivot.x;
                 maxLocalPosition.y = canvasRectTransform.sizeDelta.y * (1 - canvasRectTransform.pivot.y) - itemTransform.sizeDelta.y * itemTransform.pivot.y;
-
                 position.x = Mathf.Clamp(position.x, minLocalPosition.x, maxLocalPosition.x);
                 position.y = Mathf.Clamp(position.y, minLocalPosition.y, maxLocalPosition.y);
             }
@@ -210,7 +212,6 @@ namespace Framework.UI {
             var selectedGo = Selection.activeGameObject;
             var canvas = (selectedGo != null) ? selectedGo.GetComponentInParent<Canvas>() : null;
             if (IsValidCanvas(canvas)) return canvas.gameObject;
-
             var canvasArray = StageUtility.GetCurrentStageHandle().FindComponentsOfType<Canvas>();
             foreach (var t in canvasArray) {
                 if (IsValidCanvas(t)) {
