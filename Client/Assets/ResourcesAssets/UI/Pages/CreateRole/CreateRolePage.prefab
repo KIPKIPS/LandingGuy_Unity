@@ -2451,8 +2451,8 @@ MonoBehaviour:
     bindObj: {fileID: 2537882381554490387}
     bindFieldId: 30000
   - bindKey: active
-    bindObj: {fileID: 8268133625165542708}
-    bindFieldId: 50003
+    bindObj: {fileID: 4245445552274709373}
+    bindFieldId: 10003
   - bindKey: closeBtn
     bindObj: {fileID: 314072388229918834}
     bindFieldId: 10014

@@ -4,6 +4,7 @@
 using UnityEngine;
 using Framework.Manager;
 using Framework.UI;
+using UnityEngine.Profiling;
 using SceneManager = Framework.Manager.SceneManager;
 
 namespace Framework {
@@ -18,8 +19,7 @@ namespace Framework {
             LocalizationManager.Instance.Launch();
             SceneManager.Instance.Launch();
             UIManager.Instance.Launch();
-
-            LUI.Open("CreateRolePage");
+            Profiler.EndSample();
         }
     }
 }

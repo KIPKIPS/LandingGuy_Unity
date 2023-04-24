@@ -2,6 +2,7 @@
 // date:2023.04.24 11:00
 // describe:GameObject绑定类
 // ReSharper disable InconsistentNaming
+// ReSharper disable MemberCanBePrivate.Global
 using UnityEngine;
 
 namespace Framework.UI {

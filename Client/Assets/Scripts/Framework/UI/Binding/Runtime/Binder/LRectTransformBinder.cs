@@ -2,12 +2,13 @@
 // date:2023.04.23 18:48
 // describe:RectTransform绑定类
 // ReSharper disable InconsistentNaming
+// ReSharper disable MemberCanBePrivate.Global
 using UnityEngine;
 
 namespace Framework.UI {
     [BinderComponent(typeof(RectTransform))]
     public class LRectTransformBinder : BaseBinder {
-        [BinderField(typeof(RectTransform))]
+        [BinderField(typeof(RectTransform))] 
         public enum AttributeType {
             anchorMin = 10000 + LinkerType.Vector2,
             anchorMax = 20000 + LinkerType.Vector2,

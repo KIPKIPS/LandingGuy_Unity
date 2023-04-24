@@ -35,12 +35,12 @@ namespace Framework.UI {
         }
         public Bindable(UIBinding uiBinding,string key,UnityAction unityAction) {
             if (!uiBinding.BinderDataDict.TryGetValue(key, out var data)) return;
-            var baseBinder = UIBinding.GetBaseBinder(data.bindObj.GetType().ToString());
+            var baseBinder = UIBinding.GetBaseBinder(UIBinding.GetType(data.bindObj));
             baseBinder.SetAction(data.bindObj, data.bindFieldId,unityAction );
         }
         private void UpdateBind(T value) {
             if (!_uiBinding.BinderDataDict.TryGetValue(_key, out var data)) return;
-            var baseBinder = UIBinding.GetBaseBinder(data.bindObj.GetType().ToString());
+            var baseBinder = UIBinding.GetBaseBinder(UIBinding.GetType(data.bindObj));
             switch (typeof(T).Name) {
                 case "String":
                     if (value is string stringValue) baseBinder.SetString(data.bindObj, data.bindFieldId, stringValue);
@@ -49,10 +49,16 @@ namespace Framework.UI {
                     if (value is int intValue) baseBinder.SetInt32(data.bindObj, data.bindFieldId,intValue);
                     break;
                 case "Boolean":
-                    if (value is bool boolValue) baseBinder.SetBoolean(data.bindObj, data.bindFieldId,boolValue );
+                    if (value is bool boolValue) baseBinder.SetBoolean(data.bindObj, data.bindFieldId,boolValue);
                     break;
                 case "Color":
-                    if (value is Color colorValue) baseBinder.SetColor(data.bindObj, data.bindFieldId,colorValue );
+                    if (value is Color colorValue) baseBinder.SetColor(data.bindObj, data.bindFieldId,colorValue);
+                    break;
+                case "Vector2":
+                    if (value is Vector2 v2Value) baseBinder.SetVector2(data.bindObj, data.bindFieldId,v2Value);
+                    break;
+                case "Vector3":
+                    if (value is Vector3 v3Value) baseBinder.SetVector3(data.bindObj, data.bindFieldId,v3Value);
                     break;
                 default:
                     LUtil.LogWarning("Failure Binding",$"Unregistered binding type : {typeof(T).Name}");

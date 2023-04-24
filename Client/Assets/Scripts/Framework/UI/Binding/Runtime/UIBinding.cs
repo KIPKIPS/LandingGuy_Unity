@@ -120,5 +120,6 @@ namespace Framework.UI {
         public static Type GetPageType(string pageType) {
             return _pageDict.ContainsKey(pageType) ? _pageDict[pageType] : typeof(BasePage);
         }
+        public static string GetType(Object obj) => obj is Component ? obj.GetType().ToString() : "UnityEngine.GameObject";
     }
 }

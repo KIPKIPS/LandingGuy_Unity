@@ -2,6 +2,7 @@
 // date:2023.04.15 19:49
 // describe:Text绑定类
 // ReSharper disable InconsistentNaming
+// ReSharper disable MemberCanBePrivate.Global
 using UnityEngine;
 
 namespace Framework.UI {

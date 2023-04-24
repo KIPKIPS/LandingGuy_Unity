@@ -2,6 +2,7 @@
 // date:2023.04.15 04:20
 // describe:Image绑定类
 // ReSharper disable InconsistentNaming
+// ReSharper disable MemberCanBePrivate.Global
 using UnityEngine;
 
 namespace Framework.UI {

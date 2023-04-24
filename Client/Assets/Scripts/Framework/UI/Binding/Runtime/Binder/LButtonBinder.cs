@@ -2,6 +2,7 @@
 // date:2023.04.21 23:26
 // describe:Button绑定类
 // ReSharper disable InconsistentNaming
+// ReSharper disable MemberCanBePrivate.Global
 using UnityEngine;
 using UnityEngine.Events;
 
