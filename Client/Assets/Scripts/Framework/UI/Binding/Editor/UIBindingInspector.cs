@@ -15,6 +15,7 @@ namespace Framework.UI {
     public class UIBindingInspector : Editor {
         private UIBinding _uiBinding;
         private SerializedProperty _pathSerializedProperty;
+
         private class BindDataWrapper {
             public BinderData bindData;
             public Dictionary<string, int> fieldEnumDict;
@@ -23,10 +24,13 @@ namespace Framework.UI {
             public int bindComponentId = int.MaxValue;
             public bool isMethod;
         }
+
         private readonly List<BindDataWrapper> _bindDataWrapperList = new();
         private readonly Dictionary<string, string> _lastSelectObjDict = new();
         private readonly Dictionary<string, string> _lastBindComponentDict = new();
         private readonly Dictionary<string, Object> _curSelectObjDict = new();
+        private const string QuotationMark = @""".+""";
+        private const string Quotation = @"""";
         private bool IsValid {
             get {
                 _pathSerializedProperty ??= serializedObject.FindProperty("_pagePath");
@@ -48,11 +52,7 @@ namespace Framework.UI {
             var fields = new List<BindDataWrapper>();
             var methods = new List<BindDataWrapper>();
             foreach (var wrapper in _bindDataWrapperList) {
-                if (!wrapper.isMethod) {
-                    fields.Add(wrapper);
-                } else {
-                    methods.Add(wrapper);
-                }
+                (!wrapper.isMethod ? fields : methods).Add(wrapper);
             }
             EditorGUILayout.LabelField($"Bind Fields ({fields.Count})", new GUIStyle {
                 fontStyle = FontStyle.Bold,
@@ -60,8 +60,8 @@ namespace Framework.UI {
                     textColor = Color.white
                 }
             });
-            for (var i = 0; i < fields.Count; i++) {
-                DrawRow(fields[i]);
+            foreach (var t in fields) {
+                DrawRow(t);
             }
             GUILayout.Space(10);
             EditorGUILayout.LabelField($"Bind Methods ({methods.Count})", new GUIStyle {
@@ -70,16 +70,15 @@ namespace Framework.UI {
                     textColor = Color.white
                 }
             });
-            for (var i = 0; i < methods.Count; i++) {
-                DrawRow(methods[i]);
+            foreach (var t in methods) {
+                DrawRow(t);
             }
             GUILayout.EndVertical();
             if (GUI.changed) {
                 EditorUtility.SetDirty(_uiBinding);
             }
-            // serializedObject.ApplyModifiedProperties();
         }
-        void DrawRow(BindDataWrapper wrapperData) {
+        private void DrawRow(BindDataWrapper wrapperData) {
             GUILayout.BeginVertical();
             var bindData = wrapperData.bindData;
             EditorGUILayout.LabelField(bindData.bindKey);
@@ -118,22 +117,19 @@ namespace Framework.UI {
                     var componentDict = new Dictionary<int, Object>();
                     var componentDisplayDict = new Dictionary<int, string>();
                     if (bindData.bindObj != null) {
-                        Transform trs = null;
-                        if (bindData.bindObj is Component obj) {
-                            trs = obj.transform;
-                        }else if (bindData.bindObj is GameObject gameObject) {
-                            trs = gameObject.transform;
-                        }
+                        var trs = bindData.bindObj switch {
+                            Component obj => obj.transform,
+                            GameObject gameObject => gameObject.transform,
+                            _ => null
+                        };
                         if (trs != null) {
                             foreach (var component in trs.GetComponents<Component>()) {
                                 var compoName = GetType(component);
-                                // LUtil.Log(compoName);
-                                if (UIBinding.IsRegisterComponent(compoName)) {
-                                    componentDict.Add(UIBinding.GetRegisterBinderId(compoName), component);
-                                    componentDisplayDict.Add(UIBinding.GetRegisterBinderId(compoName), GetType(component));
-                                }
+                                if (!UIBinding.IsRegisterComponent(compoName)) continue;
+                                componentDict.Add(UIBinding.GetRegisterBinderId(compoName), component);
+                                componentDisplayDict.Add(UIBinding.GetRegisterBinderId(compoName), GetType(component));
                             }
-                            componentDict.Add("UnityEngine.GameObject".GetHashCode(),trs.gameObject);
+                            componentDict.Add("UnityEngine.GameObject".GetHashCode(), trs.gameObject);
                             componentDisplayDict.Add("UnityEngine.GameObject".GetHashCode(), "GameObject");
                         }
                     }
@@ -151,7 +147,7 @@ namespace Framework.UI {
             var componentEnumNames = GetDisplayEnums(wrapperData.componentDisplayDict.Values.ToArray());
             wrapperData.bindComponentId = EditorGUI.IntPopup(rect, wrapperData.bindComponentId, componentEnumNames, componentKeys);
             bindData.bindObj = wrapperData.componentEnumDict.ContainsKey(wrapperData.bindComponentId) ? wrapperData.componentEnumDict[wrapperData.bindComponentId] : null;
-            if ((rebuildFieldDict || !_lastBindComponentDict.ContainsKey(bindData.bindKey) || (_lastBindComponentDict.ContainsKey(bindData.bindKey) && bindData.bindObj!= null && bindData.bindObj.GetInstanceID().ToString() != _lastBindComponentDict[bindData.bindKey])) && bindData.bindObj != null) {
+            if ((rebuildFieldDict || !_lastBindComponentDict.ContainsKey(bindData.bindKey) || (_lastBindComponentDict.ContainsKey(bindData.bindKey) && bindData.bindObj != null && bindData.bindObj.GetInstanceID().ToString() != _lastBindComponentDict[bindData.bindKey])) && bindData.bindObj != null) {
                 wrapperData.fieldEnumDict = UIBinding.GetComponentBindableField(GetType(bindData.bindObj));
             }
             if (bindData.bindObj != null) {
@@ -163,19 +159,13 @@ namespace Framework.UI {
             }
             rect.x += width + 20;
             rect.width -= 13;
-            if (wrapperData.fieldEnumDict != null) {
-                var fieldKeys = wrapperData.fieldEnumDict.Values.ToArray();
-                var fieldEnumNames = wrapperData.fieldEnumDict.Keys.ToArray();
-                bindData.bindFieldId = EditorGUI.IntPopup(rect, bindData.bindFieldId, fieldEnumNames, fieldKeys);
-            } else {
-                bindData.bindFieldId = int.MaxValue;
-            }
+            bindData.bindFieldId = wrapperData.fieldEnumDict != null ? EditorGUI.IntPopup(rect, bindData.bindFieldId, wrapperData.fieldEnumDict.Keys.ToArray(), wrapperData.fieldEnumDict.Values.ToArray()) : int.MaxValue;
             GUILayout.EndHorizontal();
             GUILayout.EndVertical();
         }
-        private string[] GetDisplayEnums(IReadOnlyCollection<string> array) {
-            string[] newArr = new string[array.Count];
-            int idx = 0;
+        private static string[] GetDisplayEnums(IReadOnlyCollection<string> array) {
+            var newArr = new string[array.Count];
+            var idx = 0;
             foreach (var str in array) {
                 newArr[idx] = str.Split(".")[^1];
                 idx++;
@@ -188,40 +178,31 @@ namespace Framework.UI {
             _uiBinding = (UIBinding)target;
             _pathSerializedProperty = serializedObject.FindProperty("_pagePath");
             if (string.IsNullOrEmpty(_pathSerializedProperty.stringValue)) return;
-            // Utils.Log(_pathSerializedProperty.stringValue);
             var path = Path.Combine(Application.dataPath, $"Scripts/GamePlay/{_pathSerializedProperty.stringValue}.cs");
             var bindKeyDict = new HashSet<string>();
             var methodMap = new HashSet<string>();
             if (File.Exists(path)) {
-                string content = File.ReadAllText(path, Encoding.UTF8);
+                var content = File.ReadAllText(path, Encoding.UTF8);
                 var fields = Regex.Matches(content, @"DOBind\s*<\s*.+\s*>\s*\(\s*"".+""\s*\)(\s^\S)*;+");
-                // Utils.Log(matches.Count);
                 foreach (var match in fields) {
-                    if (Regex.IsMatch(@match.ToString(), @""".+""")) {
-                        var m = Regex.Match(@match.ToString(), @""".+""");
-                        bindKeyDict.Add(m.Value.Replace(@"""", ""));
-                    }
+                    if (!Regex.IsMatch(@match.ToString(), QuotationMark)) continue;
+                    var m = Regex.Match(@match.ToString(), QuotationMark);
+                    bindKeyDict.Add(m.Value.Replace(Quotation, ""));
                 }
                 var methods = Regex.Matches(content, @"DOBind\s*(<UnityAction>)?\s*\(\s*"".+""\s*,\S+\)");
                 foreach (var match in methods) {
-                    if (Regex.IsMatch(@match.ToString(), @""".+""")) {
-                        var m = Regex.Match(@match.ToString(), @""".+""");
-                        var key = m.Value.Replace(@"""", "");
-                        bindKeyDict.Add(key);
-                        methodMap.Add(key);
-                    }
+                    if (!Regex.IsMatch(@match.ToString(), QuotationMark)) continue;
+                    var m = Regex.Match(@match.ToString(), QuotationMark);
+                    var key = m.Value.Replace(Quotation, "");
+                    bindKeyDict.Add(key);
+                    methodMap.Add(key);
                 }
                 var matchNamespace = Regex.Match(content, "namespace.+{").Value.Replace("namespace", "").Replace("{", "").Replace(" ", "");
                 var matchClassName = Regex.Match(content, @"class.+:.*BasePage").Value.Replace("class", "").Replace(":", "").Replace("BasePage", "").Replace(" ", "");
                 var pageType = $"{matchNamespace}.{matchClassName}";
                 _uiBinding.PageType = pageType;
             }
-            var list = new List<BinderData>();
-            foreach (var binderData in _uiBinding.BinderDataList) {
-                if (bindKeyDict.Contains(binderData.bindKey)) {
-                    list.Add(binderData);
-                }
-            }
+            var list = _uiBinding.BinderDataList.Where(binderData => bindKeyDict.Contains(binderData.bindKey)).ToList();
             _uiBinding.BinderDataList = list;
             _lastBindComponentDict.Clear();
             _lastSelectObjDict.Clear();
@@ -233,7 +214,7 @@ namespace Framework.UI {
                     Transform trs = null;
                     if (binderData.bindObj is Component obj) {
                         trs = obj.transform;
-                    }else if (binderData.bindObj is GameObject gameObject) {
+                    } else if (binderData.bindObj is GameObject gameObject) {
                         trs = gameObject.transform;
                     }
                     if (trs != null) {
@@ -243,7 +224,7 @@ namespace Framework.UI {
                             componentDict.Add(UIBinding.GetRegisterBinderId(compoName), component);
                             componentDisplayDict.Add(UIBinding.GetRegisterBinderId(compoName), GetType(component));
                         }
-                        componentDict.Add("UnityEngine.GameObject".GetHashCode(),trs.gameObject);
+                        componentDict.Add("UnityEngine.GameObject".GetHashCode(), trs.gameObject);
                         componentDisplayDict.Add("UnityEngine.GameObject".GetHashCode(), "GameObject");
                         dict = UIBinding.GetComponentBindableField(GetType(binderData.bindObj));
                         _lastSelectObjDict.Add(binderData.bindKey, binderData.bindObj.GetInstanceID().ToString());
@@ -268,14 +249,9 @@ namespace Framework.UI {
         }
         private void Check() {
             UIBinding.Register();
-            Dictionary<string, BinderData> cacheBindMap = new();
-            foreach (var data in _uiBinding.BinderDataList) {
-                cacheBindMap.Add(data.bindKey, new BinderData {
-                    bindKey = data.bindKey,
-                    bindFieldId = data.bindFieldId,
-                    bindObj = data.bindObj,
-                });
-            }
+            var cacheBindMap = _uiBinding.BinderDataList.ToDictionary(data => data.bindKey, data => new BinderData {
+                bindKey = data.bindKey, bindFieldId = data.bindFieldId, bindObj = data.bindObj,
+            });
             _uiBinding.BinderDataList.Clear();
             _bindDataWrapperList.Clear();
             //查字段
@@ -284,41 +260,31 @@ namespace Framework.UI {
             if (string.IsNullOrEmpty(_pathSerializedProperty.stringValue)) return;
             var path = Path.Combine(Application.dataPath, $"Scripts/GamePlay/{_pathSerializedProperty.stringValue}.cs");
             if (File.Exists(path)) {
-                string content = File.ReadAllText(path, Encoding.UTF8);
+                var content = File.ReadAllText(path, Encoding.UTF8);
                 var fields = Regex.Matches(content, @"DOBind\s*<\s*.+\s*>\s*\(\s*"".+""\s*\)(\s^\S)*;+");
                 // Utils.Log(matches.Count);
                 var checkDict = new HashSet<string>();
                 var list = new List<string>();
                 foreach (var match in fields) {
-                    if (Regex.IsMatch(@match.ToString(), @""".+""")) {
-                        var m = Regex.Match(@match.ToString(), @""".+""");
-                        var key = m.Value.Replace(@"""", "");
-                        list.Add(key);
-                    }
+                    if (!Regex.IsMatch(@match.ToString(), QuotationMark)) continue;
+                    var key = Regex.Match(@match.ToString(), QuotationMark).Value.Replace(Quotation, "");
+                    list.Add(key);
                 }
                 var methods = Regex.Matches(content, @"DOBind\s*(<UnityAction>)?\s*\(\s*"".+""\s*,\S+\)");
                 foreach (var match in methods) {
-                    if (Regex.IsMatch(@match.ToString(), @""".+""")) {
-                        var m = Regex.Match(@match.ToString(), @""".+""");
-                        var key = m.Value.Replace(@"""", "");
-                        list.Add(key);
-                        checkDict.Add(key);
-                    }
+                    if (!Regex.IsMatch(@match.ToString(), QuotationMark)) continue;
+                    var key = Regex.Match(@match.ToString(), QuotationMark).Value.Replace(Quotation, "");
+                    list.Add(key);
+                    checkDict.Add(key);
                 }
-                // LUtils.Log(list);
                 foreach (var key in list) {
-                    bool isExist = cacheBindMap.ContainsKey(key);
+                    var isExist = cacheBindMap.ContainsKey(key);
                     var cache = isExist ? cacheBindMap[key] : null;
                     var data = new BinderData {
                         bindKey = key,
-                        // bindComponentId = isExist ? cache.bindComponentId : int.MaxValue,
                         bindFieldId = isExist ? cache.bindFieldId : int.MaxValue,
-                        // bindComponent = isExist ? cache.bindComponent : null,
-                        // bindGo = isExist ? cache.bindGo : null,
-                        // isComponent = isExist && cache.isComponent,
                         bindObj = isExist ? cache.bindObj : null,
                     };
-                    // Utils.Log();
                     _uiBinding.BinderDataList.Add(data);
                     var componentDict = new Dictionary<int, Object>();
                     var componentDisplayDict = new Dictionary<int, string>();
@@ -326,18 +292,17 @@ namespace Framework.UI {
                         Transform trs = null;
                         if (cache.bindObj is Component obj) {
                             trs = obj.transform;
-                        }else if (cache.bindObj is GameObject gameObject) {
+                        } else if (cache.bindObj is GameObject gameObject) {
                             trs = gameObject.transform;
                         }
                         if (trs != null) {
                             foreach (var component in trs.GetComponents<Component>()) {
                                 var compoName = GetType(component);
-                                if (UIBinding.IsRegisterComponent(compoName)) {
-                                    componentDict.Add(UIBinding.GetRegisterBinderId(compoName), component);
-                                    componentDisplayDict.Add(UIBinding.GetRegisterBinderId(compoName), GetType(component));
-                                }
+                                if (!UIBinding.IsRegisterComponent(compoName)) continue;
+                                componentDict.Add(UIBinding.GetRegisterBinderId(compoName), component);
+                                componentDisplayDict.Add(UIBinding.GetRegisterBinderId(compoName), GetType(component));
                             }
-                            componentDict.Add("UnityEngine.GameObject".GetHashCode(),trs.gameObject);
+                            componentDict.Add("UnityEngine.GameObject".GetHashCode(), trs.gameObject);
                             componentDisplayDict.Add("UnityEngine.GameObject".GetHashCode(), "GameObject");
                             _lastSelectObjDict.Add(cache.bindKey, cache.bindObj.GetInstanceID().ToString());
                             if (cache.bindObj != null) {
@@ -361,11 +326,8 @@ namespace Framework.UI {
                 }
             }
             EditorUtility.SetDirty(_uiBinding);
-            // serializedObject.ApplyModifiedProperties();
         }
 
-        private static string GetType(Object obj) {
-            return obj is Component ? obj.GetType().ToString() : "UnityEngine.GameObject";
-        }
+        private static string GetType(Object obj) => obj is Component ? obj.GetType().ToString() : "UnityEngine.GameObject";
     }
 }
