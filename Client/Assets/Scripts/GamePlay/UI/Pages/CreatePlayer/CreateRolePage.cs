@@ -9,7 +9,6 @@ using UnityEngine.Profiling;
 namespace GamePlay.UI {
     public class CreateRolePage : BasePage {
         protected override void Values() {
-            Profiler.BeginSample("BindField");
             DOBind<string>("text");
             DOBind<bool>("textEnable");
             DOBind<int>("textFont");
@@ -17,17 +16,13 @@ namespace GamePlay.UI {
             DOBind<Color>("textColor");
             DOBind<Vector2>("pos");
             DOBind<bool>("active");
-            Profiler.EndSample();
         }
         protected override void Methods() {
-            Profiler.BeginSample("BindMethods");
             DOBind("closeBtn",() => LUI.Close("CreateRolePage"));
             DOBind("onLast",() => LUtil.Log("onLast"));
             DOBind("onNext",() => LUtil.Log("onNext"));
-            Profiler.EndSample();
         }
         protected override void OnEnter() {
-            Profiler.BeginSample("BindUpdate");
             Bind("text", "wkp");
             Bind("textEnable", true);
             Bind("textFont", 130);
@@ -36,7 +31,6 @@ namespace GamePlay.UI {
             
             Bind("pos", Vector2.one * 100);
             Bind("active", false);
-            Profiler.EndSample();
         }
     }
 }

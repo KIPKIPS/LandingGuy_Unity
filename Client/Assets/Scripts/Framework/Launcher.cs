@@ -19,7 +19,8 @@ namespace Framework {
             LocalizationManager.Instance.Launch();
             SceneManager.Instance.Launch();
             UIManager.Instance.Launch();
-            Profiler.EndSample();
+            
+            LUI.Open("CreateRolePage");
         }
     }
 }
