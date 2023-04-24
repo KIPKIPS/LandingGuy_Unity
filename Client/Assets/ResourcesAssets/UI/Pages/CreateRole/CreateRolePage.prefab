@@ -2388,65 +2388,35 @@ MonoBehaviour:
   _pagePath: UI/Pages/CreatePlayer/CreateRolePage
   _binderDataList:
   - bindKey: text
-    bindComponentId: -1416040275
+    bindObj: {fileID: 1622468930720237471}
     bindFieldId: 10005
-    bindComponent: {fileID: 1622468930720237471}
-    bindGo: {fileID: 1300899966141443734}
-    isComponent: 0
   - bindKey: textEnable
-    bindComponentId: -1416040275
+    bindObj: {fileID: 1622468930720237471}
     bindFieldId: 50003
-    bindComponent: {fileID: 1622468930720237471}
-    bindGo: {fileID: 1300899966141443734}
-    isComponent: 1
   - bindKey: textFont
-    bindComponentId: -1416040275
+    bindObj: {fileID: 1622468930720237471}
     bindFieldId: 20004
-    bindComponent: {fileID: 1622468930720237471}
-    bindGo: {fileID: 1300899966141443734}
-    isComponent: 1
   - bindKey: imageColor
-    bindComponentId: 324364555
+    bindObj: {fileID: 9147802673409428146}
     bindFieldId: 20007
-    bindComponent: {fileID: 9147802673409428146}
-    bindGo: {fileID: 6628532726893594705}
-    isComponent: 0
   - bindKey: textColor
-    bindComponentId: -1416040275
+    bindObj: {fileID: 1622468930720237471}
     bindFieldId: 30007
-    bindComponent: {fileID: 1622468930720237471}
-    bindGo: {fileID: 1300899966141443734}
-    isComponent: 0
   - bindKey: pos
-    bindComponentId: -75087477
+    bindObj: {fileID: 2537882381554490387}
     bindFieldId: 30000
-    bindComponent: {fileID: 2537882381554490387}
-    bindGo: {fileID: 6628532726893594705}
-    isComponent: 0
   - bindKey: active
-    bindComponentId: -1416040275
-    bindFieldId: 50003
-    bindComponent: {fileID: 8268133625165542708}
-    bindGo: {fileID: 4245445552274709373}
-    isComponent: 1
+    bindObj: {fileID: 4245445552274709373}
+    bindFieldId: 10003
   - bindKey: closeBtn
-    bindComponentId: 44969768
+    bindObj: {fileID: 314072388229918834}
     bindFieldId: 10014
-    bindComponent: {fileID: 314072388229918834}
-    bindGo: {fileID: 7263367666666885590}
-    isComponent: 1
   - bindKey: onLast
-    bindComponentId: 44969768
+    bindObj: {fileID: 9016508188427196348}
     bindFieldId: 10014
-    bindComponent: {fileID: 9016508188427196348}
-    bindGo: {fileID: 5725941999568523237}
-    isComponent: 1
   - bindKey: onNext
-    bindComponentId: 44969768
+    bindObj: {fileID: 8350585163940087681}
     bindFieldId: 10014
-    bindComponent: {fileID: 8350585163940087681}
-    bindGo: {fileID: 5749309003708592187}
-    isComponent: 1
 --- !u!114 &1653996320666373178
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -98,7 +98,7 @@ namespace Framework {
         private static LogEntity HandleLogUnit(bool firstLine, object msgObj, int layer) {
             var msg = "";
             var innerLine = true;
-            if (InheritInterface<IEnumerable>(msgObj) && msgObj is not string) {
+            if (msgObj != null && InheritInterface<IEnumerable>(msgObj) && msgObj is not string) {
                 msg += firstLine ? "" : "\n";
                 var ie = ((IEnumerable)msgObj).GetEnumerator();
                 var length = GetEnumeratorCount(ie);
@@ -107,7 +107,7 @@ namespace Framework {
                 while (ie.MoveNext()) {
                     if (ie.Current != null) {
                         dynamic data = ie.Current;
-                        bool isKvp = ContainProperty(data, "Key");
+                        bool isKvp = ContainProperty(data, "Key") && ContainProperty(data, "Value");
                         LogEntity le = HandleLogUnit(false, isKvp ? data.Value : data, layer + 1);
                         var last = count == length - 1;
                         var tempStr = $"{GetTable(layer + 1)}{(isKvp ? data.Key : count)} : {le.Content}{(le.InnerLine && !last ? "\n" : "")}";

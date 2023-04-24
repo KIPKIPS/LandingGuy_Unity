@@ -27,6 +27,9 @@ namespace GamePlay.UI {
             Bind("textFont", 130);
             Bind("imageColor", Color.red);
             Bind("textColor", Color.blue);
+            
+            Bind("pos", Vector2.one * 100);
+            Bind("active", false);
         }
     }
 }

@@ -18,13 +18,14 @@ namespace Framework.UI {
         private class BindDataWrapper {
             public BinderData bindData;
             public Dictionary<string, int> fieldEnumDict;
-            public Dictionary<int, Component> componentEnumDict;
+            public Dictionary<int, Object> componentEnumDict;
             public Dictionary<int, string> componentDisplayDict;
+            public int bindComponentId = int.MaxValue;
             public bool isMethod;
         }
         private readonly List<BindDataWrapper> _bindDataWrapperList = new();
-        private readonly Dictionary<string, int> _lastSelectObjDict = new();
-        private readonly Dictionary<string, int> _lastBindComponentDict = new();
+        private readonly Dictionary<string, string> _lastSelectObjDict = new();
+        private readonly Dictionary<string, string> _lastBindComponentDict = new();
         private readonly Dictionary<string, Object> _curSelectObjDict = new();
         private bool IsValid {
             get {
@@ -87,68 +88,60 @@ namespace Framework.UI {
             GUILayout.BeginHorizontal();
             var rect = new Rect(contextRect.x, contextRect.y, contextRect.width / 3, contextRect.height);
             if (!_curSelectObjDict.ContainsKey(bindData.bindKey)) {
-                if (bindData.isComponent) {
-                    bindData.bindGo = bindData.bindComponent != null ? bindData.bindComponent.gameObject : null;
-                    _curSelectObjDict.Add(bindData.bindKey, bindData.bindComponent);
-                } else {
-                    _curSelectObjDict.Add(bindData.bindKey, bindData.bindGo);
-                }
+                _curSelectObjDict.Add(bindData.bindKey, bindData.bindObj);
             }
             var rebuildFieldDict = false;
             _curSelectObjDict[bindData.bindKey] = EditorGUI.ObjectField(rect, _curSelectObjDict[bindData.bindKey], typeof(Object), true);
             if (_curSelectObjDict[bindData.bindKey] != null) {
-                if (_curSelectObjDict[bindData.bindKey] is GameObject go) {
-                    bindData.isComponent = false;
-                    bindData.bindGo = go.gameObject;
-                } else {
-                    bindData.isComponent = true;
-                    var comp = (Component)_curSelectObjDict[bindData.bindKey];
-                    bindData.bindComponent = comp;
-                    bindData.bindGo = comp.gameObject;
-                    bindData.bindComponentId = UIBinding.GetRegisterBinderId(bindData.bindComponent.GetType().ToString());
-                }
+                bindData.bindObj = _curSelectObjDict[bindData.bindKey];
             } else {
-                bindData.bindGo = null;
-                bindData.bindComponent = null;
-                bindData.bindComponentId = int.MaxValue;
+                bindData.bindObj = null;
                 bindData.bindFieldId = int.MaxValue;
                 wrapperData.componentDisplayDict.Clear();
                 wrapperData.componentEnumDict.Clear();
                 wrapperData.fieldEnumDict.Clear();
-                _lastSelectObjDict[bindData.bindKey] = int.MaxValue;
-                _lastBindComponentDict[bindData.bindKey] = int.MaxValue;
+                _lastSelectObjDict[bindData.bindKey] = "";
+                _lastBindComponentDict[bindData.bindKey] = "";
                 rebuildFieldDict = true;
             }
             rect.x += width + 20;
-            if (bindData.bindGo == null) {
-                bindData.bindComponent = null;
-                bindData.bindComponentId = int.MaxValue;
+            if (bindData.bindObj == null) {
                 bindData.bindFieldId = int.MaxValue;
                 wrapperData.componentDisplayDict.Clear();
                 wrapperData.componentEnumDict.Clear();
                 wrapperData.fieldEnumDict.Clear();
-                _lastSelectObjDict[bindData.bindKey] = int.MaxValue;
-                _lastBindComponentDict[bindData.bindKey] = int.MaxValue;
+                _lastSelectObjDict[bindData.bindKey] = "";
+                _lastBindComponentDict[bindData.bindKey] = "";
                 rebuildFieldDict = true;
             } else {
-                if (!_lastSelectObjDict.ContainsKey(bindData.bindKey) || (_curSelectObjDict[bindData.bindKey] != null && _curSelectObjDict[bindData.bindKey].GetInstanceID() != _lastSelectObjDict[bindData.bindKey])) {
-                    var componentDict = new Dictionary<int, Component>();
+                if (!_lastSelectObjDict.ContainsKey(bindData.bindKey) || (_curSelectObjDict[bindData.bindKey] != null && _curSelectObjDict[bindData.bindKey].GetInstanceID().ToString() != _lastSelectObjDict[bindData.bindKey])) {
+                    var componentDict = new Dictionary<int, Object>();
                     var componentDisplayDict = new Dictionary<int, string>();
-                    if (bindData.bindGo != null) {
-                        foreach (var component in bindData.bindGo.GetComponents<Component>()) {
-                            var compoName = component.GetType().ToString();
-                            LUtil.Log(compoName);
-                            if (UIBinding.IsRegisterComponent(compoName)) {
-                                componentDict.Add(UIBinding.GetRegisterBinderId(compoName), component);
-                                componentDisplayDict.Add(UIBinding.GetRegisterBinderId(compoName), component.GetType().ToString());
+                    if (bindData.bindObj != null) {
+                        Transform trs = null;
+                        if (bindData.bindObj is Component obj) {
+                            trs = obj.transform;
+                        }else if (bindData.bindObj is GameObject gameObject) {
+                            trs = gameObject.transform;
+                        }
+                        if (trs != null) {
+                            foreach (var component in trs.GetComponents<Component>()) {
+                                var compoName = GetType(component);
+                                // LUtil.Log(compoName);
+                                if (UIBinding.IsRegisterComponent(compoName)) {
+                                    componentDict.Add(UIBinding.GetRegisterBinderId(compoName), component);
+                                    componentDisplayDict.Add(UIBinding.GetRegisterBinderId(compoName), GetType(component));
+                                }
                             }
+                            componentDict.Add("UnityEngine.GameObject".GetHashCode(),trs.gameObject);
+                            componentDisplayDict.Add("UnityEngine.GameObject".GetHashCode(), "GameObject");
                         }
                     }
                     wrapperData.componentEnumDict = componentDict;
                     wrapperData.componentDisplayDict = componentDisplayDict;
                 }
             }
-            var key = _curSelectObjDict[bindData.bindKey] != null ? _curSelectObjDict[bindData.bindKey].GetInstanceID() : int.MaxValue;
+            var key = _curSelectObjDict[bindData.bindKey] != null ? _curSelectObjDict[bindData.bindKey].GetInstanceID().ToString() : "";
             if (!_lastSelectObjDict.ContainsKey(bindData.bindKey)) {
                 _lastSelectObjDict.Add(bindData.bindKey, key);
             } else {
@@ -156,15 +149,17 @@ namespace Framework.UI {
             }
             var componentKeys = wrapperData.componentDisplayDict.Keys.ToArray();
             var componentEnumNames = GetDisplayEnums(wrapperData.componentDisplayDict.Values.ToArray());
-            bindData.bindComponentId = EditorGUI.IntPopup(rect, bindData.bindComponentId, componentEnumNames, componentKeys);
-            bindData.bindComponent = wrapperData.componentEnumDict.ContainsKey(bindData.bindComponentId) ? wrapperData.componentEnumDict[bindData.bindComponentId] : null;
-            if ((rebuildFieldDict || !_lastBindComponentDict.ContainsKey(bindData.bindKey) || (_lastBindComponentDict.ContainsKey(bindData.bindKey) && bindData.bindComponentId != _lastBindComponentDict[bindData.bindKey])) && bindData.bindComponent != null) {
-                wrapperData.fieldEnumDict = UIBinding.GetComponentBindableField(bindData.bindComponent.GetType().ToString());
+            wrapperData.bindComponentId = EditorGUI.IntPopup(rect, wrapperData.bindComponentId, componentEnumNames, componentKeys);
+            bindData.bindObj = wrapperData.componentEnumDict.ContainsKey(wrapperData.bindComponentId) ? wrapperData.componentEnumDict[wrapperData.bindComponentId] : null;
+            if ((rebuildFieldDict || !_lastBindComponentDict.ContainsKey(bindData.bindKey) || (_lastBindComponentDict.ContainsKey(bindData.bindKey) && bindData.bindObj!= null && bindData.bindObj.GetInstanceID().ToString() != _lastBindComponentDict[bindData.bindKey])) && bindData.bindObj != null) {
+                wrapperData.fieldEnumDict = UIBinding.GetComponentBindableField(GetType(bindData.bindObj));
             }
-            if (!_lastBindComponentDict.ContainsKey(bindData.bindKey)) {
-                _lastBindComponentDict.Add(bindData.bindKey, bindData.bindComponentId);
-            } else {
-                _lastBindComponentDict[bindData.bindKey] = bindData.bindComponentId;
+            if (bindData.bindObj != null) {
+                if (!_lastBindComponentDict.ContainsKey(bindData.bindKey)) {
+                    _lastBindComponentDict.Add(bindData.bindKey, GetType(bindData.bindObj));
+                } else {
+                    _lastBindComponentDict[bindData.bindKey] = GetType(bindData.bindObj);
+                }
             }
             rect.x += width + 20;
             rect.width -= 13;
@@ -232,56 +227,53 @@ namespace Framework.UI {
             _lastSelectObjDict.Clear();
             foreach (var binderData in _uiBinding.BinderDataList) {
                 Dictionary<string, int> dict = new();
-                var componentDict = new Dictionary<int, Component>();
+                var componentDict = new Dictionary<int, Object>();
                 var componentDisplayDict = new Dictionary<int, string>();
-                if (binderData.bindGo == null) {
-                    binderData.bindGo = binderData.bindComponent != null ? binderData.bindComponent.gameObject : null;
+                if (binderData.bindObj != null) {
+                    Transform trs = null;
+                    if (binderData.bindObj is Component obj) {
+                        trs = obj.transform;
+                    }else if (binderData.bindObj is GameObject gameObject) {
+                        trs = gameObject.transform;
+                    }
+                    if (trs != null) {
+                        foreach (var component in trs.GetComponents<Component>()) {
+                            var compoName = GetType(component);
+                            if (!UIBinding.IsRegisterComponent(compoName)) continue;
+                            componentDict.Add(UIBinding.GetRegisterBinderId(compoName), component);
+                            componentDisplayDict.Add(UIBinding.GetRegisterBinderId(compoName), GetType(component));
+                        }
+                        componentDict.Add("UnityEngine.GameObject".GetHashCode(),trs.gameObject);
+                        componentDisplayDict.Add("UnityEngine.GameObject".GetHashCode(), "GameObject");
+                        dict = UIBinding.GetComponentBindableField(GetType(binderData.bindObj));
+                        _lastSelectObjDict.Add(binderData.bindKey, binderData.bindObj.GetInstanceID().ToString());
+                        if (binderData.bindObj != null) {
+                            _lastBindComponentDict.Add(binderData.bindKey, GetType(binderData.bindObj));
+                        }
+                    }
                 }
-                if (binderData.bindGo != null) {
-                    foreach (var component in binderData.bindGo.GetComponents<Component>()) {
-                        var compoName = component.GetType().ToString();
-                        if (!UIBinding.IsRegisterComponent(compoName)) continue;
-                        componentDict.Add(UIBinding.GetRegisterBinderId(compoName), component);
-                        componentDisplayDict.Add(UIBinding.GetRegisterBinderId(compoName), component.GetType().ToString());
-                    }
-                    if (componentDisplayDict.ContainsKey(binderData.bindComponentId)) {
-                        dict = UIBinding.GetComponentBindableField(binderData.bindComponent.GetType().ToString());
-                    }
-                    _lastSelectObjDict.Add(binderData.bindKey, binderData.bindGo.GetInstanceID());
-                    if (binderData.bindComponent != null) {
-                        _lastBindComponentDict.Add(binderData.bindKey, binderData.bindComponentId);
-                    }
-                }
+                var compoType = GetType(binderData.bindObj);
                 _bindDataWrapperList.Add(new BindDataWrapper {
-                    bindData = new () {
-                        bindKey = binderData.bindKey,
-                        bindComponentId = binderData.bindComponentId,
-                        bindFieldId = binderData.bindFieldId,
-                        bindComponent = binderData.bindComponent,
-                        bindGo = binderData.bindGo,
-                        isComponent = binderData.isComponent,
-                    },
+                    bindData = binderData,
                     fieldEnumDict = dict,
                     componentEnumDict = componentDict,
                     componentDisplayDict = componentDisplayDict,
-                    isMethod = methodMap.Contains(binderData.bindKey)
+                    isMethod = methodMap.Contains(binderData.bindKey),
+                    bindComponentId = UIBinding.GetRegisterBinderId(compoType),
                 });
+                // }
             }
             // EditorUtility.SetDirty(_uiBinding);
             // serializedObject.ApplyModifiedProperties();
         }
         private void Check() {
             UIBinding.Register();
-            // _serializedPropertyDict.Clear();
             Dictionary<string, BinderData> cacheBindMap = new();
             foreach (var data in _uiBinding.BinderDataList) {
-                cacheBindMap.Add(data.bindKey, new() {
+                cacheBindMap.Add(data.bindKey, new BinderData {
                     bindKey = data.bindKey,
-                    bindComponentId = data.bindComponentId,
                     bindFieldId = data.bindFieldId,
-                    bindComponent = data.bindComponent,
-                    bindGo = data.bindGo,
-                    isComponent = data.isComponent,
+                    bindObj = data.bindObj,
                 });
             }
             _uiBinding.BinderDataList.Clear();
@@ -319,33 +311,44 @@ namespace Framework.UI {
                     var cache = isExist ? cacheBindMap[key] : null;
                     var data = new BinderData {
                         bindKey = key,
-                        bindComponentId = isExist ? cache.bindComponentId : int.MaxValue,
+                        // bindComponentId = isExist ? cache.bindComponentId : int.MaxValue,
                         bindFieldId = isExist ? cache.bindFieldId : int.MaxValue,
-                        bindComponent = isExist ? cache.bindComponent : null,
-                        bindGo = isExist ? cache.bindGo : null,
-                        isComponent = isExist && cache.isComponent,
+                        // bindComponent = isExist ? cache.bindComponent : null,
+                        // bindGo = isExist ? cache.bindGo : null,
+                        // isComponent = isExist && cache.isComponent,
+                        bindObj = isExist ? cache.bindObj : null,
                     };
                     // Utils.Log();
                     _uiBinding.BinderDataList.Add(data);
-                    var componentDict = new Dictionary<int, Component>();
+                    var componentDict = new Dictionary<int, Object>();
                     var componentDisplayDict = new Dictionary<int, string>();
-                    if (cache != null && cache.bindGo != null) {
-                        foreach (var component in cache.bindGo.GetComponents<Component>()) {
-                            var compoName = component.GetType().ToString();
-                            if (UIBinding.IsRegisterComponent(compoName)) {
-                                componentDict.Add(UIBinding.GetRegisterBinderId(compoName), component);
-                                componentDisplayDict.Add(UIBinding.GetRegisterBinderId(compoName), component.GetType().ToString());
-                            }
+                    if (cache != null && cache.bindObj != null) {
+                        Transform trs = null;
+                        if (cache.bindObj is Component obj) {
+                            trs = obj.transform;
+                        }else if (cache.bindObj is GameObject gameObject) {
+                            trs = gameObject.transform;
                         }
-                        _lastSelectObjDict.Add(cache.bindKey, cache.bindGo.GetInstanceID());
-                        if (cache.bindComponent != null) {
-                            _lastBindComponentDict.Add(cache.bindKey, cache.bindComponentId);
+                        if (trs != null) {
+                            foreach (var component in trs.GetComponents<Component>()) {
+                                var compoName = GetType(component);
+                                if (UIBinding.IsRegisterComponent(compoName)) {
+                                    componentDict.Add(UIBinding.GetRegisterBinderId(compoName), component);
+                                    componentDisplayDict.Add(UIBinding.GetRegisterBinderId(compoName), GetType(component));
+                                }
+                            }
+                            componentDict.Add("UnityEngine.GameObject".GetHashCode(),trs.gameObject);
+                            componentDisplayDict.Add("UnityEngine.GameObject".GetHashCode(), "GameObject");
+                            _lastSelectObjDict.Add(cache.bindKey, cache.bindObj.GetInstanceID().ToString());
+                            if (cache.bindObj != null) {
+                                _lastBindComponentDict.Add(cache.bindKey, GetType(cache.bindObj));
+                            }
                         }
                     }
                     var enumDict = new Dictionary<string, int>();
-                    var compoId = isExist ? cache.bindComponentId : 0;
-                    if (componentDict.ContainsKey(compoId)) {
-                        enumDict = UIBinding.GetComponentBindableField(componentDict[compoId].GetType().FullName);
+                    var compoType = isExist ? GetType(cache.bindObj) : "";
+                    if (!string.IsNullOrEmpty(compoType)) {
+                        enumDict = UIBinding.GetComponentBindableField(compoType);
                     }
                     _bindDataWrapperList.Add(new BindDataWrapper {
                         bindData = data,
@@ -353,11 +356,16 @@ namespace Framework.UI {
                         componentEnumDict = componentDict,
                         componentDisplayDict = componentDisplayDict,
                         isMethod = checkDict.Contains(key),
+                        bindComponentId = UIBinding.GetRegisterBinderId(compoType),
                     });
                 }
             }
             EditorUtility.SetDirty(_uiBinding);
             // serializedObject.ApplyModifiedProperties();
+        }
+
+        private static string GetType(Object obj) {
+            return obj is Component ? obj.GetType().ToString() : "UnityEngine.GameObject";
         }
     }
 }

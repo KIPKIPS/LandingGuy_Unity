@@ -6,18 +6,25 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace Framework.UI {
     [Serializable]
     public class BinderData {
         [SerializeField]public string bindKey;
-        [SerializeField]public int bindComponentId;
+        // [SerializeField]public int bindComponentId;
+        [SerializeField]public Object bindObj;
         [SerializeField]public int bindFieldId;
-        [SerializeField]public Component bindComponent;
-        [SerializeField]public GameObject bindGo;
-        [SerializeField]public bool isComponent;
+        // [SerializeField]public Component bindComponent;
+        // [SerializeField]public GameObject bindGo;
+        // [SerializeField]public bool isComponent;
     }
     public class UIBinding : MonoBehaviour {
+        // private void OnEnable() {
+        //     BinderDataList.Clear();
+        //     _binderDataList.Clear();
+        //     _binderDataDict.Clear();
+        // }
         public BasePage Page { get; set; }
         public string PageType {
             get => _pageType; set=>_pageType=value; }
@@ -57,7 +64,7 @@ namespace Framework.UI {
                     }
                 }
                 var o = Attribute.GetCustomAttributes(t, true);
-                foreach (Attribute a in o) {
+                foreach (var a in o) {
                     if (a is BinderComponent component) {
                         var binder = Activator.CreateInstance(t);
                         var key = component.binderType.ToString();
@@ -78,16 +85,16 @@ namespace Framework.UI {
                         var dict = new Dictionary<string,int>();
                         var nameArray = t.GetEnumNames();
                         var enums = t.GetEnumValues();
-                        List<int> enumList = new List<int>();
+                        var enumList = new List<int>();
                         foreach (var e in enums) {
                             enumList.Add((int)e);
                         }
                         var enumArray = enumList.ToArray();
-                        for (int i = 0; i < nameArray.Length; i++) {
+                        for (var i = 0; i < nameArray.Length; i++) {
                             dict.Add(nameArray[i],enumArray[i]);
                         }
                         if (!_registerBinderDict.ContainsKey(key)) {
-                            _registerBinderDict.Add(key,new() {
+                            _registerBinderDict.Add(key,new BindInfo {
                                 bindableFieldDict = dict,
                             });
                         } else {
@@ -96,12 +103,13 @@ namespace Framework.UI {
                     }
                 }
             }
+            // LUtil.Log("?",_registerBinderDict);
         }
         public static BaseBinder GetBaseBinder(string componentType) {
             return _registerBinderDict.ContainsKey(componentType) ? _registerBinderDict[componentType].baseBinder : null;
         }
         public static Dictionary<string,int> GetComponentBindableField(string componentType) {
-            return _registerBinderDict.ContainsKey(componentType) ? _registerBinderDict[componentType].bindableFieldDict : null;
+            return _registerBinderDict.ContainsKey(componentType) ? _registerBinderDict[componentType].bindableFieldDict : new Dictionary<string, int>();
         }
         public static bool IsRegisterComponent(string binderName) {
             return _registerBinderDict.ContainsKey(binderName);

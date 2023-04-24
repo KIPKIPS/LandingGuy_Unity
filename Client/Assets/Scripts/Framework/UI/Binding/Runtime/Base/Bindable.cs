@@ -35,24 +35,24 @@ namespace Framework.UI {
         }
         public Bindable(UIBinding uiBinding,string key,UnityAction unityAction) {
             if (!uiBinding.BinderDataDict.TryGetValue(key, out var data)) return;
-            var baseBinder = UIBinding.GetBaseBinder(data.bindComponent.GetType().ToString());
-            baseBinder.SetAction(data.bindComponent, data.bindFieldId,unityAction );
+            var baseBinder = UIBinding.GetBaseBinder(data.bindObj.GetType().ToString());
+            baseBinder.SetAction(data.bindObj, data.bindFieldId,unityAction );
         }
         private void UpdateBind(T value) {
             if (!_uiBinding.BinderDataDict.TryGetValue(_key, out var data)) return;
-            var baseBinder = UIBinding.GetBaseBinder(data.bindComponent.GetType().ToString());
+            var baseBinder = UIBinding.GetBaseBinder(data.bindObj.GetType().ToString());
             switch (typeof(T).Name) {
                 case "String":
-                    if (value is string stringValue) baseBinder.SetString(data.bindComponent, data.bindFieldId, stringValue);
+                    if (value is string stringValue) baseBinder.SetString(data.bindObj, data.bindFieldId, stringValue);
                     break;
                 case "Int32":
-                    if (value is int intValue) baseBinder.SetInt32(data.bindComponent, data.bindFieldId,intValue);
+                    if (value is int intValue) baseBinder.SetInt32(data.bindObj, data.bindFieldId,intValue);
                     break;
                 case "Boolean":
-                    if (value is bool boolValue) baseBinder.SetBoolean(data.bindComponent, data.bindFieldId,boolValue );
+                    if (value is bool boolValue) baseBinder.SetBoolean(data.bindObj, data.bindFieldId,boolValue );
                     break;
                 case "Color":
-                    if (value is Color colorValue) baseBinder.SetColor(data.bindComponent, data.bindFieldId,colorValue );
+                    if (value is Color colorValue) baseBinder.SetColor(data.bindObj, data.bindFieldId,colorValue );
                     break;
                 default:
                     LUtil.LogWarning("Failure Binding",$"Unregistered binding type : {typeof(T).Name}");
