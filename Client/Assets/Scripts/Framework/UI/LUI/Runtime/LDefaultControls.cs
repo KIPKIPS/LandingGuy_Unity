@@ -1,7 +1,6 @@
-﻿// --[[
-//     author:{wkp}
-//     time:14:33
-// ]]
+﻿// author:KIPKIPS
+// date:2023.04.23 14:33
+// describe:扩展Image
 using System;
 using UnityEditor;
 using UnityEngine;

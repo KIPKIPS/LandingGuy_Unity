@@ -9,13 +9,10 @@ using UnityEngine.Profiling;
 namespace GamePlay.UI {
     public class CreateRolePage : BasePage {
         protected override void Values() {
-            DOBind<string>("text");
-            DOBind<bool>("textEnable");
-            DOBind<int>("textFont");
-            DOBind<Color>("imageColor");
-            DOBind<Color>("textColor");
-            DOBind<Vector2>("pos");
-            DOBind<bool>("active");
+            DOBind<string>("profession1");
+            DOBind<string>("profession2");
+            DOBind<string>("profession3");
+            DOBind<string>("profession4");
         }
         protected override void Methods() {
             DOBind("closeBtn",() => LUI.Close("CreateRolePage"));
@@ -23,14 +20,10 @@ namespace GamePlay.UI {
             DOBind("onNext",() => LUtil.Log("onNext"));
         }
         protected override void OnEnter() {
-            Bind("text", "wkp");
-            Bind("textEnable", true);
-            Bind("textFont", 130);
-            Bind("imageColor", Color.red);
-            Bind("textColor", Color.blue);
-            
-            Bind("pos", Vector2.one * 100);
-            Bind("active", false);
+            Bind("profession1", "战士");
+            Bind("profession2", "刺客");
+            Bind("profession3", "坦克");
+            Bind("profession4", "射手");
         }
     }
 }

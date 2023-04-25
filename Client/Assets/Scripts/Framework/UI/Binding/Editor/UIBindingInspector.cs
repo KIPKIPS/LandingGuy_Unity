@@ -38,7 +38,9 @@ namespace Framework.UI {
             }
         }
         public override void OnInspectorGUI() {
+            // GUILayout.BeginHorizontal();
             EditorGUILayout.PropertyField(_pathSerializedProperty);
+            // GUILayout.EndHorizontal();
             if (!IsValid) {
                 EditorGUILayout.HelpBox("Invalid script path!", MessageType.Warning, true);
                 return;
@@ -74,8 +76,12 @@ namespace Framework.UI {
                 DrawRow(t);
             }
             GUILayout.EndVertical();
-            if (GUI.changed) {
-                EditorUtility.SetDirty(_uiBinding);
+            // if (GUI.changed) {
+            //     EditorUtility.SetDirty(_uiBinding);
+            // }
+            if (EditorGUI.EndChangeCheck() && GUI.changed) {
+                EditorUtility.SetDirty(serializedObject.targetObject as UIBinding);
+                serializedObject.ApplyModifiedProperties();
             }
         }
         private void DrawRow(BindDataWrapper wrapperData) {
@@ -252,14 +258,14 @@ namespace Framework.UI {
             var cacheBindMap = _uiBinding.BinderDataList.ToDictionary(data => data.bindKey, data => new BinderData {
                 bindKey = data.bindKey, bindFieldId = data.bindFieldId, bindObj = data.bindObj,
             });
-            _uiBinding.BinderDataList.Clear();
-            _bindDataWrapperList.Clear();
             //查字段
-            _lastBindComponentDict.Clear();
-            _lastSelectObjDict.Clear();
             if (string.IsNullOrEmpty(_pathSerializedProperty.stringValue)) return;
             var path = Path.Combine(Application.dataPath, $"Scripts/GamePlay/{_pathSerializedProperty.stringValue}.cs");
             if (File.Exists(path)) {
+                _uiBinding.BinderDataList.Clear();
+                _bindDataWrapperList.Clear();
+                _lastBindComponentDict.Clear();
+                _lastSelectObjDict.Clear();
                 var content = File.ReadAllText(path, Encoding.UTF8);
                 var fields = Regex.Matches(content, @"DOBind\s*<\s*.+\s*>\s*\(\s*"".+""\s*\)(\s^\S)*;+");
                 // Utils.Log(matches.Count);

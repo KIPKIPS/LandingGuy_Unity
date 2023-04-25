@@ -1,7 +1,6 @@
-﻿// --[[
-//     author:{wkp}
-//     time:14:28
-// ]]
+﻿// author:KIPKIPS
+// date:2023.04.24 14:28
+// describe:扩展Button
 using System;
 using UnityEditor;
 using UnityEditor.SceneManagement;

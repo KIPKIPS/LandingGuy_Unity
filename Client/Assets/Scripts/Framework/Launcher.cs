@@ -20,7 +20,7 @@ namespace Framework {
             SceneManager.Instance.Launch();
             UIManager.Instance.Launch();
             
-            LUI.Open("CreateRolePage");
+            LUI.Open("LoginPage");
         }
     }
 }

@@ -14,6 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   configs:
   - pageID: 0
+    pageName: LoginPage
+    pageType: 0
+    pageMode: 0
+    assetPath: UI/Pages/CreateRole/LoginPage.prefab
+  - pageID: 1
     pageName: CreateRolePage
     pageType: 0
     pageMode: 0
