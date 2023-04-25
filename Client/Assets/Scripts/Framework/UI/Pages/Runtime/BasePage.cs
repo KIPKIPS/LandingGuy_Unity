@@ -40,7 +40,7 @@ namespace Framework.UI {
         /// <param name="key">绑定字段</param>
         /// <param name="value">绑定值</param>
         protected static void DOBind<T>(string key, T value = default) {
-            _bindDict.Add(key,new Bindable<T>(_uiBinding, key, value));
+            _bindDict.TryAdd(key,new Bindable<T>(_uiBinding, key, value));
         }
         /// <summary>
         /// 事件绑定
@@ -48,7 +48,7 @@ namespace Framework.UI {
         /// <param name="key">绑定字段</param>
         /// <param name="action">绑定事件</param>
         protected static void DOBind(string key, UnityAction action) {
-            _bindDict.Add(key,new Bindable<UnityAction>(_uiBinding, key, action));
+            _bindDict.TryAdd(key,new Bindable<UnityAction>(_uiBinding, key, action));
         }
 
         #region Page Life Cycle
@@ -72,6 +72,7 @@ namespace Framework.UI {
         /// 进入界面
         /// </summary>
         public virtual void OnEnter() {
+            _bindDict.Clear();
         }
         /// <summary>
         /// 暂停界面
@@ -87,6 +88,7 @@ namespace Framework.UI {
         /// 关闭界面
         /// </summary>
         public virtual void OnExit() {
+            _bindDict.Clear();
         }
 
         #endregion

@@ -12,19 +12,10 @@ namespace Framework.UI {
     [Serializable]
     public class BinderData {
         [SerializeField]public string bindKey;
-        // [SerializeField]public int bindComponentId;
         [SerializeField]public Object bindObj;
         [SerializeField]public int bindFieldId;
-        // [SerializeField]public Component bindComponent;
-        // [SerializeField]public GameObject bindGo;
-        // [SerializeField]public bool isComponent;
     }
     public class UIBinding : MonoBehaviour {
-        // private void OnEnable() {
-        //     BinderDataList.Clear();
-        //     _binderDataList.Clear();
-        //     _binderDataDict.Clear();
-        // }
         public BasePage Page { get; set; }
         public string PageType {
             get => _pageType; set=>_pageType=value; }

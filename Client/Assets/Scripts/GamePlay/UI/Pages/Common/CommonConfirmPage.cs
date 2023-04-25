@@ -20,14 +20,13 @@ namespace GamePlay.UI {
             LUI.Close("CommonConfirmPage");
         }
         private void OnConfirm() {
-            _confirmCallback?.Invoke();
             LUI.Close("CommonConfirmPage");
+            _confirmCallback?.Invoke();
         }
         public override void OnEnter(dynamic options) {
             // LUtil.Log("?",options.desc);
-            Debug.Log(options["desc"]);
-            Bind("desc", options["desc"]);
-            _confirmCallback = options.confirmCallback;
+            Bind("desc", options?["desc"]);
+            _confirmCallback = options?["confirmCallback"];
         }
     }
 }

@@ -3,8 +3,6 @@
 // describe:玩家创角界面
 using Framework;
 using Framework.UI;
-using UnityEngine;
-using UnityEngine.Profiling;
 
 namespace GamePlay.UI {
     public class CreateRolePage : BasePage {
@@ -15,7 +13,10 @@ namespace GamePlay.UI {
             DOBind<string>("profession4");
         }
         protected override void Methods() {
-            DOBind("closeBtn",() => LUI.Close("CreateRolePage"));
+            DOBind("closeBtn", () => {
+                LUI.Close("CreateRolePage");
+                LUI.Open("LoginPage");
+            });
             DOBind("onLast",() => LUtil.Log("onLast"));
             DOBind("onNext",() => LUtil.Log("onNext"));
         }

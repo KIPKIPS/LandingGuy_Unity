@@ -90,7 +90,7 @@ namespace Framework.UI {
                 return;
             }
             if (_pageStack.Count > 0) {
-                uiBinding.Page.OnPause();
+                _pageStack.Peek().Page.OnPause();
             }
             //每次入栈,触发page的OnEnter方法
             page.OnEnter(options);
