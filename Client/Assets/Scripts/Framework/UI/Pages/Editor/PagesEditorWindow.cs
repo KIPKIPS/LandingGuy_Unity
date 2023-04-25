@@ -50,7 +50,7 @@ namespace Framework.UI {
             CreateColumn("PageName", 150, 150, 300),
             CreateColumn("PageType", 80, 80, 80),
             CreateColumn("PageMode", 80, 80, 80),
-            CreateColumn("AssetPath", 200, 200, 300)
+            CreateColumn("AssetPath", 300, 300, 400)
         });
         //ContextualMenuPopulateEvent
 

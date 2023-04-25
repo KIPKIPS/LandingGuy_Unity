@@ -23,3 +23,8 @@ MonoBehaviour:
     pageType: 0
     pageMode: 0
     assetPath: UI/Pages/CreateRole/CreateRolePage.prefab
+  - pageID: 2
+    pageName: CommonConfirmPage
+    pageType: 1
+    pageMode: 0
+    assetPath: UI/Pages/Common/CommonConfirmPage.prefab

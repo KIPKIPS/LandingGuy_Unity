@@ -27,10 +27,10 @@ namespace Framework.UI {
             }
         }
         private PageConfig GetConfig(string pageName) {
-            _pageName2IdMap.TryGetValue(pageName, out var id);
-            return _pagesConfigAsset.configs.Count > id ? _pagesConfigAsset.configs[id] : null;
+            return _pageName2IdMap.ContainsKey(pageName) ? _pagesConfigAsset.configs[_pageName2IdMap[pageName]] : null;
         }
         private readonly Stack<UIBinding> _pageStack = new();
+        
         private readonly Dictionary<string, int> _pageName2IdMap = new();
         private readonly Dictionary<int, UIBinding> _pageDict = new();
         private void InitUICamera() {
@@ -47,7 +47,10 @@ namespace Framework.UI {
         }
         private UIBinding GetPageUIBinding(string pageName) {
             var config = GetConfig(pageName);
-            if (config == null) return null;
+            if (config == null) {
+                LUtil.LogError(LOGTag, $"Page name [{pageName}] dont have config");
+                return null;
+            }
             _pageDict.TryGetValue(config.pageID, out var uiBinding);
             if (uiBinding) {
                 return uiBinding;
@@ -59,17 +62,31 @@ namespace Framework.UI {
             page.UIBinding = uiBinding;
             page.Config = config;
             page.Canvas = go.GetComponent<Canvas>();
+            page.Canvas.sortingOrder = CalculateSortingOrder(config.pageType);
             // page.Canvas.additionalShaderChannels = AdditionalCanvasShaderChannels.Tangent | AdditionalCanvasShaderChannels.TexCoord1 | AdditionalCanvasShaderChannels.Normal;
             page.OnBind();
             go.name = config.pageName;
             _pageDict.Add(config.pageID, uiBinding);
             return uiBinding;
         }
+        private const int BaseStackSortingOrder = 0;
+        private const int BaseFreedomSortingOrder = 1000;
+        private int CalculateSortingOrder(PageType pageType) {
+            switch (pageType) {
+                case PageType.Stack:
+                    return BaseStackSortingOrder + _pageStack.Count * 2;
+                case PageType.Freedom:
+                    return BaseFreedomSortingOrder + _pageStack.Count * 2;
+            }
+            return 0;
+        }
 
         private void PushPage(string pageName, dynamic options = null) {
             var uiBinding = GetPageUIBinding(pageName);
             var page = uiBinding.Page;
+            LUtil.Log(page.Config.pageName);
             if (page.IsShow) {
+                LUtil.LogError("Repeat Open",pageName);
                 return;
             }
             if (_pageStack.Count > 0) {

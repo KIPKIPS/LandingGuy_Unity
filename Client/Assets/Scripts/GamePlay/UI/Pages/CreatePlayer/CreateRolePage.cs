@@ -19,7 +19,8 @@ namespace GamePlay.UI {
             DOBind("onLast",() => LUtil.Log("onLast"));
             DOBind("onNext",() => LUtil.Log("onNext"));
         }
-        protected override void OnEnter() {
+        public override void OnEnter() {
+            LUtil.Log("CreateRolePage");
             Bind("profession1", "战士");
             Bind("profession2", "刺客");
             Bind("profession3", "坦克");

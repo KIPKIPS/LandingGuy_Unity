@@ -14,7 +14,11 @@ namespace Framework.UI {
             get => _canvas != null ? _canvas : null;
             set => _canvas = value;
         }
-        public bool IsShow { get; set; }
+        private bool _isShow;
+        public bool IsShow {
+            get => _isShow;
+            set => _isShow = value;
+        }
         private static UIBinding _uiBinding;
         public UIBinding UIBinding {
             get => _uiBinding;
@@ -67,25 +71,22 @@ namespace Framework.UI {
         /// <summary>
         /// 进入界面
         /// </summary>
-        protected virtual void OnEnter() {
+        public virtual void OnEnter() {
         }
         /// <summary>
         /// 暂停界面
         /// </summary>
         public virtual void OnPause() {
-            IsShow = false;
         }
         /// <summary>
         /// 恢复界面
         /// </summary>
         public virtual void OnResume() {
-            IsShow = true;
         }
         /// <summary>
         /// 关闭界面
         /// </summary>
         public virtual void OnExit() {
-            IsShow = false;
         }
 
         #endregion

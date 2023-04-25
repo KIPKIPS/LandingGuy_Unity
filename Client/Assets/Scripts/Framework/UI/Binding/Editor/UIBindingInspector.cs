@@ -79,8 +79,9 @@ namespace Framework.UI {
             // if (GUI.changed) {
             //     EditorUtility.SetDirty(_uiBinding);
             // }
-            if (EditorGUI.EndChangeCheck() && GUI.changed) {
-                EditorUtility.SetDirty(serializedObject.targetObject as UIBinding);
+            // EditorGUI.EndChangeCheck()
+            if (GUI.changed) {
+                EditorUtility.SetDirty(_uiBinding);
                 serializedObject.ApplyModifiedProperties();
             }
         }
