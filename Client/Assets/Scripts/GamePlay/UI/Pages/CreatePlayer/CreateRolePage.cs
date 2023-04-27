@@ -19,6 +19,9 @@ namespace GamePlay.UI {
             });
             DOBind("onLast",() => LUtil.Log("onLast"));
             DOBind("onNext",() => LUtil.Log("onNext"));
+            DOBind("onDragBegin",pos => LUtil.Log("onDragBegin",pos));
+            DOBind("onDrag",pos => LUtil.Log("onDrag",pos));
+            DOBind("onDragEnd",pos => LUtil.Log("onDragEnd",pos));
         }
         public override void OnEnter() {
             LUtil.Log("CreateRolePage");

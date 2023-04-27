@@ -18,5 +18,6 @@ namespace Framework.UI {
         RectTransform,
         UIBinding,
         UnityAction,
+        UnityActionVector2,
     }
 }

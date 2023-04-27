@@ -29,8 +29,8 @@ namespace Framework.UI {
         private readonly Dictionary<string, string> _lastSelectObjDict = new();
         private readonly Dictionary<string, string> _lastBindComponentDict = new();
         private readonly Dictionary<string, Object> _curSelectObjDict = new();
-        private const string QuotationMark = @""".+""";
-        private const string Quotation = @"""";
+        private const string VariableNamePattern = "\"[a-zA-Z_][0-9a-zA-Z_]*\"";
+        private const string QuotationPattern = "\"";
         private bool IsValid {
             get {
                 _pathSerializedProperty ??= serializedObject.FindProperty("_pagePath");
@@ -192,15 +192,15 @@ namespace Framework.UI {
                 var content = File.ReadAllText(path, Encoding.UTF8);
                 var fields = Regex.Matches(content, @"DOBind\s*<\s*.+\s*>\s*\(\s*"".+""\s*\)(\s^\S)*;+");
                 foreach (var match in fields) {
-                    if (!Regex.IsMatch(@match.ToString(), QuotationMark)) continue;
-                    var m = Regex.Match(@match.ToString(), QuotationMark);
-                    bindKeyDict.Add(m.Value.Replace(Quotation, ""));
+                    if (!Regex.IsMatch(@match.ToString(), VariableNamePattern)) continue;
+                    var m = Regex.Match(@match.ToString(), VariableNamePattern);
+                    bindKeyDict.Add(m.Value.Replace(QuotationPattern, ""));
                 }
-                var methods = Regex.Matches(content, @"DOBind\s*(<UnityAction>)?\s*\(\s*"".+""\s*,\S+\)");
+                var methods = Regex.Matches(content, @"DOBind\s*(<UnityAction(<.+>)?>)?\s*\(\s*"".+""\s*,\S+\)");
                 foreach (var match in methods) {
-                    if (!Regex.IsMatch(@match.ToString(), QuotationMark)) continue;
-                    var m = Regex.Match(@match.ToString(), QuotationMark);
-                    var key = m.Value.Replace(Quotation, "");
+                    if (!Regex.IsMatch(@match.ToString(), VariableNamePattern)) continue;
+                    var m = Regex.Match(@match.ToString(), VariableNamePattern);
+                    var key = m.Value.Replace(QuotationPattern, "");
                     bindKeyDict.Add(key);
                     methodMap.Add(key);
                 }
@@ -273,14 +273,14 @@ namespace Framework.UI {
                 var checkDict = new HashSet<string>();
                 var list = new List<string>();
                 foreach (var match in fields) {
-                    if (!Regex.IsMatch(@match.ToString(), QuotationMark)) continue;
-                    var key = Regex.Match(@match.ToString(), QuotationMark).Value.Replace(Quotation, "");
+                    if (!Regex.IsMatch(@match.ToString(), VariableNamePattern)) continue;
+                    var key = Regex.Match(@match.ToString(), VariableNamePattern).Value.Replace(QuotationPattern, "");
                     list.Add(key);
                 }
-                var methods = Regex.Matches(content, @"DOBind\s*(<UnityAction>)?\s*\(\s*"".+""\s*,\S+\)");
+                var methods = Regex.Matches(content, @"DOBind\s*(<UnityAction(<.+>)?>)?\s*\(\s*"".+""\s*,\S+\)");
                 foreach (var match in methods) {
-                    if (!Regex.IsMatch(@match.ToString(), QuotationMark)) continue;
-                    var key = Regex.Match(@match.ToString(), QuotationMark).Value.Replace(Quotation, "");
+                    if (!Regex.IsMatch(@match.ToString(), VariableNamePattern)) continue;
+                    var key = Regex.Match(@match.ToString(), VariableNamePattern).Value.Replace(QuotationPattern, "");
                     list.Add(key);
                     checkDict.Add(key);
                 }

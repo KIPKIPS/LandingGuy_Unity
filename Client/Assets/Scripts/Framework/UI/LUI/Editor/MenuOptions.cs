@@ -63,6 +63,15 @@ namespace Framework.UI {
             }
             PlaceUIElementRoot(go, menuCommand);
         }
+        
+        [MenuItem(MenuPrefix + "DragButton", false, (int)MenuOptionsPriorityOrder.Button)]
+        public static void AddDragButton(MenuCommand menuCommand) {
+            GameObject go;
+            using (new FactorySwapToEditor()) {
+                go = LDefaultControls.CreateDragButton(GetStandardResources());
+            }
+            PlaceUIElementRoot(go, menuCommand);
+        }
 
         private class FactorySwapToEditor : IDisposable {
             private readonly LDefaultControls.IFactoryControls _factory;

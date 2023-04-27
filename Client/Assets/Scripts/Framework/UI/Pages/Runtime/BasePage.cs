@@ -50,6 +50,9 @@ namespace Framework.UI {
         protected static void DOBind(string key, UnityAction action) {
             _bindDict.TryAdd(key,new Bindable<UnityAction>(_uiBinding, key, action));
         }
+        protected static void DOBind(string key, UnityAction<Vector2> action) {
+            _bindDict.TryAdd(key,new Bindable<UnityAction<Vector2>>(_uiBinding, key, action));
+        }
 
         #region Page Life Cycle
 

@@ -48,6 +48,29 @@ namespace Framework.UI {
             public Sprite dropdown;
             public Sprite mask;
         }
+        
+        public static GameObject CreateDragButton(Resources resources) {
+            var buttonRoot = CreateUIElementRoot("DragButton", ThickElementSize, typeof(LImage), typeof(LDragButton));
+            var childText = CreateUIObject("Text", buttonRoot, typeof(LText));
+            var image = buttonRoot.GetComponent<LImage>();
+            // image.sprite = resources.standard;
+            image.sprite = null;
+            image.type = Image.Type.Sliced;
+            image.color = DefaultSelectableColor;
+            var bt = buttonRoot.GetComponent<LDragButton>();
+            SetDefaultColorTransitionValues(bt);
+            var text = childText.GetComponent<LText>();
+            SetDefaultTextValues(text, "DragButton");
+            text.color = DefaultBlackColor;
+            var rect = text.GetComponent<RectTransform>();
+            rect.anchoredPosition = Vector2.zero;
+            // rect.
+            var textRectTransform = childText.GetComponent<RectTransform>();
+            textRectTransform.anchorMin = Vector2.zero;
+            textRectTransform.anchorMax = Vector2.one;
+            textRectTransform.sizeDelta = Vector2.zero;
+            return buttonRoot;
+        }
 
         public static GameObject CreateText(Resources resources) {
             var obj = CreateUIElementRoot("Text", ThickElementSize, typeof(LText));
