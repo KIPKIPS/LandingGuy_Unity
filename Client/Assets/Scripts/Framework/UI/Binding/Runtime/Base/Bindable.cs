@@ -33,11 +33,23 @@ namespace Framework.UI {
             _key = key;
             _uiBinding = uiBinding;
         }
-        public Bindable(UIBinding uiBinding,string key,UnityAction unityAction) {
-            if (!uiBinding.BinderDataDict.TryGetValue(key, out var data)) return;
-            var baseBinder = UIBinding.GetBaseBinder(UIBinding.GetType(data.bindObj));
-            baseBinder.SetAction(data.bindObj, data.bindFieldId,unityAction );
-        }
+        // public Bindable(UIBinding uiBinding,string key,UnityAction unityAction) {
+        //     if (!uiBinding.BinderDataDict.TryGetValue(key, out var data)) return;
+        //     var baseBinder = UIBinding.GetBaseBinder(UIBinding.GetType(data.bindObj));
+        //     baseBinder.SetAction(data.bindObj, data.bindFieldId,unityAction );
+        // }
+        // public Bindable(UIBinding uiBinding,string key,UnityAction<T> unityAction) {
+        //     if (!uiBinding.BinderDataDict.TryGetValue(key, out var data)) return;
+        //     var baseBinder = UIBinding.GetBaseBinder(UIBinding.GetType(data.bindObj));
+        //     switch (typeof(T).Name) {
+        //         case "Vector2":
+        //             if (unityAction is UnityAction<Vector2> v2) baseBinder.SetActionVector2(data.bindObj, data.bindFieldId,v2 );
+        //             break;
+        //         default:
+        //             LUtil.LogWarning("Failure Binding",$"Unregistered binding type : UnityAction<{typeof(T).Name}>");
+        //             break;
+        //     }
+        // }
         private void UpdateBind(T value) {
             if (!_uiBinding.BinderDataDict.TryGetValue(_key, out var data)) return;
             var baseBinder = UIBinding.GetBaseBinder(UIBinding.GetType(data.bindObj));
@@ -59,6 +71,12 @@ namespace Framework.UI {
                     break;
                 case "Vector3":
                     if (value is Vector3 v3Value) baseBinder.SetVector3(data.bindObj, data.bindFieldId,v3Value);
+                    break;
+                case "UnityAction":
+                    if (value is UnityAction action) baseBinder.SetAction(data.bindObj, data.bindFieldId,action);
+                    break;
+                case "UnityAction`1":
+                    if (value is UnityAction<Vector2> actionVector2) baseBinder.SetActionVector2(data.bindObj, data.bindFieldId,actionVector2);
                     break;
                 default:
                     LUtil.LogWarning("Failure Binding",$"Unregistered binding type : {typeof(T).Name}");

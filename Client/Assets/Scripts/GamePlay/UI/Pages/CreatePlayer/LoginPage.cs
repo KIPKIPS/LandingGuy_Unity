@@ -7,6 +7,7 @@ using Framework;
 using Framework.Container;
 using Framework.UI;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace GamePlay.UI {
     public class LoginPage:BasePage {
@@ -18,15 +19,15 @@ namespace GamePlay.UI {
             LUI.Open("CreateRolePage");
         }
         protected override void Methods() {
-            DOBind("onNewBtn",() => {
+            DOBind<UnityAction>("onNewBtn",() => {
                 LUI.Open("CommonConfirmPage",new Table {
                     ["desc"] = "确定创建新游戏吗?",
                     ["confirmCallback"] = (Action)Confirm
                 });
             });
-            DOBind("onContinueBtn",() => LUtil.Log("onContinueBtn"));
-            DOBind("onSettingBtn",() => LUtil.Log("onSettingBtn"));
-            DOBind("onExitBtn",() => LUI.Close("LoginPage"));
+            DOBind<UnityAction>("onContinueBtn",() => LUtil.Log("onContinueBtn"));
+            DOBind<UnityAction>("onSettingBtn",() => LUtil.Log("onSettingBtn"));
+            DOBind<UnityAction>("onExitBtn",() => LUI.Close("LoginPage"));
         }
         public override void OnEnter() {
             Bind("gameName","Landing Guy");

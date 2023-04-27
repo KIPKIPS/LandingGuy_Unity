@@ -5,6 +5,7 @@ using System;
 using Framework;
 using Framework.UI;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace GamePlay.UI {
     public class CommonConfirmPage:BasePage {
@@ -13,8 +14,8 @@ namespace GamePlay.UI {
             DOBind<string>("desc");
         }
         protected override void Methods() {
-            DOBind("cancelBtn",OnCancel);
-            DOBind("confirmBtn",OnConfirm);
+            DOBind<UnityAction>("cancelBtn",OnCancel);
+            DOBind<UnityAction>("confirmBtn",OnConfirm);
         }
         private void OnCancel() {
             LUI.Close("CommonConfirmPage");

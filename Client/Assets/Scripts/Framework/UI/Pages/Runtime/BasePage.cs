@@ -1,10 +1,10 @@
 ﻿// author:KIPKIPS
 // date:2023.04.10 18:06
 // describe:BasePage UI面板的基类
+// ReSharper disable InconsistentNaming
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
-
 namespace Framework.UI {
     public class BasePage {
         // public List<BinderData>
@@ -40,19 +40,21 @@ namespace Framework.UI {
         /// <param name="key">绑定字段</param>
         /// <param name="value">绑定值</param>
         protected static void DOBind<T>(string key, T value = default) {
-            _bindDict.TryAdd(key,new Bindable<T>(_uiBinding, key, value));
+            if (_bindDict.TryAdd(key,new Bindable<T>(_uiBinding, key, value))) {
+                _bindDict[key].Value = value;
+            }
         }
         /// <summary>
         /// 事件绑定
         /// </summary>
         /// <param name="key">绑定字段</param>
         /// <param name="action">绑定事件</param>
-        protected static void DOBind(string key, UnityAction action) {
-            _bindDict.TryAdd(key,new Bindable<UnityAction>(_uiBinding, key, action));
-        }
-        protected static void DOBind(string key, UnityAction<Vector2> action) {
-            _bindDict.TryAdd(key,new Bindable<UnityAction<Vector2>>(_uiBinding, key, action));
-        }
+        // protected static void DOBind(string key, UnityAction action) {
+        //     _bindDict.TryAdd(key,new Bindable<UnityAction>(_uiBinding, key, action));
+        // }
+        // protected static void DOBind(string key, UnityAction<T> action) {
+        //     _bindDict.TryAdd(key,new Bindable<UnityAction<T>>(_uiBinding, key, action));
+        // }
 
         #region Page Life Cycle
 
