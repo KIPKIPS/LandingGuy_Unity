@@ -9,21 +9,21 @@ using UnityEngine.Events;
 namespace GamePlay.UI {
     public class CreateRolePage : BasePage {
         protected override void Values() {
-            DOBind<string>("profession1");
-            DOBind<string>("profession2");
-            DOBind<string>("profession3");
-            DOBind<string>("profession4");
+            DOBind("profession1");
+            DOBind("profession2");
+            DOBind("profession3");
+            DOBind("profession4");
         }
         protected override void Methods() {
-            DOBind<UnityAction>("closeBtn", () => {
+            DOBind("closeBtn", () => {
                 LUI.Close("CreateRolePage");
                 LUI.Open("LoginPage");
             });
-            DOBind<UnityAction>("onLast",() => LUtil.Log("onLast"));
-            DOBind<UnityAction>("onNext",() => LUtil.Log("onNext"));
-            DOBind<UnityAction<Vector2>>("onDragBegin",pos => LUtil.Log("onDragBegin",pos));
-            DOBind<UnityAction<Vector2>>("onDrag",pos => LUtil.Log("onDrag",pos));
-            DOBind<UnityAction<Vector2>>("onDragEnd",pos => LUtil.Log("onDragEnd",pos));
+            DOBind("onLast",() => LUtil.Log("onLast"));
+            DOBind("onNext",() => LUtil.Log("onNext"));
+            DOBind("onDragBegin",pos => LUtil.Log("onDragBegin",pos));
+            DOBind("onDrag",pos => LUtil.Log("onDrag",pos));
+            DOBind("onDragEnd",pos => LUtil.Log("onDragEnd",pos));
         }
         public override void OnEnter() {
             LUtil.Log("CreateRolePage");

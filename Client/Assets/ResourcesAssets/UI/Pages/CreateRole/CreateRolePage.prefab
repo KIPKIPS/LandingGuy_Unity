@@ -2295,30 +2295,43 @@ MonoBehaviour:
   - bindKey: profession1
     bindObj: {fileID: 5432444217164438583}
     bindFieldId: 10005
+    fieldType: 5
   - bindKey: profession2
     bindObj: {fileID: 2518453704561074252}
     bindFieldId: 10005
+    fieldType: 5
   - bindKey: profession3
     bindObj: {fileID: 6903780941967806554}
     bindFieldId: 10005
+    fieldType: 5
   - bindKey: profession4
     bindObj: {fileID: 7283264547110171946}
     bindFieldId: 10005
+    fieldType: 5
+  - bindKey: closeBtn
+    bindObj: {fileID: 314072388229918834}
+    bindFieldId: 10014
+    fieldType: 14
   - bindKey: onLast
     bindObj: {fileID: 9016508188427196348}
     bindFieldId: 10014
+    fieldType: 14
   - bindKey: onNext
     bindObj: {fileID: 8350585163940087681}
     bindFieldId: 10014
+    fieldType: 14
   - bindKey: onDragBegin
     bindObj: {fileID: 4840604425052722968}
     bindFieldId: 50015
+    fieldType: 15
   - bindKey: onDrag
     bindObj: {fileID: 4840604425052722968}
     bindFieldId: 60015
+    fieldType: 15
   - bindKey: onDragEnd
     bindObj: {fileID: 4840604425052722968}
     bindFieldId: 70015
+    fieldType: 15
 --- !u!1 &9133003604630005630
 GameObject:
   m_ObjectHideFlags: 0

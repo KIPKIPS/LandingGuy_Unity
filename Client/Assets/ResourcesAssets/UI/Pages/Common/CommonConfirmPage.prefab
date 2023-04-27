@@ -938,12 +938,15 @@ MonoBehaviour:
   - bindKey: desc
     bindObj: {fileID: 4902960278237887057}
     bindFieldId: 10005
+    fieldType: 5
   - bindKey: cancelBtn
     bindObj: {fileID: 3059725397425398300}
     bindFieldId: 10014
+    fieldType: 14
   - bindKey: confirmBtn
     bindObj: {fileID: 3493831995215396610}
     bindFieldId: 10014
+    fieldType: 14
 --- !u!114 &736025090601370290
 MonoBehaviour:
   m_ObjectHideFlags: 0

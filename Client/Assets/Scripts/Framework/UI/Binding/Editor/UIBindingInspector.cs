@@ -103,6 +103,7 @@ namespace Framework.UI {
             } else {
                 bindData.bindObj = null;
                 bindData.bindFieldId = int.MaxValue;
+                bindData.fieldType = int.MaxValue;
                 wrapperData.componentDisplayDict.Clear();
                 wrapperData.componentEnumDict.Clear();
                 wrapperData.fieldEnumDict.Clear();
@@ -113,6 +114,7 @@ namespace Framework.UI {
             rect.x += width + 20;
             if (bindData.bindObj == null) {
                 bindData.bindFieldId = int.MaxValue;
+                bindData.fieldType = int.MaxValue;
                 wrapperData.componentDisplayDict.Clear();
                 wrapperData.componentEnumDict.Clear();
                 wrapperData.fieldEnumDict.Clear();
@@ -167,6 +169,7 @@ namespace Framework.UI {
             rect.x += width + 20;
             rect.width -= 13;
             bindData.bindFieldId = wrapperData.fieldEnumDict != null ? EditorGUI.IntPopup(rect, bindData.bindFieldId, wrapperData.fieldEnumDict.Keys.ToArray(), wrapperData.fieldEnumDict.Values.ToArray()) : int.MaxValue;
+            bindData.fieldType = bindData.bindFieldId % LDefine.BIND_ENUM_GAP;
             GUILayout.EndHorizontal();
             GUILayout.EndVertical();
         }
@@ -196,7 +199,7 @@ namespace Framework.UI {
                     var m = Regex.Match(@match.ToString(), VariableNamePattern);
                     bindKeyDict.Add(m.Value.Replace(QuotationPattern, ""));
                 }
-                var methods = Regex.Matches(content, @"DOBind\s*(<UnityAction(<.+>)?>)?\s*\(\s*"".+""\s*,\S+\)");
+                var methods = Regex.Matches(content, @"DOBind\s*\(\s*"".+""\s*,\S+\)");
                 foreach (var match in methods) {
                     if (!Regex.IsMatch(@match.ToString(), VariableNamePattern)) continue;
                     var m = Regex.Match(@match.ToString(), VariableNamePattern);
@@ -254,10 +257,37 @@ namespace Framework.UI {
             // EditorUtility.SetDirty(_uiBinding);
             // serializedObject.ApplyModifiedProperties();
         }
+        string GetValuesContent(string content) {
+            var match = Regex.Match(content, @"override\s+void\s+Values\s*\(\s*\)\s?\{");
+            return GetMatch(content,match);
+        }
+
+        string GetMethodsContent(string content) {
+            var match = Regex.Match(content, @"override\s+void\s+Methods\s*\(\s*\)\s?\{");
+            return GetMatch(content,match);
+        }
+        string GetMatch(string content,Match match) {
+            var idx = match.Index;
+            var rst = "";
+            var count = 0;
+            for (int i = idx + match.Value.Length - 1; i < content.Length; i++) {
+                if (content[i] == '{') {
+                    count++;
+                }
+                if (content[i] == '}') {
+                    count--;
+                }
+                rst += content[i];
+                if (count == 0) {
+                    return rst;
+                }
+            }
+            return "";
+        }
         private void Check() {
             UIBinding.Register();
             var cacheBindMap = _uiBinding.BinderDataList.ToDictionary(data => data.bindKey, data => new BinderData {
-                bindKey = data.bindKey, bindFieldId = data.bindFieldId, bindObj = data.bindObj,
+                bindKey = data.bindKey, bindFieldId = data.bindFieldId, bindObj = data.bindObj,fieldType = data.bindFieldId % LDefine.BIND_ENUM_GAP,
             });
             //查字段
             if (string.IsNullOrEmpty(_pathSerializedProperty.stringValue)) return;
@@ -268,8 +298,11 @@ namespace Framework.UI {
                 _lastBindComponentDict.Clear();
                 _lastSelectObjDict.Clear();
                 var content = File.ReadAllText(path, Encoding.UTF8);
-                var fields = Regex.Matches(content, @"DOBind\s*<\s*.+\s*>\s*\(\s*"".+""\s*\)(\s^\S)*;+");
-                // Utils.Log(matches.Count);
+                content = Regex.Replace(content.Replace("\n", " "),@"\s{2,}", " ");
+                var valuesMatch = GetValuesContent(content);
+                // var valuesMatch = Regex.Match(content, @"override\s+void\s+Values\s*\(.*\)\s*\{.*(.*\{.*\}.*)*}");
+                var fields = Regex.Matches(valuesMatch, @"DOBind\s*\(\s*""[a-zA-Z_][0-9a-zA-Z_]*""\s*,?");
+                // LUtil.Log(fields.Count);
                 var checkDict = new HashSet<string>();
                 var list = new List<string>();
                 foreach (var match in fields) {
@@ -277,7 +310,8 @@ namespace Framework.UI {
                     var key = Regex.Match(@match.ToString(), VariableNamePattern).Value.Replace(QuotationPattern, "");
                     list.Add(key);
                 }
-                var methods = Regex.Matches(content, @"DOBind\s*(<UnityAction(<.+>)?>)?\s*\(\s*"".+""\s*,\S+\)");
+                var methodsMatch = GetMethodsContent(content);
+                var methods = Regex.Matches(methodsMatch, @"DOBind\s*\(\s*""[a-zA-Z_][0-9a-zA-Z_]*""\s*,?");
                 foreach (var match in methods) {
                     if (!Regex.IsMatch(@match.ToString(), VariableNamePattern)) continue;
                     var key = Regex.Match(@match.ToString(), VariableNamePattern).Value.Replace(QuotationPattern, "");
@@ -291,6 +325,7 @@ namespace Framework.UI {
                         bindKey = key,
                         bindFieldId = isExist ? cache.bindFieldId : int.MaxValue,
                         bindObj = isExist ? cache.bindObj : null,
+                        fieldType = isExist ? cache.bindFieldId % LDefine.BIND_ENUM_GAP : -1
                     };
                     _uiBinding.BinderDataList.Add(data);
                     var componentDict = new Dictionary<int, Object>();

@@ -14,6 +14,7 @@ namespace Framework.UI {
         [SerializeField]public string bindKey;
         [SerializeField]public Object bindObj;
         [SerializeField]public int bindFieldId;
+        [SerializeField] public int fieldType;
     }
     public class UIBinding : MonoBehaviour {
         public BasePage Page { get; set; }

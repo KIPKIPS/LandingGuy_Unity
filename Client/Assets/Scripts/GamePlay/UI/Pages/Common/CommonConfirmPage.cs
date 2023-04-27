@@ -11,11 +11,11 @@ namespace GamePlay.UI {
     public class CommonConfirmPage:BasePage {
         private Action _confirmCallback;
         protected override void Values() {
-            DOBind<string>("desc");
+            DOBind("desc");
         }
         protected override void Methods() {
-            DOBind<UnityAction>("cancelBtn",OnCancel);
-            DOBind<UnityAction>("confirmBtn",OnConfirm);
+            DOBind("cancelBtn",OnCancel);
+            DOBind("confirmBtn",OnConfirm);
         }
         private void OnCancel() {
             LUI.Close("CommonConfirmPage");

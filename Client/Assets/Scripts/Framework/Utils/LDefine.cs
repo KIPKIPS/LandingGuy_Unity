@@ -9,7 +9,7 @@ namespace Framework {
         public const int SYSTEM_STANDARD_DPI = 96; //系统默认dpi
         #endregion
         public static readonly string DataStoragePath = $"{System.Environment.CurrentDirectory}\\Storage\\";
-        
+        public static int BIND_ENUM_GAP = 10000;
     }
     #region AUDIO
     public enum AudioType {

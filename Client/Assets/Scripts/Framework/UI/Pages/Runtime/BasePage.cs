@@ -3,6 +3,7 @@
 // describe:BasePage UI面板的基类
 // ReSharper disable InconsistentNaming
 using System.Collections.Generic;
+using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.Events;
 namespace Framework.UI {
@@ -24,14 +25,14 @@ namespace Framework.UI {
             get => _uiBinding;
             set => _uiBinding = value;
         }
-        private static readonly Dictionary<string, dynamic> _bindDict = new();
+        private static readonly Dictionary<string, Bindable> _bindDict = new();
 
         /// <summary>
         /// 更新绑定字段的值
         /// </summary>
         /// <param name="key">绑定字段</param>
         /// <param name="value">绑定的值</param>
-        protected static void Bind<T>(string key, T value = default) {
+        protected static void Bind(string key, dynamic value = null) {
             _bindDict[key].Value = value;
         }
         /// <summary>
@@ -39,23 +40,27 @@ namespace Framework.UI {
         /// </summary>
         /// <param name="key">绑定字段</param>
         /// <param name="value">绑定值</param>
-        protected static void DOBind<T>(string key, T value = default) {
-            if (_bindDict.TryAdd(key,new Bindable<T>(_uiBinding, key, value))) {
+        protected static void DOBind(string key,dynamic value) {
+            if (_bindDict.TryAdd(key,new Bindable(_uiBinding, key, value))) {
                 _bindDict[key].Value = value;
             }
         }
-        /// <summary>
-        /// 事件绑定
-        /// </summary>
-        /// <param name="key">绑定字段</param>
-        /// <param name="action">绑定事件</param>
-        // protected static void DOBind(string key, UnityAction action) {
-        //     _bindDict.TryAdd(key,new Bindable<UnityAction>(_uiBinding, key, action));
-        // }
-        // protected static void DOBind(string key, UnityAction<T> action) {
-        //     _bindDict.TryAdd(key,new Bindable<UnityAction<T>>(_uiBinding, key, action));
-        // }
-
+        protected static void DOBind(string key) {
+            if (_bindDict.TryAdd(key,new Bindable(_uiBinding, key))) {
+                _bindDict[key].Value = default;
+            }
+        }
+        protected static void DOBind(string key, UnityAction value) {
+            if (_bindDict.TryAdd(key,new Bindable(_uiBinding, key, value))) {
+                _bindDict[key].Value = value;
+            }
+        }
+        protected static void DOBind(string key, UnityAction<Vector2> value) {
+            if (_bindDict.TryAdd(key,new Bindable(_uiBinding, key, value))) {
+                _bindDict[key].Value = value;
+            }
+        }
+        
         #region Page Life Cycle
 
         public void OnBind() {

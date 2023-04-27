@@ -12,22 +12,22 @@ using UnityEngine.Events;
 namespace GamePlay.UI {
     public class LoginPage:BasePage {
         protected override void Values() {
-            DOBind<string>("gameName");
+            DOBind("gameName","Landing");
         }
         private void Confirm() {
             LUI.Close("LoginPage");
             LUI.Open("CreateRolePage");
         }
         protected override void Methods() {
-            DOBind<UnityAction>("onNewBtn",() => {
+            DOBind("onNewBtn",() => {
                 LUI.Open("CommonConfirmPage",new Table {
                     ["desc"] = "确定创建新游戏吗?",
                     ["confirmCallback"] = (Action)Confirm
                 });
             });
-            DOBind<UnityAction>("onContinueBtn",() => LUtil.Log("onContinueBtn"));
-            DOBind<UnityAction>("onSettingBtn",() => LUtil.Log("onSettingBtn"));
-            DOBind<UnityAction>("onExitBtn",() => LUI.Close("LoginPage"));
+            DOBind("onContinueBtn",() => LUtil.Log("onContinueBtn"));
+            DOBind("onSettingBtn",() => LUtil.Log("onSettingBtn"));
+            DOBind("onExitBtn",() => LUI.Close("LoginPage"));
         }
         public override void OnEnter() {
             Bind("gameName","Landing Guy");

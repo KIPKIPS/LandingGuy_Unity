@@ -1135,18 +1135,23 @@ MonoBehaviour:
   - bindKey: gameName
     bindObj: {fileID: 2460239471467100765}
     bindFieldId: 10005
+    fieldType: 5
   - bindKey: onNewBtn
     bindObj: {fileID: 6186159719129632078}
     bindFieldId: 10014
+    fieldType: 14
   - bindKey: onContinueBtn
     bindObj: {fileID: 6212941100696082824}
     bindFieldId: 10014
+    fieldType: 14
   - bindKey: onSettingBtn
     bindObj: {fileID: 3310312090997529479}
     bindFieldId: 10014
+    fieldType: 14
   - bindKey: onExitBtn
     bindObj: {fileID: 314072388229918834}
     bindFieldId: 10014
+    fieldType: 14
 --- !u!1 &9133003604630005630
 GameObject:
   m_ObjectHideFlags: 0
