@@ -15,7 +15,7 @@ MonoBehaviour:
   state: 0
   started: 0
   guid: e06d359ffbb2ef741b009fe02788944a
-  position: {x: 0, y: 0}
+  position: {x: 394, y: 8}
   blackboard:
     moveToPosition: {x: 0, y: 0, z: 0}
     moveToObject: {fileID: 0}
@@ -57,12 +57,13 @@ MonoBehaviour:
   state: 0
   started: 0
   guid: d143c330fc0a49a4f85d8d37a93f9bec
-  position: {x: 158, y: 8}
+  position: {x: 208, y: -13}
   blackboard:
     moveToPosition: {x: 0, y: 0, z: 0}
     moveToObject: {fileID: 0}
   number: 0
-  children: []
+  children:
+  - {fileID: -8402188210501652940}
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
