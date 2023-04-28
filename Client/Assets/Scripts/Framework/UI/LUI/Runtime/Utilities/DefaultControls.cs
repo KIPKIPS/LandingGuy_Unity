@@ -81,9 +81,17 @@ namespace Framework.UI {
         public static GameObject CreateImage(Resources resources) {
             var obj = CreateUIElementRoot("Image", ImageElementSize, typeof(LImage));
             var lbl = obj.GetComponent<LImage>();
-            SetDefaultImageValues(lbl);
+            SetDefaultGraphicValues(lbl);
             return obj;
         }
+        public static GameObject CreateRawImage(Resources resources) {
+            var obj = CreateUIElementRoot("RawImage", ImageElementSize, typeof(LRawImage));
+            var lbl = obj.GetComponent<LRawImage>();
+            SetDefaultGraphicValues(lbl);
+            return obj;
+        }
+        
+        
         private static GameObject CreateUIObject(string name, GameObject parent, params Type[] components) {
             var go = Factory.CreateGameObject(name, components);
             SetParentAndAlign(go, parent);
@@ -140,8 +148,8 @@ namespace Framework.UI {
             colors.pressedColor = new Color(0.698f, 0.698f, 0.698f);
             colors.disabledColor = new Color(0.521f, 0.521f, 0.521f);
         }
-
-        private static void SetDefaultImageValues(LImage lbl) {
+        
+        private static void SetDefaultGraphicValues(Graphic lbl) {
             lbl.raycastTarget = false;
         }
         private static void SetDefaultTextValues(LText lbl, string text = "") {

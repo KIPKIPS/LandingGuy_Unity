@@ -1,14 +1,9 @@
 ﻿// author:KIPKIPS
 // date:2023.04.28 10:37
 // describe:模型挂载器
-using System;
 using Framework.Manager;
-using Unity.Mathematics;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.Experimental.Rendering;
-using UnityEngine.Rendering.Universal;
-using UnityEngine.UI;
 
 namespace Framework.UI {
     [AddComponentMenu("LUI/LModelContainer", 10),RequireComponent(typeof(LRawImage))]
@@ -41,7 +36,7 @@ namespace Framework.UI {
                 var t = go.transform;
                 t.SetParent(MountManager.Instance.ModelMountRoot);
                 t.localPosition = Vector3.zero;
-                t.localRotation = quaternion.identity;
+                t.localRotation = Quaternion.identity;
                 t.localScale = Vector3.one;
                 return _prefabMounter;
             }

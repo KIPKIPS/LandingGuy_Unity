@@ -82,6 +82,15 @@ namespace Framework.UI {
             }
             PlaceUIElementRoot(go, menuCommand);
         }
+        
+        [MenuItem(MenuPrefix + "RawImage", false, (int)MenuOptionsPriorityOrder.RawImage)]
+        public static void AddRawImage(MenuCommand menuCommand) {
+            GameObject go;
+            using (new FactorySwapToEditor()) {
+                go = DefaultControls.CreateRawImage(GetStandardResources());
+            }
+            PlaceUIElementRoot(go, menuCommand);
+        }
 
         private class FactorySwapToEditor : IDisposable {
             private readonly DefaultControls.IFactoryControls _factory;
