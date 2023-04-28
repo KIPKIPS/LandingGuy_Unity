@@ -17,13 +17,25 @@ namespace Framework.UI {
                 _cameraGo = new GameObject("Camera");
                 var t = _cameraGo.transform;
                 t.SetParent(transform);
-                t.localPosition = Vector3.zero;
-                t.localRotation = quaternion.identity;
+                t.localPosition = new Vector3(0,3.8f,8);
+                t.localRotation = Quaternion.Euler(new Vector3(0,180,0));
                 t.localScale = Vector3.one;
                 return _cameraGo;
             }
         }
-        public Camera Camera {
+        private GameObject _containerGo;
+        private GameObject ContainerGo {
+            get {if (_containerGo != null) return _containerGo;
+                _containerGo = new GameObject("Container");
+                var t = _containerGo.transform;
+                t.SetParent(transform);
+                t.localPosition = Vector3.zero;
+                t.localRotation = quaternion.identity;
+                t.localScale = Vector3.one;
+                return _containerGo; 
+            }
+        }
+        private Camera Camera {
             get {
                 if (_camera != null) return _camera;
                 _camera = CameraGo.AddComponent<Camera>();
@@ -47,8 +59,17 @@ namespace Framework.UI {
                 DestroyImmediate(_prefabGo);
             }
             var go = AssetDatabase.LoadAssetAtPath<GameObject>(modelPath);
-            _prefabGo = Instantiate(go, Vector3.zero, quaternion.identity, transform);
+            _prefabGo = Instantiate(go, Vector3.zero, quaternion.identity, ContainerGo.transform);
             _prefabGo.transform.localScale = Vector3.one;
+        }
+        public void SetModelLocalRotation(Vector3 v) {
+            _prefabGo.transform.localEulerAngles = v;
+        }
+        public void SetModelLocalPosition(Vector3 v) {
+            _prefabGo.transform.localPosition = v;
+        }
+        public void SetModelLocalScale(Vector3 v) {
+            _prefabGo.transform.localScale = v;
         }
     }
 }

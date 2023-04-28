@@ -14,6 +14,7 @@ namespace GamePlay.UI {
             DOBind("profession3");
             DOBind("profession4");
             DOBind("modelPath");
+            DOBind("modelRot");
         }
         protected override void Methods() {
             DOBind("closeBtn", () => {
@@ -22,9 +23,22 @@ namespace GamePlay.UI {
             });
             DOBind("onLast",() => LUtil.Log("onLast"));
             DOBind("onNext",() => LUtil.Log("onNext"));
-            DOBind("onDragBegin",pos => LUtil.Log("onDragBegin",pos));
-            DOBind("onDrag",pos => LUtil.Log("onDrag",pos));
-            DOBind("onDragEnd",pos => LUtil.Log("onDragEnd",pos));
+            DOBind("onDragBegin",OnDragBegin);
+            DOBind("onDrag",OnDrag);
+            DOBind("onDragEnd",OnDragEnd);
+        }
+        private float _beginRotation;
+        private float _curRotateY;
+        void OnDragBegin(Vector2 pos) {
+            _beginRotation = pos.x;
+            _curRotateY = 0;
+        }
+        void OnDrag(Vector2 pos) {
+            Bind("modelRot",new Vector3(0,_curRotateY - (pos.x - _beginRotation) * 0.2f,0));
+        }
+        void OnDragEnd(Vector2 pos) {
+            _beginRotation = 0;
+            _curRotateY = 0;
         }
         public override void OnEnter() {
             LUtil.Log("CreateRolePage");

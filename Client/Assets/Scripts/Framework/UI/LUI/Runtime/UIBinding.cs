@@ -109,9 +109,6 @@ namespace Framework.UI {
             return _registerBinderDict.ContainsKey(bindName) ? _registerBinderDict[bindName].id : -1;
         }
         public static Type GetPageType(string pageType) {
-            foreach (var kvp in _pageDict) {
-                LUtil.Log(pageType,kvp.Key,kvp.Value);
-            }
             return _pageDict.ContainsKey(pageType) ? _pageDict[pageType] : typeof(BasePage);
         }
         public static string GetType(Object obj) => obj is Component ? obj.GetType().ToString() : "UnityEngine.GameObject";
