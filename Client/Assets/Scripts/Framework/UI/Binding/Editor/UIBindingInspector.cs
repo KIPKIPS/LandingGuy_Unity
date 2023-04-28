@@ -193,13 +193,17 @@ namespace Framework.UI {
             var methodMap = new HashSet<string>();
             if (File.Exists(path)) {
                 var content = File.ReadAllText(path, Encoding.UTF8);
-                var fields = Regex.Matches(content, @"DOBind\s*<\s*.+\s*>\s*\(\s*"".+""\s*\)(\s^\S)*;+");
+                content = Regex.Replace(content.Replace("\n", " "),@"\s{2,}", " ");
+                
+                var valuesMatch = GetValuesContent(content);
+                var fields = Regex.Matches(valuesMatch, @"DOBind\s*\(\s*""[a-zA-Z_][0-9a-zA-Z_]*""\s*,?");
                 foreach (var match in fields) {
                     if (!Regex.IsMatch(@match.ToString(), VariableNamePattern)) continue;
                     var m = Regex.Match(@match.ToString(), VariableNamePattern);
                     bindKeyDict.Add(m.Value.Replace(QuotationPattern, ""));
                 }
-                var methods = Regex.Matches(content, @"DOBind\s*\(\s*"".+""\s*,\S+\)");
+                var methodsMatch = GetMethodsContent(content);
+                var methods = Regex.Matches(methodsMatch, @"DOBind\s*\(\s*""[a-zA-Z_][0-9a-zA-Z_]*""\s*,?");
                 foreach (var match in methods) {
                     if (!Regex.IsMatch(@match.ToString(), VariableNamePattern)) continue;
                     var m = Regex.Match(@match.ToString(), VariableNamePattern);
@@ -207,9 +211,13 @@ namespace Framework.UI {
                     bindKeyDict.Add(key);
                     methodMap.Add(key);
                 }
-                var matchNamespace = Regex.Match(content, "namespace.+{").Value.Replace("namespace", "").Replace("{", "").Replace(" ", "");
-                var matchClassName = Regex.Match(content, @"class.+:.*BasePage").Value.Replace("class", "").Replace(":", "").Replace("BasePage", "").Replace(" ", "");
-                var pageType = $"{matchNamespace}.{matchClassName}";
+                var namespaceName = Regex.Match(content, @"namespace\s+([a-zA-Z_][0-9a-zA-Z_]*)(\.[a-zA-Z_][0-9a-zA-Z_]*)*\s*\{").Value.Replace("namespace","").Replace("{","").Replace(" ","");
+                var className = Regex.Match(content, @"class\s+[a-zA-Z_][0-9a-zA-Z_]*\s*:\s*BasePage\s*\{").Value.Replace("class","").Replace("BasePage","").Replace(":","").Replace("{","").Replace(" ","");
+                // LUtil.Log(namespaceName,className);
+                var pageType = $"{namespaceName}.{className}";
+                if (pageType != _uiBinding.PageType) {
+                    EditorUtility.SetDirty(_uiBinding);
+                }
                 _uiBinding.PageType = pageType;
             }
             var list = _uiBinding.BinderDataList.Where(binderData => bindKeyDict.Contains(binderData.bindKey)).ToList();

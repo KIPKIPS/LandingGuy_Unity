@@ -7,10 +7,11 @@ using Framework.Singleton;
 // using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
+using Object = UnityEngine.Object;
 // using UnityEngine.Profiling;
 
 namespace Framework.UI {
-    public class UIManager : MonoSingleton<UIManager> {
+    public class UIManager : Singleton<UIManager> {
         private const string LOGTag = "UI";
         public const string ConfigAssetPath = "Assets/ResourcesAssets/UI/Config/pages.asset"; //配置资源路径
         private PagesConfig _pagesConfigAsset;
@@ -34,7 +35,7 @@ namespace Framework.UI {
         private readonly Dictionary<string, int> _pageName2IdMap = new();
         private readonly Dictionary<int, UIBinding> _pageDict = new();
         private void InitUICamera() {
-            DontDestroyOnLoad(LCamera.GetCameraRoot(CameraType.UI));
+            Object.DontDestroyOnLoad(LCamera.GetCameraRoot(CameraType.UI));
         }
         public void Open(string pageName, dynamic options = null) {
             LUtil.Log(LOGTag, $"Open Page === {pageName}");
@@ -55,7 +56,7 @@ namespace Framework.UI {
             if (uiBinding) {
                 return uiBinding;
             }
-            var go = Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>($"Assets/ResourcesAssets/{config.assetPath}"), LCamera.GetCameraRoot(CameraType.UI));
+            var go = Object.Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>($"Assets/ResourcesAssets/{config.assetPath}"), LCamera.GetCameraRoot(CameraType.UI));
             uiBinding = go.GetComponent<UIBinding>();
             var page = Activator.CreateInstance(UIBinding.GetPageType(uiBinding.PageType)) as BasePage;
             uiBinding.Page = page;
@@ -84,7 +85,6 @@ namespace Framework.UI {
         private void PushPage(string pageName, dynamic options = null) {
             var uiBinding = GetPageUIBinding(pageName);
             var page = uiBinding.Page;
-            LUtil.Log(page.Config.pageName);
             if (page.IsShow) {
                 LUtil.LogError("Repeat Open",pageName);
                 return;
@@ -119,7 +119,7 @@ namespace Framework.UI {
         private void PopPage() {
             if (_pageStack.Count <= 0) return;
             var go = _pageStack.Pop().gameObject;
-            Destroy(go);
+            Object.Destroy(go);
             if (_pageStack.Count > 0) {
                 _pageStack.Peek().Page.OnResume(); //恢复原先的界面
             }

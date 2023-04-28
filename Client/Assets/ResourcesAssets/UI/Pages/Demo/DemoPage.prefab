@@ -445,7 +445,6 @@ GameObject:
   - component: {fileID: 9133003604144257016}
   - component: {fileID: 9133003604144257017}
   - component: {fileID: 1905856356185200200}
-  - component: {fileID: 724309102885176055}
   - component: {fileID: 736025090601370290}
   m_Layer: 5
   m_Name: DemoPage
@@ -522,42 +521,6 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
---- !u!114 &724309102885176055
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9133003604144257018}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 149e5f9721d048efb82307836a18998a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _pageType: GamePlay.UI.CreateRolePage
-  _pagePath: UI/Pages/CreatePlayer/CreateRolePage
-  _binderDataList:
-  - bindKey: profession1
-    bindObj: {fileID: 0}
-    bindFieldId: 2147483647
-  - bindKey: profession2
-    bindObj: {fileID: 0}
-    bindFieldId: 2147483647
-  - bindKey: profession3
-    bindObj: {fileID: 0}
-    bindFieldId: 2147483647
-  - bindKey: profession4
-    bindObj: {fileID: 0}
-    bindFieldId: 2147483647
-  - bindKey: closeBtn
-    bindObj: {fileID: 0}
-    bindFieldId: 2147483647
-  - bindKey: onLast
-    bindObj: {fileID: 0}
-    bindFieldId: 2147483647
-  - bindKey: onNext
-    bindObj: {fileID: 0}
-    bindFieldId: 2147483647
 --- !u!114 &736025090601370290
 MonoBehaviour:
   m_ObjectHideFlags: 0

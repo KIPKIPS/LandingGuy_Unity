@@ -7,7 +7,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 namespace Framework.UI {
-    public class LDefaultControls {
+    public class DefaultControls {
         private const float Width = 160f;
         private const float ThickHeight = 30f;
         private const float ThinHeight = 20f;
@@ -126,6 +126,13 @@ namespace Framework.UI {
             textRectTransform.anchorMax = Vector2.one;
             textRectTransform.sizeDelta = Vector2.zero;
             return buttonRoot;
+        }
+        
+        public static GameObject CreateModelContainer(Resources resources) {
+            var container = CreateUIElementRoot("ModelContainer", ImageElementSize, typeof(LRawImage), typeof(LModelContainer));
+            var image = container.GetComponent<LRawImage>();
+            image.color = DefaultSelectableColor;
+            return container;
         }
         private static void SetDefaultColorTransitionValues(Selectable selectable) {
             var colors = selectable.colors;

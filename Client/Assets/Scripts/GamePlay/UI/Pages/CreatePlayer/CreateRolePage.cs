@@ -13,6 +13,7 @@ namespace GamePlay.UI {
             DOBind("profession2");
             DOBind("profession3");
             DOBind("profession4");
+            DOBind("modelPath");
         }
         protected override void Methods() {
             DOBind("closeBtn", () => {
@@ -31,6 +32,8 @@ namespace GamePlay.UI {
             Bind("profession2", "刺客");
             Bind("profession3", "坦克");
             Bind("profession4", "射手");
+            
+            Bind("modelPath","Assets/ResourcesAssets/Character/pre_liam.prefab");
         }
     }
 }

@@ -10,17 +10,17 @@ using UnityEngine.UI;
 namespace Framework.UI {
     [AddComponentMenu("LUI/LButton", 30)]
     public class LButton : Button {
-        protected bool isEnter;
+        // protected bool isEnter;
         public UnityAction<Vector2> onPointerEnter;
         public UnityAction<Vector2> onPointerExit;
         public override void OnPointerEnter(PointerEventData eventData) {
             base.OnPointerEnter(eventData);
-            isEnter = true;
+            // isEnter = true;
             onPointerEnter?.Invoke(eventData.position);
         }
         public override void OnPointerExit(PointerEventData eventData) {
             base.OnPointerExit(eventData);
-            isEnter = false;
+            // isEnter = false;
             onPointerExit?.Invoke(eventData.position);
         }
     }

@@ -25,7 +25,6 @@ namespace GamePlay.UI {
             _confirmCallback?.Invoke();
         }
         public override void OnEnter(dynamic options) {
-            // LUtil.Log("?",options.desc);
             Bind("desc", options?["desc"]);
             _confirmCallback = options?["confirmCallback"];
         }

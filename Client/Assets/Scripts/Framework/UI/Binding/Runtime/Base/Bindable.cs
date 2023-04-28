@@ -26,7 +26,7 @@ namespace Framework.UI {
         private readonly string _key;
         private readonly UIBinding _uiBinding;
         //初始化
-        public Bindable(UIBinding uiBinding,string key,dynamic value = default) {
+        public Bindable(UIBinding uiBinding,string key,dynamic value) {
             OnValueChanged = UpdateBind;
             _value = value;
             _isInit = true;
@@ -53,7 +53,6 @@ namespace Framework.UI {
         private void UpdateBind(dynamic value) {
             if (!_uiBinding.BinderDataDict.TryGetValue(_key, out var data)) return;
             var baseBinder = UIBinding.GetBaseBinder(UIBinding.GetType(data.bindObj));
-            LUtil.Log(data.fieldType);
             switch ((LinkerType)data.fieldType) {
                 case LinkerType.String:
                     if (value is string stringValue) baseBinder.SetString(data.bindObj, data.bindFieldId, stringValue);

@@ -1,7 +1,6 @@
-﻿// --[[
-//     author:{wkp}
-//     time:20:21
-// ]]
+﻿// author:KIPKIPS
+// date:2023.04.27 20:21
+// describe:拖拽按钮Binder
 // ReSharper disable InconsistentNaming
 // ReSharper disable MemberCanBePrivate.Global
 using UnityEngine;

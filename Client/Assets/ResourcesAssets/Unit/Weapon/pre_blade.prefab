@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 33498920122782060}
   - component: {fileID: 23480554168571216}
   m_Layer: 0
-  m_Name: Blade
+  m_Name: pre_blade
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

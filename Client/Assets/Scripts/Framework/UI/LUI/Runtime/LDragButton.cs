@@ -1,12 +1,9 @@
-﻿// --[[
-//     author:{wkp}
-//     time:20:00
-// ]]
-using Framework.Manager;
+﻿// author:KIPKIPS
+// date:2023.04.27 20:00
+// describe:拖拽按钮
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
-using UnityEngine.UI;
 
 namespace Framework.UI
 {

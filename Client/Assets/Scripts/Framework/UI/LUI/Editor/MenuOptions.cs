@@ -20,13 +20,14 @@ namespace Framework.UI {
         private const string MaskPath = "UI/Skin/UIMask.psd";
         private const string MenuPrefix = "GameObject/UI/";
 
-        private static LDefaultControls.Resources _standardResources;
+        private static DefaultControls.Resources _standardResources;
 
         enum MenuOptionsPriorityOrder {
             Text = -1000,
             Image = -999,
             Button = -998,
-            RawImage = 2002,
+            RawImage = -997,
+            ModelContainer = -996,
             Panel = 2003,
             Toggle = 2021,
             Slider = 2024,
@@ -42,7 +43,7 @@ namespace Framework.UI {
         public static void AddText(MenuCommand menuCommand) {
             GameObject go;
             using (new FactorySwapToEditor()) {
-                go = LDefaultControls.CreateText(GetStandardResources());
+                go = DefaultControls.CreateText(GetStandardResources());
             }
             PlaceUIElementRoot(go, menuCommand);
         }
@@ -51,7 +52,7 @@ namespace Framework.UI {
         public static void AddImage(MenuCommand menuCommand) {
             GameObject go;
             using (new FactorySwapToEditor()) {
-                go = LDefaultControls.CreateImage(GetStandardResources());
+                go = DefaultControls.CreateImage(GetStandardResources());
             }
             PlaceUIElementRoot(go, menuCommand);
         }
@@ -59,7 +60,7 @@ namespace Framework.UI {
         public static void AddButton(MenuCommand menuCommand) {
             GameObject go;
             using (new FactorySwapToEditor()) {
-                go = LDefaultControls.CreateButton(GetStandardResources());
+                go = DefaultControls.CreateButton(GetStandardResources());
             }
             PlaceUIElementRoot(go, menuCommand);
         }
@@ -68,24 +69,33 @@ namespace Framework.UI {
         public static void AddDragButton(MenuCommand menuCommand) {
             GameObject go;
             using (new FactorySwapToEditor()) {
-                go = LDefaultControls.CreateDragButton(GetStandardResources());
+                go = DefaultControls.CreateDragButton(GetStandardResources());
+            }
+            PlaceUIElementRoot(go, menuCommand);
+        }
+        
+        [MenuItem(MenuPrefix + "ModelContainer", false, (int)MenuOptionsPriorityOrder.ModelContainer)]
+        public static void AddModelContainer(MenuCommand menuCommand) {
+            GameObject go;
+            using (new FactorySwapToEditor()) {
+                go = DefaultControls.CreateModelContainer(GetStandardResources());
             }
             PlaceUIElementRoot(go, menuCommand);
         }
 
         private class FactorySwapToEditor : IDisposable {
-            private readonly LDefaultControls.IFactoryControls _factory;
+            private readonly DefaultControls.IFactoryControls _factory;
             public FactorySwapToEditor() {
-                _factory = LDefaultControls.Factory;
-                LDefaultControls.Factory = DefaultEditorFactory.Default;
+                _factory = DefaultControls.Factory;
+                DefaultControls.Factory = DefaultEditorFactory.Default;
             }
 
             public void Dispose() {
-                LDefaultControls.Factory = _factory;
+                DefaultControls.Factory = _factory;
             }
         }
 
-        private class DefaultEditorFactory : LDefaultControls.IFactoryControls {
+        private class DefaultEditorFactory : DefaultControls.IFactoryControls {
             public static readonly DefaultEditorFactory Default = new();
             public GameObject CreateGameObject(string name, params Type[] components) {
                 return ObjectFactory.CreateGameObject(name, components);
@@ -134,7 +144,7 @@ namespace Framework.UI {
             }
         }
 
-        private static LDefaultControls.Resources GetStandardResources() {
+        private static DefaultControls.Resources GetStandardResources() {
             if (_standardResources.standard != null) return _standardResources;
             _standardResources.standard = AssetDatabase.GetBuiltinExtraResource<Sprite>(StandardSpritePath);
             _standardResources.background = AssetDatabase.GetBuiltinExtraResource<Sprite>(BackgroundSpritePath);

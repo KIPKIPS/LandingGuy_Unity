@@ -46,7 +46,7 @@ namespace Framework.UI {
             }
         }
         protected static void DOBind(string key) {
-            if (_bindDict.TryAdd(key,new Bindable(_uiBinding, key))) {
+            if (_bindDict.TryAdd(key,new Bindable(_uiBinding, key,default))) {
                 _bindDict[key].Value = default;
             }
         }
