@@ -21,7 +21,8 @@ namespace Framework.UI {
                 _renderTexture = new RenderTexture(size.x,size.y,DepthBits,RenderTextureFormat.ARGB32,RenderTextureReadWrite.Default) {
                     antiAliasing = 1,
                     depthStencilFormat = GraphicsFormat.D24_UNorm,
-                    useMipMap = false
+                    useMipMap = false,
+                    name = "TempBuffer"
                 };
                 return _renderTexture;
             }
@@ -49,8 +50,8 @@ namespace Framework.UI {
             }
         }
         private void OnDestroy() {
-            DestroyImmediate(PrefabMounter.gameObject);
-            DestroyImmediate(RenderTexture);
+            DestroyImmediate(_prefabMounter.gameObject);
+            DestroyImmediate(_renderTexture);
         }
         public void LoadModel(string modelPath) {
             if (_modePath == modelPath) return;
