@@ -1,6 +1,7 @@
 ﻿// author:KIPKIPS
 // date:2023.02.03 11:39
 // describe:普通对象池
+using System;
 
 namespace Framework.Pool {
     /// <summary>
@@ -22,7 +23,7 @@ namespace Framework.Pool {
             result.IsRecycled = false;
             return result;
         }
-        
+
         /// <summary>
         /// 回收函数
         /// </summary>

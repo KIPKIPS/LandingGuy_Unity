@@ -3,7 +3,6 @@
 // describe:BasePage UI面板的基类
 // ReSharper disable InconsistentNaming
 using System.Collections.Generic;
-using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.Events;
 namespace Framework.UI {

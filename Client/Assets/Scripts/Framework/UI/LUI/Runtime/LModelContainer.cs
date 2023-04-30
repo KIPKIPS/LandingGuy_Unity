@@ -17,7 +17,8 @@ namespace Framework.UI {
         private RenderTexture RenderTexture {
             get {
                 if (_renderTexture != null) return _renderTexture;
-                size = new Vector2Int(size.x == 0 ? (int)RectTransform.rect.width : size.x, size.y == 0 ? (int)RectTransform.rect.height : size.y);
+                var rect = RectTransform.rect;
+                size = new Vector2Int(size.x == 0 ? (int)rect.width : size.x, size.y == 0 ? (int)rect.height : size.y);
                 _renderTexture = new RenderTexture(size.x,size.y,DepthBits,RenderTextureFormat.ARGB32,RenderTextureReadWrite.Default) {
                     antiAliasing = 1,
                     depthStencilFormat = GraphicsFormat.D24_UNorm,

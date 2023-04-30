@@ -1,9 +1,6 @@
-﻿// --[[
-//     author:{wkp}
-//     time:14:08
-// ]]
-using System;
-using Unity.Mathematics;
+﻿// author:KIPKIPS
+// date:2023.04.28 14:08
+// describe:扩展Image
 using UnityEditor;
 using UnityEngine;
 
@@ -30,7 +27,7 @@ namespace Framework.UI {
                 var t = _containerGo.transform;
                 t.SetParent(transform);
                 t.localPosition = Vector3.zero;
-                t.localRotation = quaternion.identity;
+                t.localRotation = Quaternion.identity;
                 t.localScale = Vector3.one;
                 return _containerGo; 
             }
@@ -59,7 +56,7 @@ namespace Framework.UI {
                 DestroyImmediate(_prefabGo);
             }
             var go = AssetDatabase.LoadAssetAtPath<GameObject>(modelPath);
-            _prefabGo = Instantiate(go, Vector3.zero, quaternion.identity, ContainerGo.transform);
+            _prefabGo = Instantiate(go, Vector3.zero, Quaternion.identity, ContainerGo.transform);
             _prefabGo.transform.localScale = Vector3.one;
         }
         public void SetModelLocalRotation(Vector3 v) {

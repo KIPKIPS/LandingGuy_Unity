@@ -1,9 +1,7 @@
-﻿// --[[
-//     author:{wkp}
-//     time:12:12
-// ]]
+﻿// author:KIPKIPS
+// date:2023.04.28 12:12
+// describe:挂载管理器
 using Framework.Singleton;
-using Unity.Mathematics;
 using UnityEngine;
 
 namespace Framework.Manager {
@@ -17,10 +15,13 @@ namespace Framework.Manager {
                 };
                 _modelMountRoot = go.transform;
                 _modelMountRoot.localPosition = Vector3.zero;
-                _modelMountRoot.localRotation = quaternion.identity;
+                _modelMountRoot.localRotation = Quaternion.identity;
                 _modelMountRoot.localScale = Vector3.one;
                 return _modelMountRoot;
             }
+        }
+        public override void Dispose() {
+            Object.Destroy(_modelMountRoot);
         }
     }
 }

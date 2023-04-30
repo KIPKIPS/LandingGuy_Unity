@@ -1,7 +1,6 @@
-﻿// --[[
-//     author:{wkp}
-//     time:14:02
-// ]]
+﻿// author:KIPKIPS
+// date:2023.04.28 14:05
+// describe:模型绑定器
 // ReSharper disable InconsistentNaming
 // ReSharper disable MemberCanBePrivate.Global
 using UnityEngine;

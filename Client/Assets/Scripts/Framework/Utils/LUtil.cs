@@ -10,6 +10,8 @@ using System.Collections.Generic;
 using Framework.Manager;
 // using System.Reflection;
 using Framework.Pool;
+using Object = System.Object;
+
 namespace Framework {
     // ReSharper disable UnusedMember.Global
     // ReSharper disable MemberCanBePrivate.Global
@@ -330,6 +332,29 @@ namespace Framework {
         /// </summary>
         /// <param name="callback">update执行的tick</param>
         public static void RemoveUpdate(Action callback) => MonoManager.Instance.UPDATE -= callback;
+        
+        /// <summary>
+        /// 提供给普通类的添加Update方法的函数
+        /// </summary>
+        /// <param name="callback">update执行的tick</param>
+        public static void AddLateUpdate(Action callback) => MonoManager.Instance.LATEUPDATE += callback;
+
+        /// <summary>
+        /// 提供给普通类的移除Update方法的函数
+        /// </summary>
+        /// <param name="callback">update执行的tick</param>
+        public static void RemoveLateUpdate(Action callback) => MonoManager.Instance.LATEUPDATE -= callback;
+        
+        /// <summary>
+        /// 提供给普通类的添加Update方法的函数
+        /// </summary>
+        /// <param name="callback">update执行的tick</param>
+        public static void AddFixedUpdate(Action callback) => MonoManager.Instance.FIXEDUPDATE += callback;
+        /// <summary>
+        /// 提供给普通类的移除Update方法的函数
+        /// </summary>
+        /// <param name="callback">update执行的tick</param>
+        public static void RemoveFixedUpdate(Action callback) => MonoManager.Instance.FIXEDUPDATE -= callback;
         
         /// <summary>
         /// 提供给普通类的不销毁对象的函数
