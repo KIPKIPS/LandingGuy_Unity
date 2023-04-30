@@ -46,13 +46,12 @@ namespace Framework.Controller {
                 }
                 transitionCoroutine = StartCoroutine(TransitionAnimation(fixedTime, currentIs1));
                 currentIs1 = !currentIs1;
-                //todo:过渡
             }
             if (!_graph.IsPlaying()) {
                 _graph.Play();
             }
         }
-        IEnumerator TransitionAnimation(float fixedTime, bool is1) {
+        private IEnumerator TransitionAnimation(float fixedTime, bool is1) {
             float currentWight = 1;
             float speed = 1 / fixedTime;
             while (currentWight > 0) {

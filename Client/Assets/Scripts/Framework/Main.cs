@@ -8,7 +8,7 @@ using UnityEngine.Profiling;
 using SceneManager = Framework.Manager.SceneManager;
 
 namespace Framework {
-    public class Launcher : MonoBehaviour {
+    public class Main : MonoBehaviour {
         private void Awake() {
             DontDestroyOnLoad(this);
             MonoManager.Instance.Launch();

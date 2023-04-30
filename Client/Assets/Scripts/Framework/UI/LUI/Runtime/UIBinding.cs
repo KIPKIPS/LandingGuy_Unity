@@ -3,7 +3,6 @@
 // describe:ui绑定器
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using UnityEngine;
 using Object = UnityEngine.Object;

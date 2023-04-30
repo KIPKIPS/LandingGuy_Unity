@@ -3,6 +3,9 @@
 // describe:
 namespace Framework.Controller {
     public class IdleState:BaseRoleState {
+        // public IdleState() {
+        //     
+        // }
         public override void Enter() {
             roleController.ChangeState(RoleState.Idle);
         }

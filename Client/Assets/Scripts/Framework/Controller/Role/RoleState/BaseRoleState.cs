@@ -6,8 +6,8 @@ using Framework.AI;
 namespace Framework.Controller {
     public abstract class BaseRoleState:BaseState {
         protected RoleController roleController;
-        public override void Init(IStateMachineOwner owner, int stateType, StateMachine sm) {
-            base.Init(owner, stateType, sm);
+        public override void Init(IStateMachineOwner owner, int stateType, StateMachine machine) {
+            base.Init(owner, stateType, machine);
             roleController = (RoleController)owner;
         }
     }

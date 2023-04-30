@@ -8,6 +8,8 @@ namespace Framework.UI {
     public class PrefabMounter:MonoBehaviour {
         private Camera _camera;
         private GameObject _cameraGo;
+        private GameObject _prefabGo;
+        private GameObject _containerGo;
         private GameObject CameraGo {
             get {
                 if (_cameraGo != null) return _cameraGo;
@@ -20,7 +22,6 @@ namespace Framework.UI {
                 return _cameraGo;
             }
         }
-        private GameObject _containerGo;
         private GameObject ContainerGo {
             get {if (_containerGo != null) return _containerGo;
                 _containerGo = new GameObject("Container");
@@ -50,7 +51,6 @@ namespace Framework.UI {
                 DestroyImmediate(_prefabGo);
             }
         }
-        private GameObject _prefabGo;
         public void SetModelPath(string modelPath) {
             if (_prefabGo != null) {
                 DestroyImmediate(_prefabGo);

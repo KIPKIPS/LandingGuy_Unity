@@ -2,6 +2,7 @@
 // date:2023.04.29 20:24
 // describe:
 using System.Collections.Generic;
+using Framework.Manager;
 using Framework.Pool;
 
 namespace Framework.AI {
@@ -9,7 +10,7 @@ namespace Framework.AI {
     }
     public class StateMachine {
         // 当前状态
-        public int CurrStateType { get; private set; } = -1;
+        public int CurStateType { get; private set; } = -1;
         // 当前生效中的状态
         private BaseState currStateObj;
 
@@ -35,7 +36,7 @@ namespace Framework.AI {
         /// <returns></returns>
         public bool ChangeState<T>(int newStateType, bool reCurState = false) where T : BaseState, new() {
             // 状态一致，并且不需要刷新状态，则切换失败
-            if (newStateType == CurrStateType && !reCurState) return false;
+            if (newStateType == CurStateType && !reCurState) return false;
 
             // 退出当前状态
             if (currStateObj != null) {
@@ -46,7 +47,7 @@ namespace Framework.AI {
             }
             // 进入新状态
             currStateObj = GetState<T>(newStateType);
-            CurrStateType = newStateType;
+            CurStateType = newStateType;
             currStateObj.Enter();
             LUtil.AddUpdate(currStateObj.Update);
             LUtil.AddLateUpdate(currStateObj.LateUpdate);
@@ -59,7 +60,8 @@ namespace Framework.AI {
         private BaseState GetState<T>(int stateType) where T : BaseState, new() {
             if (stateDic.ContainsKey(stateType)) return stateDic[stateType];
             // BaseState state = ResManager.Load<T>();
-            BaseState state = new T();
+            BaseState state = PoolManager.Instance.Allocate<T>();
+            
             state.Init(owner, stateType, this);
             stateDic.Add(stateType, state);
             return state;
@@ -74,12 +76,12 @@ namespace Framework.AI {
             LUtil.RemoveUpdate(currStateObj.Update);
             LUtil.RemoveLateUpdate(currStateObj.LateUpdate);
             LUtil.RemoveFixedUpdate(currStateObj.FixedUpdate);
-            CurrStateType = -1;
+            CurStateType = -1;
             currStateObj = null;
             // 处理缓存中所有状态的逻辑
             using var enumerator = stateDic.GetEnumerator();
             while (enumerator.MoveNext()) {
-                enumerator.Current.Value.UnInit();
+                enumerator.Current.Value.OnRecycled();
             }
             stateDic.Clear();
         }
