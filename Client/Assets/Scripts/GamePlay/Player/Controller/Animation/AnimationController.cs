@@ -7,15 +7,15 @@ using UnityEngine;
 using UnityEngine.Animations;
 using UnityEngine.Playables;
 
-namespace Framework.Controller {
+namespace GamePlay.Player {
     public class AnimationController : MonoBehaviour {
         [SerializeField] private Animator _animator;
         private AnimationMixerPlayable _mixer;
         private PlayableGraph _graph;
-        private bool _isFirstPlay = true;
-        private AnimationClipPlayable clipPlayable1;
-        private AnimationClipPlayable clipPlayable2;
-        private bool currentIs1;
+        private bool _isInit = true;
+        private AnimationClipPlayable currentClipPlayable;
+        private AnimationClipPlayable targetClipPlayable;
+        private bool isCurrent;
         private Coroutine transitionCoroutine;
         public void Init() {
             _graph = PlayableGraph.Create("AnimationController");
@@ -25,27 +25,27 @@ namespace Framework.Controller {
             playableOutput.SetSourcePlayable(_mixer);
         }
         public void PlayAnimation(AnimationClip clip, float fixedTime = 0.25f) {
-            if (_isFirstPlay) {
-                clipPlayable1 = AnimationClipPlayable.Create(_graph, clip);
-                _graph.Connect(clipPlayable1, 0, _mixer, 0);
+            if (_isInit) {
+                currentClipPlayable = AnimationClipPlayable.Create(_graph, clip);
+                _graph.Connect(currentClipPlayable, 0, _mixer, 0);
                 _mixer.SetInputWeight(0, 1);
-                _isFirstPlay = false;
-                currentIs1 = true;
+                _isInit = false;
+                isCurrent = true;
             } else {
-                if (currentIs1) { //1-> 2
+                if (isCurrent) { //1-> 2
                     _graph.Disconnect(_mixer, 1); //解除2
-                    clipPlayable2 = AnimationClipPlayable.Create(_graph, clip);
-                    _graph.Connect(clipPlayable2, 0, _mixer, 1);
+                    targetClipPlayable = AnimationClipPlayable.Create(_graph, clip);
+                    _graph.Connect(targetClipPlayable, 0, _mixer, 1);
                 } else {
                     _graph.Disconnect(_mixer, 0); //解除1
-                    clipPlayable1 = AnimationClipPlayable.Create(_graph, clip);
-                    _graph.Connect(clipPlayable1, 0, _mixer, 0);
+                    currentClipPlayable = AnimationClipPlayable.Create(_graph, clip);
+                    _graph.Connect(currentClipPlayable, 0, _mixer, 0);
                 }
                 if (transitionCoroutine != null) {
                     StopCoroutine(transitionCoroutine);
                 }
-                transitionCoroutine = StartCoroutine(TransitionAnimation(fixedTime, currentIs1));
-                currentIs1 = !currentIs1;
+                transitionCoroutine = StartCoroutine(TransitionAnimation(fixedTime, isCurrent));
+                isCurrent = !isCurrent;
             }
             if (!_graph.IsPlaying()) {
                 _graph.Play();

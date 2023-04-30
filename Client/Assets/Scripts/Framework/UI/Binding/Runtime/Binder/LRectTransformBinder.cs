@@ -88,8 +88,6 @@ namespace Framework.UI {
                 case AttributeType.localScale:
                     target.localScale = value;
                     break;
-                default:
-                    break;
             }
         }
         public override void SetQuaternion(Object mono, int linkerType, Quaternion value) {

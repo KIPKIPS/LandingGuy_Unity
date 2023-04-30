@@ -32,12 +32,11 @@ namespace Framework.AI {
         /// <typeparam name="T">具体要切换到的状态脚本类型</typeparam>
         /// <param name="newState">新状态</param>
         /// <param name="newStateType"></param>
-        /// <param name="reCurState">新状态和当前状态一致的情况下，是否也要切换</param>
+        /// <param name="reCurState">新状态和当前状态一致的情况下,是否也要切换</param>
         /// <returns></returns>
         public bool ChangeState<T>(int newStateType, bool reCurState = false) where T : BaseState, new() {
-            // 状态一致，并且不需要刷新状态，则切换失败
+            // 状态一致,并且不需要刷新状态,则切换失败
             if (newStateType == CurStateType && !reCurState) return false;
-
             // 退出当前状态
             if (currStateObj != null) {
                 currStateObj.Exit();
@@ -59,16 +58,14 @@ namespace Framework.AI {
         /// </summary>
         private BaseState GetState<T>(int stateType) where T : BaseState, new() {
             if (stateDic.ContainsKey(stateType)) return stateDic[stateType];
-            // BaseState state = ResManager.Load<T>();
             BaseState state = PoolManager.Instance.Allocate<T>();
-            
             state.Init(owner, stateType, this);
             stateDic.Add(stateType, state);
             return state;
         }
         /// <summary>
         /// 停止工作
-        /// 把所有状态都释放，但是StateMachine未来还可以工作
+        /// 把所有状态都释放,但是StateMachine未来还可以工作
         /// </summary>
         public void Stop() {
             // 处理当前状态的额外逻辑
@@ -86,10 +83,9 @@ namespace Framework.AI {
             stateDic.Clear();
         }
         /// <summary>
-        /// 销毁，宿主应该释放掉StateMachine的引用
+        /// 销毁,宿主应该释放掉StateMachine的引用
         /// </summary>
         public void Destroy() {
-            owner = null;
             Stop();
         }
     }

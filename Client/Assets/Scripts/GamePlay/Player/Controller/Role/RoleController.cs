@@ -4,7 +4,7 @@
 using System;
 using UnityEngine;
 using Framework.AI;
-namespace Framework.Controller {
+namespace GamePlay.Player {
     public class RoleController:MonoBehaviour,IStateMachineOwner {
         public AnimationClip[] clips;
         private AnimationController animCtrl;

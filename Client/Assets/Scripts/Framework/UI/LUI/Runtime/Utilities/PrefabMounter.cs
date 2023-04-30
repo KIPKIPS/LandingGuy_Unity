@@ -39,7 +39,6 @@ namespace Framework.UI {
                 _camera = CameraGo.AddComponent<Camera>();
                 _camera.clearFlags = CameraClearFlags.SolidColor;
                 _camera.cullingMask = LayerMask.NameToLayer("Default") | LayerMask.NameToLayer("3DUI");
-                // _camera.targetTexture = RenderTexture;
                 return _camera;
             }
         }

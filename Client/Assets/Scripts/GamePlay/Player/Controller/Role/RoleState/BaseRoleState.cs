@@ -3,7 +3,7 @@
 // describe:
 using Framework.AI;
 
-namespace Framework.Controller {
+namespace GamePlay.Player {
     public abstract class BaseRoleState:BaseState {
         protected RoleController roleController;
         public override void Init(IStateMachineOwner owner, int stateType, StateMachine machine) {

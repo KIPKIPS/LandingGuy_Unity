@@ -7,8 +7,6 @@ using Framework.Pool;
 namespace Framework.AI {
     public class BaseState : IPoolAble {
         protected StateMachine stateMachine;
-        public BaseState() {
-        }
         /// <summary>
         /// 初始化状态
         /// 只在状态第一次创建时执行
@@ -21,12 +19,10 @@ namespace Framework.AI {
         }
         /// <summary>
         /// 反初始化
-        /// 不再使用时候，放回对象池时调用
-        /// 把一些引用置空，防止不能被GC
+        /// 不再使用时候,放回对象池时调用
+        /// 把一些引用置空,防止不能被GC
         /// </summary>
-        public virtual void OnRecycled() {
-            PoolManager.Instance.Recycle(this);
-        }
+        public virtual void OnRecycled() => PoolManager.Instance.Recycle(this);
         /// <summary>
         /// 状态进入
         /// 每次进入都会执行

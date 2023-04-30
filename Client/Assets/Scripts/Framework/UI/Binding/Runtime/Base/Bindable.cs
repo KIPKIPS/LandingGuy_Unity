@@ -11,7 +11,7 @@ namespace Framework.UI {
         //保存真正的值
         private dynamic _value;
         private bool _isInit;
-        //get时返回真正的值，set时顺便调用值改变事件
+        //get时返回真正的值,set时顺便调用值改变事件
         public dynamic Value {
             get => _value;
             set {
