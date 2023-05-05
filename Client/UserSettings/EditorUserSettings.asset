@@ -6,34 +6,34 @@ EditorUserSettings:
   serializedVersion: 4
   m_ConfigSettings:
     RecentlyUsedSceneGuid-0:
-      value: 0004045e03505e0f0c5d5b7211260b4443164c7d2e7f7631787f1c30b3b1606f
-      flags: 0
-    RecentlyUsedSceneGuid-1:
-      value: 0154035154020d035a5d557315760944414e197d7f7822317d2c4465b6b26168
-      flags: 0
-    RecentlyUsedSceneGuid-2:
-      value: 5506575652010d5d5c5c0f2042700644124e1e7a2d7920632c284c64e7e2616d
-      flags: 0
-    RecentlyUsedSceneGuid-3:
-      value: 0709010301010b5a590d0d7a16260d444e4f4d2e7a2d72687a2a4d6ae3b1673b
-      flags: 0
-    RecentlyUsedSceneGuid-4:
-      value: 0054045350035003585d5a2414265d44474f407c7a7a7563752a4c6ab7b2623d
-      flags: 0
-    RecentlyUsedSceneGuid-5:
-      value: 505501040657080d5b0d087744250844474f497f2d7a25602f7d4e37e4b73269
-      flags: 0
-    RecentlyUsedSceneGuid-6:
       value: 0502075150530f0f0b0a5b2611275a4445154c2c7a297f642f2d4e62e1e2636a
       flags: 0
-    RecentlyUsedSceneGuid-7:
+    RecentlyUsedSceneGuid-1:
       value: 56050c0051535d5f5b0f08754271074414151d297b2a71317b2c4f6ab6b3376c
       flags: 0
-    RecentlyUsedSceneGuid-8:
+    RecentlyUsedSceneGuid-2:
       value: 025050025554510a59585f7742770a444515492c2d7d27342e7f4436b3b33561
       flags: 0
-    RecentlyUsedSceneGuid-9:
+    RecentlyUsedSceneGuid-3:
       value: 5a08575f5207595a0f5d59741173094444164f7d7d2a23317c7a4465bbe1646d
+      flags: 0
+    RecentlyUsedSceneGuid-4:
+      value: 5503515500055f5e0e565e261227064444164f2e787e7f68797f1c37b2e46068
+      flags: 0
+    RecentlyUsedSceneGuid-5:
+      value: 0105070004005f0c5d0c597a44225d44104f412f2a7871677b7d1b30b5b66260
+      flags: 0
+    RecentlyUsedSceneGuid-6:
+      value: 5453025400575d0b5c5d0e7a48200d44144e4b29757b276179714865e3b73669
+      flags: 0
+    RecentlyUsedSceneGuid-7:
+      value: 5308520254510c0d540b0f7643270744424e4d72287976627f281c61e6e5366e
+      flags: 0
+    RecentlyUsedSceneGuid-8:
+      value: 56050554040c0f5855585d7a137b0f44424f487d752a7e60797d1962b3b9353e
+      flags: 0
+    RecentlyUsedSceneGuid-9:
+      value: 53070c520002585e0e5e597346225d444f151e287f7e71642e2c4c67e7b43139
       flags: 0
     UIBuilder.EditorExtensionModeKey:
       value: 37434103
