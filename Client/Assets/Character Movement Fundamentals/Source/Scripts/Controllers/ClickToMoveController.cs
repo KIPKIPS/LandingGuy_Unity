@@ -1,277 +1,228 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using CMF;
 
 //This controller provides basic 'click-to-move' functionality;
 //It can be used as a starting point for a variety of top-down (or isometric) games, which are primarily controlled via mouse input;
-public class ClickToMoveController : Controller
-{
-	//Controller movement speed;
-	public float movementSpeed = 10f;
-	//Downward gravity;
-	public float gravity = 30f;
+public class ClickToMoveController : Controller {
+    //Controller movement speed;
+    public float movementSpeed = 10f;
+    //Downward gravity;
+    public float gravity = 30f;
 
-	float currentVerticalSpeed = 0f;
-	bool isGrounded = false;
+    private float _currentVerticalSpeed;
+    private bool _isGrounded;
 
-	//Current position to move towards;
-	Vector3 currentTargetPosition;
-	//If the distance between controller and target position is smaller than this, the target is reached;
-	float reachTargetThreshold = 0.001f;
+    //Current position to move towards;
+    private Vector3 _currentTargetPosition;
+    //If the distance between controller and target position is smaller than this, the target is reached;
+    private const float ReachTargetThreshold = 0.001f;
 
-	//Whether the user can hold down the mouse button to continually move the controller;
-	public bool holdMouseButtonToMove = false;
+    //Whether the user can hold down the mouse button to continually move the controller;
+    public bool holdMouseButtonToMove;
 
-	//Whether the target position is determined by raycasting against an abstract plane or the actual level geometry;
-	//'AbstractPlane' is less accurate, but simpler (and will automatically ignore colliders between the camera and target position);
-	//'Raycast' is more accurate, but ceilings or intersecting geometry (between camera and target position) must be handled separately;
-	public enum MouseDetectionType
-	{
-		AbstractPlane, 
-		Raycast
-	}
-	public MouseDetectionType mouseDetectionType = MouseDetectionType.AbstractPlane;
+    //Whether the target position is determined by raycasting against an abstract plane or the actual level geometry;
+    //'AbstractPlane' is less accurate, but simpler (and will automatically ignore colliders between the camera and target position);
+    //'Raycast' is more accurate, but ceilings or intersecting geometry (between camera and target position) must be handled separately;
+    public enum MouseDetectionType {
+        AbstractPlane,
+        Raycast
+    }
 
-	//Layermask used when 'Raycast' is selected;
-	public LayerMask raycastLayerMask = ~0;
+    public MouseDetectionType mouseDetectionType = MouseDetectionType.AbstractPlane;
 
-	//Timeout variables;
-	//If the controller is stuck walking against a wall, movement will be canceled if it hasn't moved at least a certain distance in a certain time;
-	//'timeOutTime' controls the time window during which the controller has to move (or else it stops moving);
-	public float timeOutTime = 1f;
-	float currentTimeOutTime = 1f;
-	//This controls the minimum amount of distance needed to be moved (or else the controller stops moving);
-	public float timeOutDistanceThreshold = 0.05f;
-	Vector3 lastPosition;
+    //Layermask used when 'Raycast' is selected;
+    public LayerMask raycastLayerMask = ~0;
 
-	//Reference to the player's camera (used for raycasting);
-	public Camera playerCamera;
+    //Timeout variables;
+    //If the controller is stuck walking against a wall, movement will be canceled if it hasn't moved at least a certain distance in a certain time;
+    //'timeOutTime' controls the time window during which the controller has to move (or else it stops moving);
+    public float timeOutTime = 1f;
+    private float _currentTimeOutTime = 1f;
+    //This controls the minimum amount of distance needed to be moved (or else the controller stops moving);
+    public float timeOutDistanceThreshold = 0.05f;
+    private Vector3 _lastPosition;
 
-	//Whether or not the controller currently has a valid target position to move towards;
-	bool hasTarget = false;
+    //Reference to the player's camera (used for raycasting);
+    public Camera playerCamera;
 
-	Vector3 lastVelocity = Vector3.zero;
-	Vector3 lastMovementVelocity = Vector3.zero;
+    //Whether or not the controller currently has a valid target position to move towards;
+    private bool _hasTarget;
 
-	//Abstarct ground plane used when 'AbstractPlane' is selected;
-	Plane groundPlane;
+    private Vector3 _lastVelocity = Vector3.zero;
+    private Vector3 _lastMovementVelocity = Vector3.zero;
+
+    //Abstarct ground plane used when 'AbstractPlane' is selected;
+    private Plane _groundPlane;
 
     //Reference to attached 'Mover' and transform component;
-    Mover mover;
-	Transform tr;
+    private Mover _mover;
+    private Transform _tr;
 
-    void Start()
-    {
+    private void Start() {
         //Get references to necessary components;
-        mover = GetComponent<Mover>();
-		tr = transform;
+        _mover = GetComponent<Mover>();
+        _tr = transform;
+        if (playerCamera == null) Debug.LogWarning("No camera has been assigned to this controller!", this);
 
-		if(playerCamera == null)
-			Debug.LogWarning("No camera has been assigned to this controller!", this);
-
-		//Initialize variables;
-		lastPosition = tr.position;
-		currentTargetPosition = transform.position;
-		groundPlane = new Plane(tr.up, tr.position);
+        //Initialize variables;
+        var position = _tr.position;
+        _lastPosition = position;
+        _currentTargetPosition = transform.position;
+        _groundPlane = new Plane(_tr.up, position);
     }
 
-	void Update()
-	{
-		//Handle mouse input (check for input, determine new target position);
-		HandleMouseInput();
-	}
+    private void Update() {
+        //Handle mouse input (check for input, determine new target position);
+        HandleMouseInput();
+    }
 
-    void FixedUpdate()
-    {
+    private void FixedUpdate() {
         //Run initial mover ground check;
-        mover.CheckForGround();
+        _mover.CheckForGround();
 
         //Check whether the character is grounded;
-        isGrounded = mover.IsGrounded();
+        _isGrounded = _mover.IsGrounded();
 
-		//Handle timeout (stop controller if it is stuck);
-		HandleTimeOut();
-
-        Vector3 _velocity = Vector3.zero;
-
+        //Handle timeout (stop controller if it is stuck);
+        HandleTimeOut();
         //Calculate the final velocity for this frame;
-		_velocity = CalculateMovementVelocity();
-		lastMovementVelocity = _velocity;
+        var velocity = CalculateMovementVelocity();
+        _lastMovementVelocity = velocity;
 
-		//Calculate and apply gravity;
-		HandleGravity();
-		_velocity += tr.up * currentVerticalSpeed;
+        //Calculate and apply gravity;
+        HandleGravity();
+        velocity += _tr.up * _currentVerticalSpeed;
 
         //If the character is grounded, extend ground detection sensor range;
-        mover.SetExtendSensorRange(isGrounded);
+        _mover.SetExtendSensorRange(_isGrounded);
         //Set mover velocity;
-        mover.SetVelocity(_velocity);
+        _mover.SetVelocity(velocity);
 
-		//Save velocity for later;
-		lastVelocity = _velocity;
+        //Save velocity for later;
+        _lastVelocity = velocity;
     }
 
-	//Calculate movement velocity based on the current target position;
-	Vector3 CalculateMovementVelocity()
-	{
-		//Return no velocity if controller currently has no target;	
-		if(!hasTarget)
-			return Vector3.zero;
+    //Calculate movement velocity based on the current target position;
+    private Vector3 CalculateMovementVelocity() {
+        //Return no velocity if controller currently has no target;	
+        if (!_hasTarget) return Vector3.zero;
 
-		//Calculate vector to target position;
-		Vector3 _toTarget = currentTargetPosition - tr.position;
+        //Calculate vector to target position;
+        var toTarget = _currentTargetPosition - _tr.position;
 
-		//Remove all vertical parts of vector;
-		_toTarget = VectorMath.RemoveDotVector(_toTarget, tr.up);
-		
-		//Calculate distance to target;
-		float _distanceToTarget = _toTarget.magnitude;
+        //Remove all vertical parts of vector;
+        toTarget = VectorMath.RemoveDotVector(toTarget, _tr.up);
 
-		//If controller has already reached target position, return no velocity;
-		if(_distanceToTarget <= reachTargetThreshold)
-		{
-			hasTarget = false;
-			return Vector3.zero;
-		}
-			
-		Vector3 _velocity = _toTarget.normalized * movementSpeed;
+        //Calculate distance to target;
+        var distanceToTarget = toTarget.magnitude;
 
-		//Check for overshooting;
-		if(movementSpeed * Time.fixedDeltaTime > _distanceToTarget)
-		{
-			_velocity = _toTarget.normalized * _distanceToTarget;
-			hasTarget = false;
-		}
-	
-		return _velocity;
-	}
+        //If controller has already reached target position, return no velocity;
+        if (distanceToTarget <= ReachTargetThreshold) {
+            _hasTarget = false;
+            return Vector3.zero;
+        }
+        var velocity = toTarget.normalized * movementSpeed;
 
-	//Calculate current gravity;
-	void HandleGravity()
-	{
-		//Handle gravity;
-		if(!isGrounded)
-			currentVerticalSpeed -= gravity * Time.deltaTime;
-		else
-		{
-			if(currentVerticalSpeed < 0f)
-			{
-				if(OnLand != null)
-					OnLand(tr.up * currentVerticalSpeed);
-			}
-			
-			currentVerticalSpeed = 0f;
-		}
-	}
+        //Check for overshooting;
+        if (!(movementSpeed * Time.fixedDeltaTime > distanceToTarget)) return velocity;
+        velocity = toTarget.normalized * distanceToTarget;
+        _hasTarget = false;
+        return velocity;
+    }
 
-	//Handle mouse input (mouse clicks, [...]);
-	void HandleMouseInput()
-	{
-		//If no camera has been assigned, stop function execution;
-		if(playerCamera == null)
-			return;
+    //Calculate current gravity;
+    private void HandleGravity() {
+        //Handle gravity;
+        if (!_isGrounded)
+            _currentVerticalSpeed -= gravity * Time.deltaTime;
+        else {
+            if (_currentVerticalSpeed < 0f) {
+                OnLand?.Invoke(_tr.up * _currentVerticalSpeed);
+            }
+            _currentVerticalSpeed = 0f;
+        }
+    }
 
-		//If a valid mouse press has been detected, raycast to determine the new target position;
-		if(!holdMouseButtonToMove && WasMouseButtonJustPressed() || holdMouseButtonToMove && IsMouseButtonPressed())
-		{
-			//Set up mouse ray (based on screen position);
-			Ray _mouseRay = playerCamera.ScreenPointToRay(GetMousePosition());
+    //Handle mouse input (mouse clicks, [...]);
+    private void HandleMouseInput() {
+        //If no camera has been assigned, stop function execution;
+        if (playerCamera == null) return;
 
-			if(mouseDetectionType == MouseDetectionType.AbstractPlane)
-			{
-				//Set up abstract ground plane;
-				groundPlane.SetNormalAndPosition(tr.up, tr.position);
-				float _enter = 0f;
+        //If a valid mouse press has been detected, raycast to determine the new target position;
+        if ((holdMouseButtonToMove || !WasMouseButtonJustPressed()) && (!holdMouseButtonToMove || !IsMouseButtonPressed())) return;
+        //Set up mouse ray (based on screen position);
+        var mouseRay = playerCamera.ScreenPointToRay(GetMousePosition());
+        if (mouseDetectionType == MouseDetectionType.AbstractPlane) {
+            //Set up abstract ground plane;
+            _groundPlane.SetNormalAndPosition(_tr.up, _tr.position);
 
-				//Raycast against ground plane;
-				if(groundPlane.Raycast(_mouseRay, out _enter))
-				{
-					currentTargetPosition = _mouseRay.GetPoint(_enter);
-					hasTarget = true;
-				}
-				else
-					hasTarget = false;
-			}
-			else if(mouseDetectionType == MouseDetectionType.Raycast)
-			{
-				RaycastHit _hit;
+            //Raycast against ground plane;
+            if (_groundPlane.Raycast(mouseRay, out var enter)) {
+                _currentTargetPosition = mouseRay.GetPoint(enter);
+                _hasTarget = true;
+            } else
+                _hasTarget = false;
+        } else if (mouseDetectionType == MouseDetectionType.Raycast) {
+            //Raycast against level geometry;
+            if (Physics.Raycast(mouseRay, out var hit, 100f, raycastLayerMask, QueryTriggerInteraction.Ignore)) {
+                _currentTargetPosition = hit.point;
+                _hasTarget = true;
+            } else
+                _hasTarget = false;
+        }
+    }
 
-				//Raycast against level geometry;
-				if(Physics.Raycast(_mouseRay, out _hit, 100f, raycastLayerMask, QueryTriggerInteraction.Ignore))
-				{
-					currentTargetPosition = _hit.point;
-					hasTarget = true;
-				}
-				else
-					hasTarget = false;
-			}
-			
-		}
-	}
+    //Handle timeout (stop controller from moving if it is stuck against level geometry);
+    private void HandleTimeOut() {
+        //If controller currently has no target, reset time and return;
+        if (!_hasTarget) {
+            _currentTimeOutTime = 0f;
+            return;
+        }
 
-	//Handle timeout (stop controller from moving if it is stuck against level geometry);
-	void HandleTimeOut()
-	{
-		//If controller currently has no target, reset time and return;
-		if(!hasTarget)
-		{
-			currentTimeOutTime = 0f;
-			return;
-		}
+        //If controller has moved enough distance, reset time;
+        if (Vector3.Distance(_tr.position, _lastPosition) > timeOutDistanceThreshold) {
+            _currentTimeOutTime = 0f;
+            _lastPosition = _tr.position;
+        }
+        //If controller hasn't moved a sufficient distance, increment current timeout time;
+        else {
+            _currentTimeOutTime += Time.deltaTime;
 
-		//If controller has moved enough distance, reset time;
-		if(Vector3.Distance(tr.position, lastPosition) > timeOutDistanceThreshold)
-		{
-			currentTimeOutTime = 0f;
-			lastPosition = tr.position;
-		}
-		//If controller hasn't moved a sufficient distance, increment current timeout time;
-		else
-		{
-			currentTimeOutTime += Time.deltaTime;
+            //If current timeout time has reached limit, stop controller from moving;
+            if (_currentTimeOutTime >= timeOutTime) {
+                _hasTarget = false;
+            }
+        }
+    }
 
-			//If current timeout time has reached limit, stop controller from moving;
-			if(currentTimeOutTime >= timeOutTime)
-			{
-				hasTarget = false;
-			}
-		}
-	}
+    //Get current screen position of mouse cursor;
+    //This function can be overridden to implement other input methods;
+    private Vector2 GetMousePosition() {
+        return Input.mousePosition;
+    }
 
-	//Get current screen position of mouse cursor;
-	//This function can be overridden to implement other input methods;
-	protected Vector2 GetMousePosition()
-	{
-		return Input.mousePosition;
-	}
+    //Check whether mouse button is currently pressed down;
+    //This function can be overridden to implement other input methods;
+    private bool IsMouseButtonPressed() {
+        return Input.GetMouseButton(0);
+    }
 
-	//Check whether mouse button is currently pressed down;
-	//This function can be overridden to implement other input methods;
-	protected bool IsMouseButtonPressed()
-	{
-		return Input.GetMouseButton(0);
-	}
+    //Check whether mouse button was just pressed down;
+    //This function can be overridden to implement other input methods;
+    private bool WasMouseButtonJustPressed() {
+        return Input.GetMouseButtonDown(0);
+    }
 
-	//Check whether mouse button was just pressed down;
-	//This function can be overridden to implement other input methods;
-	protected bool WasMouseButtonJustPressed()
-	{
-		return Input.GetMouseButtonDown(0);
-	}
+    public override bool IsGrounded() {
+        return _isGrounded;
+    }
 
-	public override bool IsGrounded()
-	{
-		return isGrounded;
-	}
+    public override Vector3 GetMovementVelocity() {
+        return _lastMovementVelocity;
+    }
 
-	public override Vector3 GetMovementVelocity()
-	{
-		return lastMovementVelocity;
-	}
-
-	public override Vector3 GetVelocity()
-	{
-		return lastVelocity;
-	}
+    public override Vector3 GetVelocity() {
+        return _lastVelocity;
+    }
 }

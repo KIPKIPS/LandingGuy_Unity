@@ -1,144 +1,113 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-namespace CMF
-{
+namespace CMF {
     //A very simplified controller script;
-	//This script is an example of a very simple walker controller that covers only the basics of character movement;
-    public class SimpleWalkerController : Controller
-    {
-        private Mover mover;
-        float currentVerticalSpeed = 0f;
-        bool isGrounded;
+    //This script is an example of a very simple walker controller that covers only the basics of character movement;
+    public class SimpleWalkerController : Controller {
+        private Mover _mover;
+        private float _currentVerticalSpeed;
+        private bool _isGrounded;
         public float movementSpeed = 7f;
         public float jumpSpeed = 10f;
         public float gravity = 10f;
 
-		Vector3 lastVelocity = Vector3.zero;
+        private Vector3 _lastVelocity = Vector3.zero;
 
-		public Transform cameraTransform;
-        CharacterInput characterInput;
-        Transform tr;
+        public Transform cameraTransform;
+        private CharacterInput _characterInput;
+        private Transform _tr;
 
         // Use this for initialization
-        void Start()
-        {
-            tr = transform;
-            mover = GetComponent<Mover>();
-            characterInput = GetComponent<CharacterInput>();
+        private void Start() {
+            _tr = transform;
+            _mover = GetComponent<Mover>();
+            _characterInput = GetComponent<CharacterInput>();
         }
 
-        void FixedUpdate()
-        {
+        void FixedUpdate() {
             //Run initial mover ground check;
-            mover.CheckForGround();
+            _mover.CheckForGround();
 
             //If character was not grounded int the last frame and is now grounded, call 'OnGroundContactRegained' function;
-            if(isGrounded == false && mover.IsGrounded() == true)
-                OnGroundContactRegained(lastVelocity);
+            if (_isGrounded == false && _mover.IsGrounded()) OnGroundContactRegained(_lastVelocity);
 
             //Check whether the character is grounded and store result;
-            isGrounded = mover.IsGrounded();
-
-            Vector3 _velocity = Vector3.zero;
+            _isGrounded = _mover.IsGrounded();
+            var velocity = Vector3.zero;
 
             //Add player movement to velocity;
-            _velocity += CalculateMovementDirection() * movementSpeed;
-            
+            velocity += CalculateMovementDirection() * movementSpeed;
+
             //Handle gravity;
-            if (!isGrounded)
-            {
-                currentVerticalSpeed -= gravity * Time.deltaTime;
-            }
-            else
-            {
-                if (currentVerticalSpeed <= 0f)
-                    currentVerticalSpeed = 0f;
+            if (!_isGrounded) {
+                _currentVerticalSpeed -= gravity * Time.deltaTime;
+            } else {
+                if (_currentVerticalSpeed <= 0f) _currentVerticalSpeed = 0f;
             }
 
             //Handle jumping;
-            if ((characterInput != null) && isGrounded && characterInput.IsJumpKeyPressed())
-            {
+            if ((_characterInput != null) && _isGrounded && _characterInput.IsJumpKeyPressed()) {
                 OnJumpStart();
-                currentVerticalSpeed = jumpSpeed;
-                isGrounded = false;
+                _currentVerticalSpeed = jumpSpeed;
+                _isGrounded = false;
             }
 
             //Add vertical velocity;
-            _velocity += tr.up * currentVerticalSpeed;
+            velocity += _tr.up * _currentVerticalSpeed;
 
-			//Save current velocity for next frame;
-			lastVelocity = _velocity;
-
-            mover.SetExtendSensorRange(isGrounded);
-            mover.SetVelocity(_velocity);
+            //Save current velocity for next frame;
+            _lastVelocity = velocity;
+            _mover.SetExtendSensorRange(_isGrounded);
+            _mover.SetVelocity(velocity);
         }
 
-        private Vector3 CalculateMovementDirection()
-        {
+        private Vector3 CalculateMovementDirection() {
             //If no character input script is attached to this object, return no input;
-			if(characterInput == null)
-				return Vector3.zero;
+            if (_characterInput == null) return Vector3.zero;
+            var direction = Vector3.zero;
 
-			Vector3 _direction = Vector3.zero;
+            //If no camera transform has been assigned, use the character's transform axes to calculate the movement direction;
+            if (cameraTransform == null) {
+                direction += _tr.right * _characterInput.GetHorizontalMovementInput();
+                direction += _tr.forward * _characterInput.GetVerticalMovementInput();
+            } else {
+                //If a camera transform has been assigned, use the assigned transform's axes for movement direction;
+                //Project movement direction so movement stays parallel to the ground;
+                var up = _tr.up;
+                direction += Vector3.ProjectOnPlane(cameraTransform.right, up).normalized * _characterInput.GetHorizontalMovementInput();
+                direction += Vector3.ProjectOnPlane(cameraTransform.forward, up).normalized * _characterInput.GetVerticalMovementInput();
+            }
 
-			//If no camera transform has been assigned, use the character's transform axes to calculate the movement direction;
-			if(cameraTransform == null)
-			{
-				_direction += tr.right * characterInput.GetHorizontalMovementInput();
-				_direction += tr.forward * characterInput.GetVerticalMovementInput();
-			}
-			else
-			{
-				//If a camera transform has been assigned, use the assigned transform's axes for movement direction;
-				//Project movement direction so movement stays parallel to the ground;
-				_direction += Vector3.ProjectOnPlane(cameraTransform.right, tr.up).normalized * characterInput.GetHorizontalMovementInput();
-				_direction += Vector3.ProjectOnPlane(cameraTransform.forward, tr.up).normalized * characterInput.GetVerticalMovementInput();
-			}
-
-			//If necessary, clamp movement vector to magnitude of 1f;
-			if(_direction.magnitude > 1f)
-				_direction.Normalize();
-
-			return _direction;
+            //If necessary, clamp movement vector to magnitude of 1f;
+            if (direction.magnitude > 1f) direction.Normalize();
+            return direction;
         }
 
         //This function is called when the controller has landed on a surface after being in the air;
-		void OnGroundContactRegained(Vector3 _collisionVelocity)
-		{
-			//Call 'OnLand' delegate function;
-			if(OnLand != null)
-				OnLand(_collisionVelocity);
-		}
+        private void OnGroundContactRegained(Vector3 collisionVelocity) {
+            //Call 'OnLand' delegate function;
+            OnLand?.Invoke(collisionVelocity);
+        }
 
         //This function is called when the controller has started a jump;
-        void OnJumpStart()
-        {
+        private void OnJumpStart() {
             //Call 'OnJump' delegate function;
-            if(OnJump != null)
-                OnJump(lastVelocity);
+            OnJump?.Invoke(_lastVelocity);
         }
 
         //Return the current velocity of the character;
-        public override Vector3 GetVelocity()
-        {
-            return lastVelocity;
+        public override Vector3 GetVelocity() {
+            return _lastVelocity;
         }
 
         //Return only the current movement velocity (without any vertical velocity);
-        public override Vector3 GetMovementVelocity()
-        {
-            return lastVelocity;
+        public override Vector3 GetMovementVelocity() {
+            return _lastVelocity;
         }
 
         //Return whether the character is currently grounded;
-        public override bool IsGrounded()
-        {
-            return isGrounded;
+        public override bool IsGrounded() {
+            return _isGrounded;
         }
-
     }
-
 }
-
