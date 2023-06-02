@@ -36,13 +36,13 @@ namespace CMF {
         private Vector3 _upwardsDirection;
 
         //References to transform and camera components;
-        private Transform _tr;
+        private Transform _transform;
         private Camera _cam;
         private CameraInput _cameraInput;
 
         //Setup references.
         private void Awake() {
-            _tr = transform;
+            _transform = transform;
             _cam = GetComponent<Camera>();
             _cameraInput = GetComponent<CameraInput>();
             if (_cameraInput == null) Debug.LogWarning("No camera input script has been attached to this gameObject", this.gameObject);
@@ -51,7 +51,7 @@ namespace CMF {
             if (_cam == null) _cam = GetComponentInChildren<Camera>();
 
             //Set angle variables to current rotation angles of this transform;
-            var localRotation = _tr.localRotation;
+            var localRotation = _transform.localRotation;
             _currentXAngle = localRotation.eulerAngles.x;
             _currentYAngle = localRotation.eulerAngles.y;
 
@@ -106,10 +106,10 @@ namespace CMF {
             // localRotation = Quaternion.Euler(new Vector3(0, _currentYAngle, 0));
 
             //Save 'facingDirection' and 'upwardsDirection' for later;
-            _facingDirection = _tr.forward;
-            _upwardsDirection = _tr.up;
+            _facingDirection = _transform.forward;
+            _upwardsDirection = _transform.up;
             // var localRotation = Quaternion.Euler(new Vector3(_currentXAngle, _currentYAngle, 0));
-            _tr.localRotation = Quaternion.Euler(new Vector3(_currentXAngle, _currentYAngle, 0));
+            _transform.localRotation = Quaternion.Euler(new Vector3(_currentXAngle, _currentYAngle, 0));
         }
 
         //Set the camera's field-of-view (FOV);
@@ -127,7 +127,7 @@ namespace CMF {
         //Rotate the camera toward a rotation that points at a world position in the scene;
         public void RotateTowardPosition(Vector3 position, float lookSpeed) {
             //Calculate target look vector;
-            var direction = (position - _tr.position);
+            var direction = (position - _transform.position);
             RotateTowardDirection(direction, lookSpeed);
         }
 
@@ -137,7 +137,7 @@ namespace CMF {
             direction.Normalize();
 
             //Transform target look vector to this transform's local space;
-            var parent = _tr.parent;
+            var parent = _transform.parent;
             direction = parent.InverseTransformDirection(direction);
 
             //Calculate (local) current look vector; 
@@ -191,12 +191,12 @@ namespace CMF {
         //Returns the 'forward' vector of this gameobject;
         //This vector points in the direction the camera is "aiming" and could be used for instantiating projectiles or raycasts.
         private Vector3 GetAimingDirection() {
-            return _tr.forward;
+            return _transform.forward;
         }
 
         // Returns the 'right' vector of this gameobject;
         public Vector3 GetStrafeDirection() {
-            return _tr.right;
+            return _transform.right;
         }
 
         // Returns the 'up' vector of this gameobject;

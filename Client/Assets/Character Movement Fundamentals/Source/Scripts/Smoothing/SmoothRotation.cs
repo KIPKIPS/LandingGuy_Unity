@@ -1,89 +1,76 @@
 ﻿using UnityEngine;
-using System.Collections;
 
-namespace CMF
-{
-	//This script smoothes the rotation of a gameobject;
-	public class SmoothRotation : MonoBehaviour {
+namespace CMF {
+    //This script smoothes the rotation of a gameobject;
+    public class SmoothRotation : MonoBehaviour {
+        //The target transform, whose rotation values will be copied and smoothed;
+        public Transform target;
+        private Transform _transform;
 
-		//The target transform, whose rotation values will be copied and smoothed;
-		public Transform target;
-		Transform tr;
+        private Quaternion _currentRotation;
 
-		Quaternion currentRotation;
+        //Speed that controls how fast the current rotation will be smoothed toward the target rotation;
+        public float smoothSpeed = 20f;
 
-		//Speed that controls how fast the current rotation will be smoothed toward the target rotation;
-		public float smoothSpeed = 20f;
+        //Whether rotation values will be extrapolated to compensate for delay caused by smoothing;
+        public bool extrapolateRotation;
 
-		//Whether rotation values will be extrapolated to compensate for delay caused by smoothing;
-		public bool extrapolateRotation = false;
+        //'UpdateType' controls whether the smoothing function is called in 'Update' or 'LateUpdate';
+        public enum UpdateType {
+            Update,
+            LateUpdate
+        }
 
-		//'UpdateType' controls whether the smoothing function is called in 'Update' or 'LateUpdate';
-		public enum UpdateType
-		{
-			Update,
-			LateUpdate
-		}
-		public UpdateType updateType;
+        public UpdateType updateType;
 
-		//Awake;
-		void Awake () {
+        //Awake;
+        private void Awake() {
+            //If no target has been selected, choose this transform's parent as target;
+            if (target == null) target = transform.parent;
+            var t = transform;
+            _transform = t;
+            _currentRotation = t.rotation;
+        }
 
-			//If no target has been selected, choose this transform's parent as target;
-			if(target == null)
-				target = this.transform.parent;
+        //OnEnable;
+        private void OnEnable() {
+            //Reset current rotation when gameobject is re-enabled to prevent unwanted interpolation from last rotation;
+            ResetCurrentRotation();
+        }
 
-			tr = transform;
-			currentRotation = transform.rotation;
-		}
+        private void Update() {
+            if (updateType == UpdateType.LateUpdate) return;
+            SmoothUpdate();
+        }
 
-		//OnEnable;
-		void OnEnable()
-		{
-			//Reset current rotation when gameobject is re-enabled to prevent unwanted interpolation from last rotation;
-			ResetCurrentRotation();
-		}
+        private void LateUpdate() {
+            if (updateType == UpdateType.Update) return;
+            SmoothUpdate();
+        }
 
-		void Update () {
-			if(updateType == UpdateType.LateUpdate)
-				return;
-			SmoothUpdate();
-		}
+        private void SmoothUpdate() {
+            //Smooth current rotation;
+            _currentRotation = Smooth(_currentRotation, target.rotation, smoothSpeed);
 
-		void LateUpdate () {
-			if(updateType == UpdateType.Update)
-				return;
-			SmoothUpdate();
-		}
+            //Set rotation;
+            _transform.rotation = _currentRotation;
+        }
 
-		void SmoothUpdate()
-		{
-			//Smooth current rotation;
-			currentRotation = Smooth (currentRotation, target.rotation, smoothSpeed);
+        //Smooth a rotation toward a target rotation based on 'smoothTime';
+        private Quaternion Smooth(Quaternion curRotation, Quaternion targetRotation, float smooth) {
+            //If 'extrapolateRotation' is set to 'true', calculate a new target rotation;
+            if (!extrapolateRotation || !(Quaternion.Angle(curRotation, targetRotation) < 90f)) return Quaternion.Slerp(curRotation, targetRotation, Time.deltaTime * smooth);
+            var difference = targetRotation * Quaternion.Inverse(curRotation);
+            targetRotation *= difference;
 
-			//Set rotation;
-			tr.rotation = currentRotation;
-		}
+            //Slerp rotation and return;
+            return Quaternion.Slerp(curRotation, targetRotation, Time.deltaTime * smooth);
+        }
 
-		//Smooth a rotation toward a target rotation based on 'smoothTime';
-		Quaternion Smooth(Quaternion _currentRotation, Quaternion _targetRotation, float _smoothSpeed)
-		{
-			//If 'extrapolateRotation' is set to 'true', calculate a new target rotation;
-			if (extrapolateRotation && Quaternion.Angle(_currentRotation, _targetRotation) < 90f) {
-				Quaternion difference = _targetRotation * Quaternion.Inverse (_currentRotation);
-				_targetRotation *= difference;
-			}
-
-			//Slerp rotation and return;
-			return Quaternion.Slerp (_currentRotation, _targetRotation, Time.deltaTime * _smoothSpeed);
-		}
-
-		//Reset stored rotation and rotate this gameobject to macth the target's rotation;
-		//Call this function if the target has just been rotatedand no interpolation should take place (instant rotation);
-		public void ResetCurrentRotation()
-		{
-			currentRotation = target.rotation;
-		}
-								
-	}
+        //Reset stored rotation and rotate this gameobject to macth the target's rotation;
+        //Call this function if the target has just been rotatedand no interpolation should take place (instant rotation);
+        private void ResetCurrentRotation() {
+            _currentRotation = target.rotation;
+        }
+    }
 }

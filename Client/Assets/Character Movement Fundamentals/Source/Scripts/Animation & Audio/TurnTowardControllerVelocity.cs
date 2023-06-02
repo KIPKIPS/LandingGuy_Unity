@@ -12,7 +12,7 @@ namespace CMF {
         public float turnSpeed = 500f;
 
         private Transform _parentTransform;
-        private Transform _tr;
+        private Transform _transform;
 
         //Current (local) rotation around the (local) y axis of this gameobject;
         private float _currentYRotation;
@@ -26,8 +26,8 @@ namespace CMF {
 
         //Setup;
         private void Start() {
-            _tr = transform;
-            _parentTransform = _tr.parent;
+            _transform = transform;
+            _parentTransform = _transform.parent;
 
             //Throw warning if no controller has been assigned;
             if (controller != null) return;
@@ -46,7 +46,7 @@ namespace CMF {
             //Normalize velocity direction;
             velocity.Normalize();
             //Get current 'forward' vector;
-            var currentForward = _tr.forward;
+            var currentForward = _transform.forward;
             //Calculate (signed) angle between velocity and forward direction;
             var angleDifference = VectorMath.GetAngle(currentForward, velocity, _parentTransform.up);
             //Calculate angle factor;
@@ -66,7 +66,7 @@ namespace CMF {
             if (_currentYRotation > 360f) _currentYRotation -= 360f;
             if (_currentYRotation < -360f) _currentYRotation += 360f;
             //Set transform rotation using Quaternion.Euler;
-            _tr.localRotation = Quaternion.Euler(0f, _currentYRotation, 0f);
+            _transform.localRotation = Quaternion.Euler(0f, _currentYRotation, 0f);
         }
 
         private void OnEnable() {

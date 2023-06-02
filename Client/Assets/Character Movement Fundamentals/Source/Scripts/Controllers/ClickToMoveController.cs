@@ -56,19 +56,19 @@ public class ClickToMoveController : Controller {
 
     //Reference to attached 'Mover' and transform component;
     private Mover _mover;
-    private Transform _tr;
+    private Transform _transform;
 
     private void Start() {
         //Get references to necessary components;
         _mover = GetComponent<Mover>();
-        _tr = transform;
+        _transform = transform;
         if (playerCamera == null) Debug.LogWarning("No camera has been assigned to this controller!", this);
 
         //Initialize variables;
-        var position = _tr.position;
+        var position = _transform.position;
         _lastPosition = position;
         _currentTargetPosition = transform.position;
-        _groundPlane = new Plane(_tr.up, position);
+        _groundPlane = new Plane(_transform.up, position);
     }
 
     private void Update() {
@@ -91,7 +91,7 @@ public class ClickToMoveController : Controller {
 
         //Calculate and apply gravity;
         HandleGravity();
-        velocity += _tr.up * _currentVerticalSpeed;
+        velocity += _transform.up * _currentVerticalSpeed;
 
         //If the character is grounded, extend ground detection sensor range;
         _mover.SetExtendSensorRange(_isGrounded);
@@ -108,10 +108,10 @@ public class ClickToMoveController : Controller {
         if (!_hasTarget) return Vector3.zero;
 
         //Calculate vector to target position;
-        var toTarget = _currentTargetPosition - _tr.position;
+        var toTarget = _currentTargetPosition - _transform.position;
 
         //Remove all vertical parts of vector;
-        toTarget = VectorMath.RemoveDotVector(toTarget, _tr.up);
+        toTarget = VectorMath.RemoveDotVector(toTarget, _transform.up);
 
         //Calculate distance to target;
         var distanceToTarget = toTarget.magnitude;
@@ -137,7 +137,7 @@ public class ClickToMoveController : Controller {
             _currentVerticalSpeed -= gravity * Time.deltaTime;
         else {
             if (_currentVerticalSpeed < 0f) {
-                OnLand?.Invoke(_tr.up * _currentVerticalSpeed);
+                OnLand?.Invoke(_transform.up * _currentVerticalSpeed);
             }
             _currentVerticalSpeed = 0f;
         }
@@ -154,7 +154,7 @@ public class ClickToMoveController : Controller {
         var mouseRay = playerCamera.ScreenPointToRay(GetMousePosition());
         if (mouseDetectionType == MouseDetectionType.AbstractPlane) {
             //Set up abstract ground plane;
-            _groundPlane.SetNormalAndPosition(_tr.up, _tr.position);
+            _groundPlane.SetNormalAndPosition(_transform.up, _transform.position);
 
             //Raycast against ground plane;
             if (_groundPlane.Raycast(mouseRay, out var enter)) {
@@ -181,9 +181,9 @@ public class ClickToMoveController : Controller {
         }
 
         //If controller has moved enough distance, reset time;
-        if (Vector3.Distance(_tr.position, _lastPosition) > timeOutDistanceThreshold) {
+        if (Vector3.Distance(_transform.position, _lastPosition) > timeOutDistanceThreshold) {
             _currentTimeOutTime = 0f;
-            _lastPosition = _tr.position;
+            _lastPosition = _transform.position;
         }
         //If controller hasn't moved a sufficient distance, increment current timeout time;
         else {

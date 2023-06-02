@@ -15,11 +15,11 @@ namespace CMF {
 
         public Transform cameraTransform;
         private CharacterInput _characterInput;
-        private Transform _tr;
+        private Transform _transform;
 
         // Use this for initialization
         private void Start() {
-            _tr = transform;
+            _transform = transform;
             _mover = GetComponent<Mover>();
             _characterInput = GetComponent<CharacterInput>();
         }
@@ -53,7 +53,7 @@ namespace CMF {
             }
 
             //Add vertical velocity;
-            velocity += _tr.up * _currentVerticalSpeed;
+            velocity += _transform.up * _currentVerticalSpeed;
 
             //Save current velocity for next frame;
             _lastVelocity = velocity;
@@ -68,12 +68,12 @@ namespace CMF {
 
             //If no camera transform has been assigned, use the character's transform axes to calculate the movement direction;
             if (cameraTransform == null) {
-                direction += _tr.right * _characterInput.GetHorizontalMovementInput();
-                direction += _tr.forward * _characterInput.GetVerticalMovementInput();
+                direction += _transform.right * _characterInput.GetHorizontalMovementInput();
+                direction += _transform.forward * _characterInput.GetVerticalMovementInput();
             } else {
                 //If a camera transform has been assigned, use the assigned transform's axes for movement direction;
                 //Project movement direction so movement stays parallel to the ground;
-                var up = _tr.up;
+                var up = _transform.up;
                 direction += Vector3.ProjectOnPlane(cameraTransform.right, up).normalized * _characterInput.GetHorizontalMovementInput();
                 direction += Vector3.ProjectOnPlane(cameraTransform.forward, up).normalized * _characterInput.GetVerticalMovementInput();
             }

@@ -1,145 +1,123 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
-namespace CMF
-{
-	//This script is used in the showcase scene to control the controller selection/settings menu;
-	public class DemoMenu : MonoBehaviour {
+namespace CMF {
+    //This script is used in the showcase scene to control the controller selection/settings menu;
+    public class DemoMenu : MonoBehaviour {
+        //The menu is shown/hidden using this key;
+        public KeyCode menuKey = KeyCode.C;
 
-		//The menu is shown/hidden using this key;
-		public KeyCode menuKey = KeyCode.C;
+        //References to secondary components;
+        private DisableShadows _disableShadows;
+        private FPSCounter _fpsCounter;
 
-		//References to secondary components;
-		DisableShadows disableShadows;
-		FPSCounter fpsCounter;
+        //Reference to game object containing the demo menu UI;
+        public GameObject demoMenuObject;
 
-		//Reference to game object containing the demo menu UI;
-		public GameObject demoMenuObject;
+        //List of controllers to choose from;
+        public List<GameObject> controllers = new();
+        //List of controller selection buttons in the menu UI;
+        public List<Button> buttons = new();
 
-		//List of controllers to choose from;
-		public List<GameObject> controllers = new List<GameObject>();
-		//List of controller selection buttons in the menu UI;
-		public List<Button> buttons = new List<Button>();
+        //Toggle in the menu UI to control scene shadows;
+        public Toggle shadowToggle;
 
-		//Toggle in the menu UI to control scene shadows;
-		public Toggle shadowToggle;
+        //Reference to the two separate areas in the showcase scene;
+        public GameObject regularArea;
+        public GameObject topDownArea;
 
-		//Reference to the two separate areas in the showcase scene;
-		public GameObject regularArea;
-		public GameObject topDownArea;
+        //Color of currently selected controller prefab button;
+        public Color activeButtonColor = Color.cyan;
 
-		//Color of currently selected controller prefab button;
-		public Color activeButtonColor = Color.cyan;
+        private void Start() {
+            //Get references;
+            _disableShadows = GetComponent<DisableShadows>();
+            _fpsCounter = GetComponent<FPSCounter>();
 
-		void Start () {
+            //Hide menu;
+            SetMenuEnabled(false);
 
-			//Get references;
-			disableShadows = GetComponent<DisableShadows>();
-			fpsCounter = GetComponent<FPSCounter>();
+            //Enable/Disable shadows based on last player selection;
+            _disableShadows.SetShadows(PlayerData.enableShadows);
+            shadowToggle.isOn = PlayerData.enableShadows;
 
-			//Hide menu;
-			SetMenuEnabled(false);
+            //Deactivate all controller presets in the scene;
+            foreach (var t in controllers) {
+                t.SetActive(false);
+            }
 
-			//Enable/Disable shadows based on last player selection;
-			disableShadows.SetShadows(PlayerData.enableShadows);
-			shadowToggle.isOn = PlayerData.enableShadows;
+            //Activate the correct controller preset based on the preset index;
+            controllers[PlayerData.controllerIndex].SetActive(true);
 
-			//Deactivate all controller presets in the scene;
-			for(int i = 0; i < controllers.Count; i++)
-			{
-				controllers[i].SetActive(false);
-			}
+            //Activate the correct level area based on preset index;
+            if (PlayerData.controllerIndex >= 4) {
+                regularArea.SetActive(false);
+            } else {
+                topDownArea.SetActive(false);
+            }
 
-			//Activate the correct controller preset based on the preset index;
-			controllers[PlayerData.controllerIndex].SetActive(true);
+            //Colorize the correct button based on controller index;
+            var c = buttons[PlayerData.controllerIndex].colors;
+            c.normalColor = activeButtonColor;
+            c.highlightedColor = activeButtonColor;
+            c.pressedColor = activeButtonColor;
+            buttons[PlayerData.controllerIndex].colors = c;
+        }
 
-			//Activate the correct level area based on preset index;
-			if(PlayerData.controllerIndex >= 4)
-			{
-				regularArea.SetActive(false);
-			}
-			else
-			{
-				topDownArea.SetActive(false);
-			}
+        // Update is called once per frame
+        private void Update() {
+            //Hide/show demo menu;
+            if (Input.GetKeyDown(menuKey)) {
+                SetMenuEnabled(!demoMenuObject.activeSelf);
+            }
 
-			//Colorize the correct button based on controller index;
-			ColorBlock c = buttons[PlayerData.controllerIndex].colors;
-			c.normalColor = activeButtonColor;
-			c.highlightedColor = activeButtonColor;
-			c.pressedColor = activeButtonColor;
-			buttons[PlayerData.controllerIndex].colors = c;
-			
-		}
-		
-		// Update is called once per frame
-		void Update () {
+            //If scene was built as a Windows executable, also hide/show demo menu when 'Escape' is pressed;
+#if UNITY_STANDALONE_WIN
+            if (Input.GetKeyDown(KeyCode.Escape)) {
+                SetMenuEnabled(!demoMenuObject.activeSelf);
+            }
+#endif
 
-			//Hide/show demo menu;
-			if(Input.GetKeyDown(menuKey))
-			{
-				SetMenuEnabled(!demoMenuObject.activeSelf);
-			}
+            //If left mouse button is pressed and the menu is hidden, lock cursor;
+            if (Input.GetMouseButtonDown(0) && !demoMenuObject.activeSelf) Cursor.lockState = CursorLockMode.Locked;
+        }
 
-			//If scene was built as a Windows executable, also hide/show demo menu when 'Escape' is pressed;
-			#if UNITY_STANDALONE_WIN
-			if(Input.GetKeyDown(KeyCode.Escape))
-			{
-				SetMenuEnabled(!demoMenuObject.activeSelf);
-			}
-			#endif
+        //Reload scene;
+        public void RestartScene() {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        }
 
-			//If left mouse button is pressed and the menu is hidden, lock cursor;
-			if(Input.GetMouseButtonDown(0) && !demoMenuObject.activeSelf)
-				Cursor.lockState = CursorLockMode.Locked;
-		}
+        //Quit game;
+        public void QuitGame() {
+            Application.Quit();
+        }
 
-		//Reload scene;
-		public void RestartScene()
-		{
-			SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-		}
+        //This event is called whenever a new controller preset is chosen in the menu;
+        public void OnControllerPresetChosen(int presetIndex) {
+            //Save new preset index;
+            PlayerData.controllerIndex = presetIndex;
 
-		//Quit game;
-		public void QuitGame()
-		{
-			Application.Quit();
-		}	
+            //Restart scene;
+            RestartScene();
+        }
 
-		//This event is called whenever a new controller preset is chosen in the menu;
-		public void OnControllerPresetChosen(int _presetIndex)
-		{
-			//Save new preset index;
-			PlayerData.controllerIndex = _presetIndex;
+        //Hide/show menu;
+        private void SetMenuEnabled(bool isEnabled) {
+            demoMenuObject.SetActive(isEnabled);
+            Cursor.lockState = isEnabled ? CursorLockMode.None : CursorLockMode.Locked;
+        }
 
-			//Restart scene;
-			RestartScene();
-		}
+        //Enable/disable scene shadows;
+        public void SetShadowsEnabled(bool isEnabled) {
+            _disableShadows.SetShadows(isEnabled);
+            PlayerData.enableShadows = isEnabled;
+        }
 
-		//Hide/show menu;
-		public void SetMenuEnabled(bool _isEnabled)
-		{
-			demoMenuObject.SetActive(_isEnabled);
-			if(_isEnabled)
-				Cursor.lockState = CursorLockMode.None;
-			else
-				Cursor.lockState = CursorLockMode.Locked;
-		}
-
-		//Enable/disable scene shadows;
-		public void SetShadowsEnabled(bool _isEnabled)
-		{
-			disableShadows.SetShadows(_isEnabled);
-			PlayerData.enableShadows = _isEnabled;
-		}
-
-		//Show/Hide framerate counter;
-		public void SetFrameRateEnabled(bool _isEnabled)
-		{
-			fpsCounter.enabled = _isEnabled;
-		}
-	}
+        //Show/Hide framerate counter;
+        public void SetFrameRateEnabled(bool isEnabled) {
+            _fpsCounter.enabled = isEnabled;
+        }
+    }
 }

@@ -39,7 +39,7 @@ namespace CMF {
         private Vector3 _backupNormal;
 
         //References to attached components;
-        private Transform _tr;
+        private Transform _transform;
         private Collider _col;
 
         //Enum describing different types of ground detection methods;
@@ -88,7 +88,7 @@ namespace CMF {
 
         //Constructor;
         public Sensor(Transform transform, Collider collider) {
-            _tr = transform;
+            _transform = transform;
             if (collider == null) return;
             _ignoreList = new Collider[1];
 
@@ -146,7 +146,7 @@ namespace CMF {
 
             //Calculate origin and direction of ray in world coordinates;
             var worldDirection = GetCastDirection();
-            var worldOrigin = _tr.TransformPoint(_origin);
+            var worldOrigin = _transform.TransformPoint(_origin);
 
             //Check if ignore list length has been changed since last frame;
             if (_ignoreListLayers.Length != _ignoreList.Length) {
@@ -194,7 +194,7 @@ namespace CMF {
             //Cast array;
             foreach (var t in _raycastArrayStartPositions) {
                 //Calculate ray start position;
-                var rayStartPosition = origin + _tr.TransformDirection(t);
+                var rayStartPosition = origin + _transform.TransformDirection(t);
                 if (!Physics.Raycast(rayStartPosition, rayDirection, out var hit, castLength, layerMask, QueryTriggerInteraction.Ignore)) continue;
                 if (isInDebugMode) Debug.DrawRay(hit.point, hit.normal, Color.red, Time.fixedDeltaTime * 1.01f);
                 _hitColliders.Add(hit.collider);
@@ -264,17 +264,17 @@ namespace CMF {
         Vector3 GetCastDirection() {
             switch (_castDirection) {
                 case CastDirection.Forward:
-                    return _tr.forward;
+                    return _transform.forward;
                 case CastDirection.Right:
-                    return _tr.right;
+                    return _transform.right;
                 case CastDirection.Up:
-                    return _tr.up;
+                    return _transform.up;
                 case CastDirection.Backward:
-                    return -_tr.forward;
+                    return -_transform.forward;
                 case CastDirection.Left:
-                    return -_tr.right;
+                    return -_transform.right;
                 case CastDirection.Down:
-                    return -_tr.up;
+                    return -_transform.up;
                 default:
                     return Vector3.one;
             }
@@ -327,13 +327,13 @@ namespace CMF {
         //Set the position for the raycast to start from;
         //The input vector '_origin' is converted to local coordinates;
         public void SetCastOrigin(Vector3 origin) {
-            if (_tr == null) return;
-            _origin = _tr.InverseTransformPoint(origin);
+            if (_transform == null) return;
+            _origin = _transform.InverseTransformPoint(origin);
         }
 
         //Set which axis of this gameobject's transform will be used as the direction for the raycast;
         public void SetCastDirection(CastDirection direction) {
-            if (_tr == null) return;
+            if (_transform == null) return;
             _castDirection = direction;
         }
 

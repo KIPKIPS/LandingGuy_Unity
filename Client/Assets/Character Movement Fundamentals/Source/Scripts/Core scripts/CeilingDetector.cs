@@ -27,10 +27,10 @@ public class CeilingDetector : MonoBehaviour {
     //How long debug information is drawn on the screen;
     private const float DebugDrawDuration = 2.0f;
 
-    private Transform _tr;
+    private Transform _transform;
 
     private void Awake() {
-        _tr = transform;
+        _transform = transform;
     }
 
     private void OnCollisionEnter(Collision collision) {
@@ -47,7 +47,7 @@ public class CeilingDetector : MonoBehaviour {
         switch (ceilingDetectionMethod) {
             case CeilingDetectionMethod.OnlyCheckFirstContact: {
                 //Calculate angle between hit normal and character;
-                angle = Vector3.Angle(-_tr.up, collision.contacts[0].normal);
+                angle = Vector3.Angle(-_transform.up, collision.contacts[0].normal);
 
                 //If angle is smaller than ceiling angle limit, register ceiling hit;
                 if (angle < ceilingAngleLimit) _ceilingWasHit = true;
@@ -59,7 +59,7 @@ public class CeilingDetector : MonoBehaviour {
             case CeilingDetectionMethod.CheckAllContacts: {
                 foreach (var t in collision.contacts) {
                     //Calculate angle between hit normal and character;
-                    angle = Vector3.Angle(-_tr.up, t.normal);
+                    angle = Vector3.Angle(-_transform.up, t.normal);
 
                     //If angle is smaller than ceiling angle limit, register ceiling hit;
                     if (angle < ceilingAngleLimit) _ceilingWasHit = true;
@@ -72,7 +72,7 @@ public class CeilingDetector : MonoBehaviour {
             case CeilingDetectionMethod.CheckAverageOfAllContacts: {
                 foreach (var t in collision.contacts) {
                     //Calculate angle between hit normal and character and add it to total angle count;
-                    angle += Vector3.Angle(-_tr.up, t.normal);
+                    angle += Vector3.Angle(-_transform.up, t.normal);
 
                     //Draw debug information;
                     if (isInDebugMode) Debug.DrawRay(t.point, t.normal, Color.red, DebugDrawDuration);

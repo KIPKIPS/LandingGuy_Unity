@@ -2,147 +2,121 @@
 using System.Collections;
 using System.Collections.Generic;
 
-namespace CMF
-{
-	//This script moves a rigidbody along a set of waypoints;
-	//It also moves any controllers on top along with it;
-	public class MovingPlatform : MonoBehaviour {
+namespace CMF {
+    //This script moves a rigidbody along a set of waypoints;
+    //It also moves any controllers on top along with it;
+    public class MovingPlatform : MonoBehaviour {
+        //Movement speed;
+        public float movementSpeed = 10f;
 
-		//Movement speed;
-		public float movementSpeed = 10f;
+        //Check to reverse order of waypoints;
+        public bool reverseDirection;
 
-		//Check to reverse order of waypoints;
-		public bool reverseDirection = false;
+        //Wait time after reaching a waypoint;
+        public float waitTime = 1f;
 
-		//Wait time after reaching a waypoint;
-		public float waitTime = 1f;
+        //This boolean is used to stop movement while the platform is waiting;
+        private bool _isWaiting;
 
-		//This boolean is used to stop movement while the platform is waiting;
-		private bool isWaiting = false;
+        //References to attached components;
+        private Rigidbody _r;
+        private TriggerArea _triggerArea;
 
-		//References to attached components;
-		Rigidbody r;
-		TriggerArea triggerArea;
+        //List of transforms used as waypoints;
+        public List<Transform> waypoints = new();
+        private int _currentWaypointIndex;
+        private Transform _currentWaypoint;
 
-		//List of transforms used as waypoints;
-		public List<Transform> waypoints = new List<Transform>();
-		int currentWaypointIndex = 0;
-		Transform currentWaypoint;
+        //Start;
+        private void Start() {
+            //Get references to components;
+            _r = GetComponent<Rigidbody>();
+            _triggerArea = GetComponentInChildren<TriggerArea>();
 
-		//Start;
-		void Start () {
+            //Disable gravity, freeze rotation of rigidbody and set to kinematic;
+            _r.freezeRotation = true;
+            _r.useGravity = false;
+            _r.isKinematic = true;
 
-			//Get references to components;
-			r = GetComponent<Rigidbody>();
-			triggerArea = GetComponentInChildren<TriggerArea>();
+            //Check if any waypoints have been assigned and if not, throw a warning;
+            if (waypoints.Count <= 0) {
+                Debug.LogWarning("No waypoints have been assigned to 'MovingPlatform'!");
+            } else {
+                //Set first waypoint;
+                _currentWaypoint = waypoints[_currentWaypointIndex];
+            }
 
-			//Disable gravity, freeze rotation of rigidbody and set to kinematic;
-			r.freezeRotation = true;
-			r.useGravity = false;
-			r.isKinematic = true;
+            //Start coroutines;
+            StartCoroutine(WaitRoutine());
+            StartCoroutine(LateFixedUpdate());
+        }
 
-			//Check if any waypoints have been assigned and if not, throw a warning;
-			if(waypoints.Count <= 0){
-				Debug.LogWarning("No waypoints have been assigned to 'MovingPlatform'!");
-			} else {
-				//Set first waypoint;
-				currentWaypoint = waypoints[currentWaypointIndex];
-			}
+        //This coroutine ensures that platform movement always occurs after Fixed Update;
+        private IEnumerator LateFixedUpdate() {
+            var instruction = new WaitForFixedUpdate();
+            while (true) {
+                yield return instruction;
+                MovePlatform();
+            }
+        }
 
-			//Start coroutines;
-			StartCoroutine(WaitRoutine());
-			StartCoroutine(LateFixedUpdate());
-		}
+        private void MovePlatform() {
+            //If no waypoints have been assigned, return;
+            if (waypoints.Count <= 0) return;
+            if (_isWaiting) return;
 
-		//This coroutine ensures that platform movement always occurs after Fixed Update;
-		IEnumerator LateFixedUpdate()
-		{
-			WaitForFixedUpdate _instruction = new WaitForFixedUpdate();
-			while(true)
-			{
-				yield return _instruction;
-				MovePlatform();
-			}
-		}
+            //Calculate a vector to the current waypoint;
+            var toCurrentWaypoint = _currentWaypoint.position - transform.position;
 
-		void MovePlatform () {
+            //Get normalized movement direction;
+            var movement = toCurrentWaypoint.normalized;
 
-			//If no waypoints have been assigned, return;
-			if(waypoints.Count <= 0)
-				return;
+            //Get movement for this frame;
+            movement *= movementSpeed * Time.deltaTime;
 
-			if(isWaiting)
-				return;
+            //If the remaining distance to the next waypoint is smaller than this frame's movement, move directly to next waypoint;
+            //Else, move toward next waypoint;
+            if (movement.magnitude >= toCurrentWaypoint.magnitude || movement.magnitude == 0f) {
+                _r.transform.position = _currentWaypoint.position;
+                UpdateWaypoint();
+            } else {
+                _r.transform.position += movement;
+            }
+            if (_triggerArea == null) return;
 
-			//Calculate a vector to the current waypoint;
-			Vector3 _toCurrentWaypoint = currentWaypoint.position - transform.position;
+            //Move all controllrs on top of the platform the same distance;
+            foreach (var t in _triggerArea.rigidbodiesInTriggerArea) {
+                t.MovePosition(t.position + movement);
+            }
+        }
 
-			//Get normalized movement direction;
-			Vector3 _movement = _toCurrentWaypoint.normalized;
+        //This function is called after the current waypoint has been reached;
+        //The next waypoint is chosen from the list of waypoints;
+        private void UpdateWaypoint() {
+            if (reverseDirection)
+                _currentWaypointIndex--;
+            else
+                _currentWaypointIndex++;
 
-			//Get movement for this frame;
-			_movement *= movementSpeed * Time.deltaTime;
+            //If end of list has been reached, reset index;
+            if (_currentWaypointIndex >= waypoints.Count) _currentWaypointIndex = 0;
+            if (_currentWaypointIndex < 0) _currentWaypointIndex = waypoints.Count - 1;
+            _currentWaypoint = waypoints[_currentWaypointIndex];
 
-			//If the remaining distance to the next waypoint is smaller than this frame's movement, move directly to next waypoint;
-			//Else, move toward next waypoint;
-			if(_movement.magnitude >= _toCurrentWaypoint.magnitude || _movement.magnitude == 0f)
-			{
-				r.transform.position = currentWaypoint.position;
-				UpdateWaypoint();
-			}
-			else
-			{
-				r.transform.position += _movement;
-			}
+            //Stop platform movement;
+            _isWaiting = true;
+        }
 
-			if(triggerArea == null)
-				return;
-
-			//Move all controllrs on top of the platform the same distance;
-
-			for(int i = 0; i < triggerArea.rigidbodiesInTriggerArea.Count; i++) 
-			{
-				triggerArea.rigidbodiesInTriggerArea[i].MovePosition(triggerArea.rigidbodiesInTriggerArea[i].position + _movement);
-			}
-		}
-
-		//This function is called after the current waypoint has been reached;
-		//The next waypoint is chosen from the list of waypoints;
-		private void UpdateWaypoint()
-		{
-			if(reverseDirection)
-				currentWaypointIndex --;
-			else
-				currentWaypointIndex ++;
-
-			//If end of list has been reached, reset index;
-			if(currentWaypointIndex >= waypoints.Count)
-				currentWaypointIndex = 0;
-
-			if(currentWaypointIndex < 0)
-				currentWaypointIndex = waypoints.Count - 1;
-
-			currentWaypoint = waypoints[currentWaypointIndex];
-
-			//Stop platform movement;
-			isWaiting = true;
-		}
-
-		//Coroutine that keeps track of the wait time and sets 'isWaiting' back to 'false', after 'waitTime' has passed;
-		IEnumerator WaitRoutine()
-		{
-			WaitForSeconds _waitInstruction = new WaitForSeconds(waitTime);
-
-			while(true)
-			{
-				if(isWaiting)
-				{
-					yield return _waitInstruction;
-					isWaiting = false;
-				}
-
-				yield return null;
-			}
-		}	
-	}
+        //Coroutine that keeps track of the wait time and sets 'isWaiting' back to 'false', after 'waitTime' has passed;
+        private IEnumerator WaitRoutine() {
+            var waitInstruction = new WaitForSeconds(waitTime);
+            while (true) {
+                if (_isWaiting) {
+                    yield return waitInstruction;
+                    _isWaiting = false;
+                }
+                yield return null;
+            }
+        }
+    }
 }

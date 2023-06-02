@@ -10,7 +10,7 @@ namespace CMF {
         //Transform component of camera target;
         public Transform cameraTargetTransform;
 
-        private Transform _tr;
+        private Transform _transform;
 
         //Whether a raycast or spherecast is used to scan for obstacles;
         public CastType castType;
@@ -50,7 +50,7 @@ namespace CMF {
         public float spherecastRadius = 0.2f;
 
         private void Awake() {
-            _tr = transform;
+            _transform = transform;
 
             //Setup array to store ignore list layers;
             _ignoreListLayers = new int[ignoreList.Length];
@@ -72,7 +72,7 @@ namespace CMF {
             }
 
             //Set intial starting distance;
-            _currentDistance = (cameraTargetTransform.position - _tr.position).magnitude;
+            _currentDistance = (cameraTargetTransform.position - _transform.position).magnitude;
         }
 
         private void LateUpdate() {
@@ -100,7 +100,7 @@ namespace CMF {
             _currentDistance = Mathf.Lerp(_currentDistance, distance, Time.deltaTime * smoothingFactor);
 
             //Set new position of 'cameraTransform';
-            var position = _tr.position;
+            var position = _transform.position;
             cameraTransform.position = position + (cameraTargetTransform.position - position).normalized * _currentDistance;
         }
 
@@ -109,10 +109,10 @@ namespace CMF {
             RaycastHit hit;
 
             //Calculate cast direction;
-            var castDirection = cameraTargetTransform.position - _tr.position;
+            var castDirection = cameraTargetTransform.position - _transform.position;
             if (castType == CastType.Raycast) {
                 //Cast ray;
-                if (!Physics.Raycast(new Ray(_tr.position, castDirection), out hit, castDirection.magnitude + minimumDistanceFromObstacles, layerMask, QueryTriggerInteraction.Ignore)) return castDirection.magnitude;
+                if (!Physics.Raycast(new Ray(_transform.position, castDirection), out hit, castDirection.magnitude + minimumDistanceFromObstacles, layerMask, QueryTriggerInteraction.Ignore)) return castDirection.magnitude;
                 //Check if 'minimumDistanceFromObstacles' can be subtracted from '_hit.distance', then return distance;
                 if (hit.distance - minimumDistanceFromObstacles < 0f) {
                     return hit.distance;
@@ -121,7 +121,7 @@ namespace CMF {
                 }
             } else {
                 //Cast sphere;
-                if (Physics.SphereCast(new Ray(_tr.position, castDirection), spherecastRadius, out hit, castDirection.magnitude, layerMask, QueryTriggerInteraction.Ignore)) {
+                if (Physics.SphereCast(new Ray(_transform.position, castDirection), spherecastRadius, out hit, castDirection.magnitude, layerMask, QueryTriggerInteraction.Ignore)) {
                     //Return distance;
                     return hit.distance;
                 }

@@ -1,16 +1,14 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace CMF {
     //This script turns a gameobject toward the look direction of a chosen 'CameraController' component;
     public class TurnTowardCameraDirection : MonoBehaviour {
         public CameraController cameraController;
-        private Transform _tr;
+        private Transform _transform;
 
         //Setup;
         private void Start() {
-            _tr = transform;
+            _transform = transform;
             if (cameraController == null) Debug.LogWarning("No camera controller reference has been assigned to this script.", this);
         }
 
@@ -23,7 +21,7 @@ namespace CMF {
             var upDirection = cameraController.GetUpDirection();
 
             //Set rotation;
-            _tr.rotation = Quaternion.LookRotation(forwardDirection, upDirection);
+            _transform.rotation = Quaternion.LookRotation(forwardDirection, upDirection);
         }
     }
 }

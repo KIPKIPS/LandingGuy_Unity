@@ -1,46 +1,34 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-namespace CMF
-{
-	//This script provides simple mouse cursor locking functionality;
-	public class MouseCursorLock : MonoBehaviour {
+namespace CMF {
+    //This script provides simple mouse cursor locking functionality;
+    public class MouseCursorLock : MonoBehaviour {
+        //Whether to lock the mouse cursor at the start of the game;
+        public bool lockCursorAtGameStart = true;
 
-		//Whether to lock the mouse cursor at the start of the game;
-		public bool lockCursorAtGameStart = true;
+        //Key used to unlock mouse cursor;
+        public KeyCode unlockKeyCode = KeyCode.Escape;
 
-		//Key used to unlock mouse cursor;
-		public KeyCode unlockKeyCode = KeyCode.Escape;
+        //Key used to lock mouse cursor;
+        public KeyCode lockKeyCode = KeyCode.Mouse0;
 
-		//Key used to lock mouse cursor;
-		public KeyCode lockKeyCode = KeyCode.Mouse0;
+        //Start;
+        private void Start() {
+            if (!lockCursorAtGameStart) return;
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+        }
 
-		//Start;
-		void Start () {
-
-			if(lockCursorAtGameStart)
-			{
-				Cursor.lockState = CursorLockMode.Locked;
-				Cursor.visible = false;
-			}
-				
-		}
-		
-		//Update;
-		void Update () {
-
-			if(Input.GetKeyDown(unlockKeyCode))
-			{
-				Cursor.lockState = CursorLockMode.None;
-				Cursor.visible = true;
-			}
-				
-			if(Input.GetKeyDown(lockKeyCode))
-			{
-				Cursor.lockState = CursorLockMode.Locked;
-				Cursor.visible = false;
-			}	
-		}
-	}
+        //Update;
+        private void Update() {
+            if (Input.GetKeyDown(unlockKeyCode)) {
+                Cursor.lockState = CursorLockMode.None;
+                Cursor.visible = true;
+            }
+            if (Input.GetKeyDown(lockKeyCode)) {
+                Cursor.lockState = CursorLockMode.Locked;
+                Cursor.visible = false;
+            }
+        }
+    }
 }

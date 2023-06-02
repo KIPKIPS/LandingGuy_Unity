@@ -6,13 +6,13 @@ namespace CMF {
     //This script rotates an object toward the 'forward' direction of another target transform;
     public class TurnTowardTransformDirection : MonoBehaviour {
         public Transform targetTransform;
-        private Transform _tr;
+        private Transform _transform;
         private Transform _parentTransform;
 
         //Setup;
         private void Start() {
-            _tr = transform;
-            _parentTransform = _tr.parent;
+            _transform = transform;
+            _parentTransform = _transform.parent;
             if (targetTransform == null) Debug.LogWarning("No target transform has been assigned to this script.", this);
         }
 
@@ -25,7 +25,7 @@ namespace CMF {
             var forwardDirection = Vector3.ProjectOnPlane(targetTransform.forward, up).normalized;
 
             //Set rotation;
-            _tr.rotation = Quaternion.LookRotation(forwardDirection, up);
+            _transform.rotation = Quaternion.LookRotation(forwardDirection, up);
         }
     }
 }

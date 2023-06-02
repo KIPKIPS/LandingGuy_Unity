@@ -47,14 +47,14 @@ namespace CMF {
         //References to attached components;
         private Collider _col;
         private Rigidbody _rig;
-        private Transform _tr;
+        private Transform _transform;
         private Sensor _sensor;
 
         private void Awake() {
             Setup();
 
             //Initialize sensor;
-            _sensor = new Sensor(_tr, _col);
+            _sensor = new Sensor(_transform, _col);
             RecalculateColliderDimensions();
             RecalibrateSensor();
         }
@@ -73,19 +73,19 @@ namespace CMF {
 
         //Setup references to components;
         private void Setup() {
-            _tr = transform;
+            _transform = transform;
             _col = GetComponent<Collider>();
 
             //If no collider is attached to this gameobject, add a collider;
             if (_col == null) {
-                _tr.gameObject.AddComponent<CapsuleCollider>();
+                _transform.gameObject.AddComponent<CapsuleCollider>();
                 _col = GetComponent<Collider>();
             }
             _rig = GetComponent<Rigidbody>();
 
             //If no rigidbody is attached to this gameobject, add a rigidbody;
             if (_rig == null) {
-                _tr.gameObject.AddComponent<Rigidbody>();
+                _transform.gameObject.AddComponent<Rigidbody>();
                 _rig = GetComponent<Rigidbody>();
             }
             _boxCollider = GetComponent<BoxCollider>();
@@ -171,7 +171,7 @@ namespace CMF {
             //Set sensor variables;
 
             //Set sensor radius;
-            var localScale = _tr.localScale;
+            var localScale = _transform.localScale;
             _sensor.sphereCastRadius = radius * localScale.x;
 
             //Calculate and set sensor length;
@@ -232,7 +232,7 @@ namespace CMF {
 
             //Set sensor length;
             if (_isUsingExtendedSensorRange)
-                _sensor.castLength = _baseSensorRange + (colliderHeight * _tr.localScale.x) * stepHeightRatio;
+                _sensor.castLength = _baseSensorRange + (colliderHeight * _transform.localScale.x) * stepHeightRatio;
             else
                 _sensor.castLength = _baseSensorRange;
             _sensor.Cast();
@@ -250,13 +250,13 @@ namespace CMF {
             var distance = _sensor.GetDistance();
 
             //Calculate how much mover needs to be moved up or down;
-            var localScale = _tr.localScale;
+            var localScale = _transform.localScale;
             var upperLimit = ((colliderHeight * localScale.x) * (1f - stepHeightRatio)) * 0.5f;
             var middle = upperLimit + (colliderHeight * localScale.x) * stepHeightRatio;
             var distanceToGo = middle - distance;
 
             //Set new ground adjustment velocity for the next frame;
-            _currentGroundAdjustmentVelocity = _tr.up * (distanceToGo / Time.fixedDeltaTime);
+            _currentGroundAdjustmentVelocity = _transform.up * (distanceToGo / Time.fixedDeltaTime);
         }
 
         //Check if mover is grounded;

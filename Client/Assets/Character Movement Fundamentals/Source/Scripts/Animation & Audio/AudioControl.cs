@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace CMF {
     //This script handles and plays audio cues like footsteps, jump and land audio clips based on character movement speed and events; 
@@ -9,7 +7,7 @@ namespace CMF {
         private Controller _controller;
         private Animator _animator;
         private Mover _mover;
-        private Transform _tr;
+        private Transform _transform;
         public AudioSource audioSource;
 
         //Whether footsteps will be based on the currently playing animation or calculated based on walked distance (see further below);
@@ -45,7 +43,7 @@ namespace CMF {
             _controller = GetComponent<Controller>();
             _animator = GetComponentInChildren<Animator>();
             _mover = GetComponent<Mover>();
-            _tr = transform;
+            _transform = transform;
 
             //Connecting events to controller events;
             _controller.OnLand += OnLand;
@@ -54,12 +52,12 @@ namespace CMF {
         }
 
         //Update;
-        void Update() {
+        private void Update() {
             //Get controller velocity;
             var velocity = _controller.GetVelocity();
 
             //Calculate horizontal velocity;
-            var horizontalVelocity = VectorMath.RemoveDotVector(velocity, _tr.up);
+            var horizontalVelocity = VectorMath.RemoveDotVector(velocity, _transform.up);
             FootStepUpdate(horizontalVelocity.magnitude);
         }
 
@@ -93,7 +91,7 @@ namespace CMF {
 
         private void OnLand(Vector3 v) {
             //Only trigger sound if downward velocity exceeds threshold;
-            if (VectorMath.GetDotProduct(v, _tr.up) > -landVelocityThreshold) return;
+            if (VectorMath.GetDotProduct(v, _transform.up) > -landVelocityThreshold) return;
 
             //Play land audio clip;
             audioSource.PlayOneShot(landClip, audioClipVolume);

@@ -113,8 +113,7 @@ namespace Framework.Manager {
             private Action<TimerEntity> _callback;
             private float _startTime;
             private float _gap;
-            private int _id;
-            internal int ID=>_id;
+            internal int ID { get; private set; }
             private int _times;
             private int _curTimes;
             private bool _isStart;
@@ -131,7 +130,7 @@ namespace Framework.Manager {
             /// 销毁定时器
             /// </summary>
             public void Destroy() {
-                Instance.DestroyTimer(_id);
+                Instance.DestroyTimer(ID);
                 _isStart = false;
             }
             /// <summary>
@@ -148,7 +147,7 @@ namespace Framework.Manager {
             /// <param name="times">执行次数</param>
             internal void SetEntity(int gap, Action<TimerEntity> callback, int id, int times = 0) {
                 _gap = (float)gap / 1000;
-                _id = id;
+                ID = id;
                 _callback = callback;
                 _times = times;
             }

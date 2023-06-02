@@ -6,7 +6,7 @@ namespace CMF {
         private Controller _controller;
         private Animator _animator;
         private Transform _animatorTransform;
-        private Transform _tr;
+        private Transform _transform;
 
         //Whether the character is using the strafing blend tree;
         public bool useStrafeAnimations;
@@ -30,7 +30,7 @@ namespace CMF {
             _controller = GetComponent<Controller>();
             _animator = GetComponentInChildren<Animator>();
             _animatorTransform = _animator.transform;
-            _tr = transform;
+            _transform = transform;
         }
 
         //OnEnable;
@@ -53,7 +53,7 @@ namespace CMF {
             var velocity = _controller.GetVelocity();
 
             //Split up velocity;
-            var up = _tr.up;
+            var up = _transform.up;
             var horizontalVelocity = VectorMath.RemoveDotVector(velocity, up);
             var verticalVelocity = velocity - horizontalVelocity;
 
@@ -77,7 +77,7 @@ namespace CMF {
 
         private void OnLand(Vector3 v) {
             //Only trigger animation if downward velocity exceeds threshold;
-            if (VectorMath.GetDotProduct(v, _tr.up) > -landVelocityThreshold) return;
+            if (VectorMath.GetDotProduct(v, _transform.up) > -landVelocityThreshold) return;
             _animator.SetTrigger(Land);
         }
 

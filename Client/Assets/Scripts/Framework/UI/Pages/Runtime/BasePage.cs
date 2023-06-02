@@ -14,11 +14,7 @@ namespace Framework.UI {
             get => _canvas != null ? _canvas : null;
             set => _canvas = value;
         }
-        private bool _isShow;
-        public bool IsShow {
-            get => _isShow;
-            set => _isShow = value;
-        }
+        public bool IsShow { get; set; }
         private static UIBinding _uiBinding;
         public UIBinding UIBinding {
             get => _uiBinding;
